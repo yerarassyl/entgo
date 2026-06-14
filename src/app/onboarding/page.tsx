@@ -22,7 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { Brand } from "@/components/brand";
 import { universityCatalog } from "@/data/universities";
 
@@ -313,79 +313,79 @@ export default function OnboardingPage() {
 
   if (phase === "route") {
     return (
-      <main className="min-h-screen bg-white px-5 py-8 lg:h-[100svh] lg:overflow-hidden lg:py-5">
-        <section className="mx-auto flex h-full max-w-6xl flex-col text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]">
+      <main className="min-h-screen bg-white px-5 py-12 sm:py-16">
+        <section className="mx-auto max-w-6xl text-center">
+          <span className="route-fade-up inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]">
             <Sparkles size={15} /> Персональный анализ завершен
           </span>
-          <div className="relative mx-auto mt-4 max-w-4xl">
-            <h1 className="text-4xl font-extrabold tracking-[-.055em] text-[#172033] sm:text-5xl lg:text-[48px]">Твой маршрут до гранта готов</h1>
-            <div className="mt-4 flex justify-center sm:absolute sm:-right-24 sm:-top-2 sm:mt-0">
-              <div className="grid size-20 place-items-center rounded-full border-[6px] border-[#dbe8ff] border-t-[#2563eb] bg-white text-center shadow-sm">
-                <span><strong className="block text-xl">{readiness}%</strong><small className="text-[9px] text-[#727b8b]">готовность</small></span>
+          <div className="route-fade-up route-delay-1 relative mx-auto mt-7 max-w-5xl">
+            <h1 className="mx-auto max-w-4xl text-4xl font-extrabold tracking-[-.055em] text-[#172033] sm:text-6xl lg:text-[64px]">Твой маршрут до гранта готов</h1>
+            <div className="mt-6 flex justify-center lg:absolute lg:-right-4 lg:top-0 lg:mt-0">
+              <div className="grid size-28 place-items-center rounded-full bg-[conic-gradient(#2563eb_var(--readiness),#dbe8ff_0)] p-[7px] shadow-[0_12px_35px_rgba(37,99,235,.14)]" style={{ "--readiness": `${readiness}%` } as CSSProperties}>
+                <span className="grid size-full place-items-center rounded-full bg-white text-center">
+                  <span><small className="block text-[10px] font-semibold text-[#7b8495]">Готовность</small><strong className="mt-1 block text-2xl">{readiness}%</strong></span>
+                </span>
               </div>
             </div>
           </div>
-          <p className="mx-auto mt-3 max-w-2xl text-base text-[#727b8b]">На основе твоей цели и текущего уровня мы сформировали персональный план подготовки.</p>
+          <p className="route-fade-up route-delay-2 mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#727b8b]">На основе твоей цели и текущего уровня мы сформировали персональный план подготовки.</p>
 
-          <div className="mt-6 grid flex-1 gap-5 text-left lg:min-h-0 lg:grid-cols-[.95fr_1.05fr]">
-            <div className="flex flex-col gap-5">
-              <div className="grid overflow-hidden rounded-[24px] border border-[#e2e7f0] bg-white shadow-[0_18px_55px_rgba(24,50,100,.07)] sm:grid-cols-3">
-                {[
-                  { icon: University, label: "Университет", value: universityData.shortName },
-                  { icon: TrendingUp, label: "Разрыв до цели", value: `${scoreGap} баллов` },
-                  { icon: BookOpen, label: "Приоритетные темы", value: `${priorityTopics} тем` },
-                ].map(({ icon: Icon, label, value }, index) => (
-                  <div key={label} className={`p-5 text-center ${index > 0 ? "border-t border-[#e2e7f0] sm:border-l sm:border-t-0" : ""}`}>
-                    <Icon className="mx-auto text-[#2563eb]" size={22} />
-                    <p className="mt-2 text-[11px] text-[#7b8495]">{label}</p>
-                    <strong className="mt-1 block text-lg text-[#172033]">{value}</strong>
-                  </div>
-                ))}
+          <div className="route-fade-up route-delay-2 mx-auto mt-12 grid min-h-[220px] w-full max-w-[800px] overflow-hidden rounded-[30px] border border-[#e2e7f0] bg-white shadow-[0_24px_80px_rgba(24,50,100,.08)] sm:grid-cols-3">
+            {[
+              { icon: University, label: "Университет", value: universityData.shortName },
+              { icon: TrendingUp, label: "Разрыв до цели", value: `${scoreGap} баллов` },
+              { icon: BookOpen, label: "Приоритетные темы", value: `${priorityTopics} тем` },
+            ].map(({ icon: Icon, label, value }, index) => (
+              <div key={label} className={`flex min-h-[180px] flex-col items-center justify-center p-7 ${index > 0 ? "border-t border-[#e2e7f0] sm:border-l sm:border-t-0" : ""}`}>
+                <span className="grid size-12 place-items-center rounded-2xl bg-[#eef5ff] text-[#2563eb]"><Icon size={24} /></span>
+                <p className="mt-4 text-xs font-semibold text-[#7b8495]">{label}</p>
+                <strong className="mt-2 text-2xl text-[#172033]">{value}</strong>
               </div>
+            ))}
+          </div>
 
-              <div className="flex-1 rounded-[24px] border border-[#e2e7f0] p-6">
-                <h2 className="text-2xl font-extrabold tracking-[-.04em] text-[#172033]">Твой путь до цели</h2>
-                <div className="relative mt-7 grid grid-cols-4">
-                  <div className="absolute left-[12.5%] right-[12.5%] top-2.5 h-1 bg-[#dce8ff]" />
-                  {[
-                    ["Сейчас", currentScore],
-                    ["Первый прогресс", firstMilestone],
-                    ["Уверенный уровень", secondMilestone],
-                    ["Цель", targetScore],
-                  ].map(([label, value]) => (
-                    <div key={label} className="relative text-center">
-                      <span className="mx-auto block size-6 rounded-full border-[6px] border-[#dce8ff] bg-[#2563eb]" />
-                      <p className="mt-3 text-[10px] leading-4 text-[#7b8495]">{label}</p>
-                      <strong className="mt-1 block text-lg text-[#172033]">{value}</strong>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-7 grid gap-2 text-xs font-semibold sm:grid-cols-3">
-                  <span className="rounded-xl bg-[#f7f9fc] p-3"><BookOpen className="mb-1.5 text-[#2563eb]" size={16} />{priorityTopics} тем</span>
-                  <span className="rounded-xl bg-[#f7f9fc] p-3"><BrainCircuit className="mb-1.5 text-[#2563eb]" size={16} />AI-анализ</span>
-                  <span className="rounded-xl bg-[#f7f9fc] p-3"><TrendingUp className="mb-1.5 text-[#2563eb]" size={16} />Личный план</span>
-                </div>
-              </div>
+          <div className="route-fade-up route-delay-3 mx-auto mt-16 max-w-5xl text-left">
+            <h2 className="text-center text-3xl font-extrabold tracking-[-.045em] text-[#172033] sm:text-4xl">Твой путь до цели</h2>
+            <div className="relative mt-10 grid gap-4 md:grid-cols-4 md:gap-5">
+              <div className="absolute left-[10%] right-[10%] top-8 hidden h-1 rounded-full bg-[#dce8ff] md:block" />
+              {[
+                { label: "Сейчас", value: currentScore, caption: "Текущий уровень" },
+                { label: "Первый прогресс", value: firstMilestone, caption: "Закрыты первые пробелы" },
+                { label: "Уверенный уровень", value: secondMilestone, caption: "Результат закреплён" },
+                { label: "Цель", value: targetScore, caption: universityData.shortName },
+              ].map((milestone, index) => (
+                <article key={milestone.label} className="relative rounded-[22px] border border-[#dfe6f2] bg-white p-5 text-center shadow-[0_12px_35px_rgba(24,50,100,.05)]">
+                  <span className="relative z-10 mx-auto grid size-16 place-items-center rounded-2xl border-[6px] border-[#dce8ff] bg-[#2563eb] text-lg font-extrabold text-white shadow-[0_8px_22px_rgba(37,99,235,.2)]">{index + 1}</span>
+                  <p className="mt-4 text-xs font-bold uppercase tracking-[.1em] text-[#2563eb]">{milestone.label}</p>
+                  <strong className="mt-2 block text-3xl tracking-[-.04em]">{milestone.value}</strong>
+                  <small className="mt-2 block text-[#7b8495]">{milestone.caption}</small>
+                </article>
+              ))}
             </div>
-
-            <div className="flex flex-col rounded-[24px] bg-[#eef5ff] p-6">
-              <div className="flex items-center gap-3"><Target className="text-[#2563eb]" /><h2 className="text-xl font-extrabold">Что даст максимальный результат</h2></div>
-              <div className="mt-5 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                {topTopics.map((topic) => (
-                  <div key={topic.name} className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
-                    <strong>{topic.name}</strong>
-                    <span className="shrink-0 text-sm font-bold text-[#2563eb]">+{topic.growth} баллов</span>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-5 text-center text-sm font-semibold leading-6 text-[#172033]">Большая часть прироста будет достигнута за счет этих тем.</p>
-              <button onClick={() => setPhase("plan")} className="group mt-auto inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 font-bold text-white hover:bg-[#1d4ed8]">
-                Посмотреть мой план <ArrowRight className="transition-transform group-hover:translate-x-1" size={19} />
-              </button>
-              <p className="mt-2 text-center text-[11px] text-[#8b93a1]">Следующий шаг: персональный план подготовки</p>
+            <div className="mx-auto mt-6 grid max-w-3xl gap-3 text-sm font-semibold sm:grid-cols-3">
+              <span className="flex items-center gap-3 rounded-2xl bg-[#f7f9fc] p-4"><BookOpen className="text-[#2563eb]" size={18} />{priorityTopics} приоритетных тем</span>
+              <span className="flex items-center gap-3 rounded-2xl bg-[#f7f9fc] p-4"><BrainCircuit className="text-[#2563eb]" size={18} />AI-анализ ошибок</span>
+              <span className="flex items-center gap-3 rounded-2xl bg-[#f7f9fc] p-4"><TrendingUp className="text-[#2563eb]" size={18} />Персональный план</span>
             </div>
           </div>
+
+          <div className="route-fade-up route-delay-3 mx-auto mt-14 max-w-5xl rounded-[30px] bg-[#eef5ff] p-7 text-left sm:p-10">
+            <div className="flex items-center gap-3"><span className="grid size-11 place-items-center rounded-2xl bg-white text-[#2563eb]"><Target size={23} /></span><h2 className="text-2xl font-extrabold">Что даст максимальный результат</h2></div>
+            <div className="mt-7 grid gap-4 sm:grid-cols-3">
+              {topTopics.map((topic) => (
+                <article key={topic.name} className="rounded-[22px] bg-white p-6">
+                  <strong className="text-lg">{topic.name}</strong>
+                  <span className="mt-5 block text-sm font-bold text-[#2563eb]">+{topic.growth} потенциальных баллов</span>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <p className="route-fade-up route-delay-3 mt-8 text-center text-lg font-semibold text-[#172033]"><Sparkles className="mr-2 inline text-[#2563eb]" size={19} />Большая часть прироста будет достигнута за счет этих тем.</p>
+          <button onClick={() => setPhase("plan")} className="route-fade-up route-delay-3 group mt-10 inline-flex h-16 w-full max-w-[340px] items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 font-bold text-white shadow-[0_15px_35px_rgba(37,99,235,.22)] hover:-translate-y-0.5 hover:bg-[#1d4ed8]">
+            Посмотреть мой план <ArrowRight className="transition-transform group-hover:translate-x-1" size={19} />
+          </button>
+          <p className="mt-3 text-xs text-[#8b93a1]">Следующий шаг: персональный план подготовки</p>
         </section>
       </main>
     );

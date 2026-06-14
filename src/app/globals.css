@@ -102,6 +102,31 @@ input {
   animation: login-growth 1.4s cubic-bezier(.22, 1, .36, 1) both;
 }
 
+@keyframes route-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.route-fade-up {
+  animation: route-fade-up 560ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.route-delay-1 { animation-delay: 80ms; }
+.route-delay-2 { animation-delay: 160ms; }
+.route-delay-3 { animation-delay: 240ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .route-fade-up {
+    animation: none;
+  }
+}
+
 button,
 a {
   transition:
