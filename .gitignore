@@ -1,0 +1,64 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+**/node_modules/
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+/playwright-report/
+/test-results/
+
+# next.js
+/.next/
+/out/
+/src/generated/prisma/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# local verification artifacts
+/screenshots-all-pages-*/
+/screenshots-all-pages-*.zip
+/verification-latest/
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# local Codex artifacts
+/.codex/
+
+# Expo / React Native local output
+/mobile/.expo/
+/mobile/dist/
+/mobile/verification/
+
+# local development databases
+/.data/
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+.vercel

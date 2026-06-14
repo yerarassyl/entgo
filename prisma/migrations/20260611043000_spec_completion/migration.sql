@@ -1,0 +1,6 @@
+ALTER TYPE "ContentSubmissionStatus" ADD VALUE IF NOT EXISTS 'NEEDS_CHANGES';
+
+ALTER TABLE "Topic"
+ADD COLUMN "grade" TEXT,
+ADD COLUMN "description" TEXT,
+ADD COLUMN "tags" JSONB;

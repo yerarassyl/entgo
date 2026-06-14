@@ -1,0 +1,14 @@
+.env
+.env.*
+.data/
+.next/
+node_modules/
+mobile/
+screenshots-all-pages-*/
+screenshots-all-pages-*.zip
+verification-latest/
+*.log
+docs/
+tests/
+playwright-report/
+test-results/

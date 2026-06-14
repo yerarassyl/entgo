@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.data
+.env
+.codex
+coverage
+playwright-report
+test-results
+npm-debug.log*

@@ -1,0 +1,14 @@
+{
+  "name": "ENTGO — подготовка к ЕНТ",
+  "short_name": "ENTGO",
+  "description": "Прогноз балла, персональный план и подготовка к ЕНТ.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#f7f7f4",
+  "theme_color": "#111111",
+  "lang": "ru",
+  "icons": [
+    { "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
