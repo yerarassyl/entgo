@@ -106,7 +106,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-paper">
+    <main className="product-auth-page min-h-screen bg-paper">
       <header className="border-b border-line bg-white">
         <div className="container-shell flex h-18 items-center justify-between">
           <Brand />
@@ -129,7 +129,7 @@ export default function RegisterPage() {
           <div className="mt-8 space-y-3">
             {["Узнаешь, сколько баллов не хватает до гранта", "Увидишь темы, которые сильнее всего мешают результату", "Получишь персональный план роста"].map((item) => (
               <div key={item} className="flex items-center gap-3 text-sm font-semibold">
-                <span className="grid size-6 place-items-center rounded-full bg-ink text-white"><Check size={13} /></span>
+                <span className="grid size-6 place-items-center rounded-full bg-[#2563eb] text-white"><Check size={13} /></span>
                 {item}
               </div>
             ))}
@@ -193,7 +193,7 @@ export default function RegisterPage() {
 
           {error && <p role="alert" className="mt-5 rounded-xl bg-[#fff1ef] px-4 py-3 text-sm font-medium text-danger">{error}</p>}
 
-          <button disabled={loading} className="mt-7 flex h-14 w-full items-center justify-center gap-3 rounded-full bg-ink px-6 text-sm font-semibold text-white disabled:opacity-50">
+          <button disabled={loading} className="mt-7 flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#2563eb] px-6 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] disabled:opacity-50">
             {loading ? "Создаём аккаунт..." : "Создать аккаунт и выбрать подписку"} {!loading && <ArrowRight size={17} />}
           </button>
           <div className="my-5 flex items-center gap-3 text-xs text-muted"><span className="h-px flex-1 bg-line" />или<span className="h-px flex-1 bg-line" /></div>

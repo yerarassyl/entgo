@@ -96,19 +96,19 @@ export function DashboardClient({
   );
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper lg:grid lg:grid-cols-[250px_1fr]">
-      <aside className="hidden min-h-screen border-r border-line bg-white p-5 pb-24 lg:flex lg:flex-col">
+    <main className="mobile-app-page min-h-screen bg-paper lg:grid lg:grid-cols-[270px_1fr]">
+      <aside className="hidden min-h-screen border-r border-[#e5eaf2] bg-white p-5 pb-24 lg:flex lg:flex-col">
         <div className="px-2 py-2"><Brand /></div>
         <nav className="mt-8 space-y-1">
           {nav.map(([label, href, Icon], index) => {
             const IconComponent = Icon as typeof Home;
-            return <Link key={label as string} href={href as string} className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold ${index === 0 ? "bg-ink text-white" : "text-muted hover:bg-paper hover:text-ink"}`}><IconComponent size={18} />{label as string}</Link>;
+            return <Link key={label as string} href={href as string} className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold ${index === 0 ? "bg-[#2563eb] text-white shadow-[0_10px_25px_rgba(37,99,235,.18)]" : "text-muted hover:bg-[#f2f6fd] hover:text-ink"}`}><IconComponent size={18} />{label as string}</Link>;
           })}
         </nav>
-        <div className="mt-auto rounded-2xl bg-paper p-4">
-          <p className="text-xs font-bold">Открыть Premium</p>
-          <p className="mt-1 text-xs leading-5 text-muted">Все тесты, AI и полный персональный план.</p>
-          <Link href="/premium" className="mt-3 block w-full rounded-full bg-ink py-2.5 text-center text-xs font-semibold text-white">Попробовать</Link>
+        <div className="mt-auto rounded-[22px] border border-[#d6e4ff] bg-[#eef5ff] p-4">
+          <p className="text-xs font-bold text-[#174dbd]">Открыть Premium</p>
+          <p className="mt-1 text-xs leading-5 text-[#667085]">Все тесты, AI и полный персональный план.</p>
+          <Link href="/premium" className="mt-3 block w-full rounded-full bg-[#2563eb] py-2.5 text-center text-xs font-semibold text-white">Попробовать</Link>
         </div>
         <Link href="/settings" className="mt-3 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-muted hover:bg-paper hover:text-ink"><Settings size={18} />Настройки</Link>
         <LogoutButton />
@@ -166,7 +166,7 @@ export function DashboardClient({
               <p className="border-t border-line pt-4 text-xs text-muted">Выполнено сегодня: {completedMinutes} из {totalMinutes} минут</p>
             </section>
 
-            <section className="rounded-[26px] bg-ink p-6 text-white sm:p-8">
+            <section className="rounded-[26px] bg-[#2563eb] p-6 text-white shadow-[0_20px_55px_rgba(37,99,235,.18)] sm:p-8">
               <div className="flex items-center justify-between"><p className="text-xs font-bold uppercase tracking-[.14em] text-white/45">Прогноз</p><Target size={19} /></div>
               <p className="display mt-8 text-7xl">{forecastScore}</p>
               <p className="mt-1 text-sm text-white/45">прогноз ЕНТ · {forecastMinimum}–{forecastOptimistic}</p>

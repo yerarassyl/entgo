@@ -50,8 +50,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen bg-white lg:grid-cols-[3fr_2fr]">
-      <section className="relative hidden overflow-hidden bg-[#10234d] p-10 text-white lg:flex lg:flex-col xl:p-14">
+    <main className="product-auth-page grid min-h-screen bg-white lg:grid-cols-[3fr_2fr]">
+      <section className="relative hidden overflow-hidden bg-[#2563eb] p-10 text-white lg:flex lg:flex-col xl:p-14">
         <Brand inverse />
         <div className="my-auto max-w-2xl py-10">
           <h1 className="max-w-xl text-6xl font-extrabold leading-[.98] tracking-[-.055em] xl:text-7xl">До гранта осталось меньше, чем кажется.</h1>
@@ -63,18 +63,18 @@ export default function LoginPage() {
               [TrendingUp, "Сможешь отслеживать прогресс до ЕНТ"],
             ].map(([Icon, label]) => {
               const ItemIcon = Icon as typeof Target;
-              return <div key={label as string} className="flex items-center gap-4 text-sm font-semibold"><span className="grid size-10 place-items-center rounded-xl bg-white/10 text-[#8bb4ff]"><ItemIcon size={19} /></span>{label as string}</div>;
+              return <div key={label as string} className="flex items-center gap-4 text-sm font-semibold"><span className="grid size-10 place-items-center rounded-xl bg-white/12 text-white"><ItemIcon size={19} /></span>{label as string}</div>;
             })}
           </div>
           <div className="mt-10 max-w-lg rounded-[28px] border border-white/12 bg-white/[.07] p-6 backdrop-blur-sm">
             <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-4 text-center">
               <span><small className="block text-white/50">Текущий уровень</small><strong className="mt-2 block text-3xl">90</strong></span>
-              <ArrowDown className="-rotate-90 text-[#8bb4ff]" size={18} />
+              <ArrowDown className="-rotate-90 text-white/65" size={18} />
               <span><small className="block text-white/50">Цель</small><strong className="mt-2 block text-3xl">125</strong></span>
-              <ArrowDown className="-rotate-90 text-[#8bb4ff]" size={18} />
+              <ArrowDown className="-rotate-90 text-white/65" size={18} />
               <span><small className="block text-white/50">План</small><strong className="mt-2 block text-3xl">18</strong><small className="text-white/50">тем</small></span>
             </div>
-            <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/10"><div className="login-growth-line h-full rounded-full bg-[#6ea1ff]" /></div>
+            <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/15"><div className="login-growth-line h-full rounded-full bg-white" /></div>
           </div>
         </div>
         <p className="text-xs text-white/40">© 2026 entgo.kz</p>

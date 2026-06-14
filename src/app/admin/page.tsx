@@ -98,8 +98,13 @@ export default async function AdminPage() {
     <main className="admin-page min-h-screen bg-paper pb-16">
       <header className="border-b border-line bg-white">
         <div className="container-shell flex h-18 items-center justify-between gap-4">
-          <span className="text-sm font-semibold">{superAdmin ? "Суперадмин" : "Контент-админ · ограниченный доступ"}</span>
-          <div className="flex items-center gap-3"><LogoutButton header /><Brand /></div>
+          <Brand />
+          <div className="flex items-center gap-3">
+            <span className="hidden text-sm font-semibold text-muted sm:inline">
+              {superAdmin ? "Суперадмин" : "Контент-админ · ограниченный доступ"}
+            </span>
+            <LogoutButton header />
+          </div>
         </div>
       </header>
       <div className="container-shell py-10 sm:py-16">

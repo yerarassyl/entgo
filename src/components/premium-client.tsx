@@ -31,7 +31,7 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
 
   if (activeUntil) {
     return (
-      <div className="mx-auto mt-12 max-w-3xl rounded-[30px] bg-[#10234d] p-8 text-white shadow-[0_30px_90px_rgba(16,35,77,.18)] sm:p-11">
+      <div className="mx-auto mt-12 max-w-3xl rounded-[30px] bg-[#2563eb] p-8 text-white shadow-[0_30px_90px_rgba(37,99,235,.2)] sm:p-11">
         <ShieldCheck size={32} />
         <h2 className="mt-6 text-4xl font-extrabold tracking-[-.04em]">Полный план разблокирован</h2>
         <p className="mt-3 text-sm leading-6 text-white/70">Доступ активен до {activeUntil}. Пробники, уроки, AI и прогноз поступления уже доступны.</p>
@@ -77,8 +77,8 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
     <>
       <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-2">
         {plans.map((plan) => (
-          <article key={plan.id} className={`relative flex min-h-[620px] flex-col rounded-[30px] border p-7 sm:p-9 ${plan.dark ? "border-[#10234d] bg-[#10234d] text-white shadow-[0_30px_80px_rgba(16,35,77,.2)]" : "border-[#dfe5ef] bg-white text-[#172033]"}`}>
-            {plan.dark && <span className="absolute -top-3 left-8 rounded-full bg-white px-4 py-1.5 text-xs font-extrabold text-[#10234d] shadow-sm">Самый популярный</span>}
+          <article key={plan.id} className={`relative flex min-h-[620px] flex-col rounded-[30px] border p-7 sm:p-9 ${plan.dark ? "border-[#2563eb] bg-[#2563eb] text-white shadow-[0_30px_80px_rgba(37,99,235,.2)]" : "border-[#dfe5ef] bg-white text-[#172033]"}`}>
+            {plan.dark && <span className="absolute -top-3 left-8 rounded-full bg-white px-4 py-1.5 text-xs font-extrabold text-[#2563eb] shadow-sm">Самый популярный</span>}
             <h2 className="text-3xl font-extrabold tracking-[-.04em]">{plan.title}</h2>
             <p className={`mt-3 min-h-12 text-sm leading-6 ${plan.dark ? "text-white/65" : "text-[#737d8e]"}`}>{plan.subtitle}</p>
             <p className="mt-8 text-5xl font-extrabold tracking-[-.055em]">{plan.price}</p>
@@ -94,7 +94,7 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
                 Система автоматически обновляет план после каждого пробника.
               </div>
             )}
-            <button onClick={() => checkout(plan.id)} disabled={Boolean(loadingPlan)} className={`group mt-auto flex h-14 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold disabled:opacity-50 ${plan.dark ? "bg-white text-[#10234d]" : "border border-[#172033] bg-white text-[#172033] hover:bg-[#f5f7fa]"}`}>
+            <button onClick={() => checkout(plan.id)} disabled={Boolean(loadingPlan)} className={`group mt-auto flex h-14 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold disabled:opacity-50 ${plan.dark ? "bg-white text-[#2563eb]" : "border border-[#2563eb] bg-white text-[#2563eb] hover:bg-[#f5f8ff]"}`}>
               {loadingPlan === plan.id ? "Открываем оплату..." : plan.dark ? "Разблокировать мой план" : "Выбрать тариф"}
               {loadingPlan !== plan.id && <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} />}
             </button>

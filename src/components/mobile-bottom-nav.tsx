@@ -32,7 +32,7 @@ export function MobileBottomNav() {
   return (
     <nav
       data-mobile-bottom-nav
-      className="mobile-dock fixed inset-x-3 bottom-[calc(.55rem+env(safe-area-inset-bottom))] z-[60] grid grid-cols-5 rounded-[22px] border border-black/10 bg-white/95 p-1.5 shadow-[0_12px_45px_rgba(0,0,0,.16)] backdrop-blur-xl lg:hidden"
+      className="mobile-dock fixed inset-x-3 bottom-[calc(.55rem+env(safe-area-inset-bottom))] z-[60] grid grid-cols-5 rounded-[22px] border border-[#dfe5ef] bg-white/95 p-1.5 shadow-[0_14px_45px_rgba(37,70,140,.16)] backdrop-blur-xl lg:hidden"
       aria-label="Основная навигация"
     >
       {items.slice(0, 2).map(([label, href, Icon]) => {
@@ -41,7 +41,7 @@ export function MobileBottomNav() {
           <Link
             key={href}
             href={href}
-            className={`flex min-h-13 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[10px] font-semibold ${active ? "bg-paper text-ink" : "text-muted"}`}
+            className={`flex min-h-13 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[10px] font-semibold ${active ? "bg-[#eef5ff] text-[#2563eb]" : "text-muted"}`}
           >
             <Icon size={18} />
             {label}
@@ -51,7 +51,7 @@ export function MobileBottomNav() {
       <button
         type="button"
         onClick={() => window.dispatchEvent(new CustomEvent("entgo:ai-open"))}
-        className="mx-auto grid size-13 place-items-center rounded-2xl bg-ink text-white shadow-lg"
+        className="mx-auto grid size-13 place-items-center rounded-2xl bg-[#2563eb] text-white shadow-[0_10px_25px_rgba(37,99,235,.28)]"
         aria-label="Открыть AI-репетитора"
       >
         <Sparkles size={19} />
@@ -62,7 +62,7 @@ export function MobileBottomNav() {
           <Link
             key={href}
             href={href}
-            className={`flex min-h-13 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[10px] font-semibold ${active ? "bg-paper text-ink" : "text-muted"}`}
+            className={`flex min-h-13 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[10px] font-semibold ${active ? "bg-[#eef5ff] text-[#2563eb]" : "text-muted"}`}
           >
             <Icon size={18} />
             {label}

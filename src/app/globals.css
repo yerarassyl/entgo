@@ -2,9 +2,12 @@
 
 :root {
   --ink: #111111;
-  --paper: #f7f7f4;
-  --line: #deded8;
-  --muted: #5c5c57;
+  --paper: #f5f7fb;
+  --line: #dfe5ef;
+  --muted: #667085;
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --blue-soft: #eef5ff;
   --success: #168a52;
   --danger: #c43d35;
   --font-dm-sans: "DM Sans Variable";
@@ -136,6 +139,26 @@ a {
     transform 160ms ease;
 }
 
+.bg-ink {
+  background-color: #2563eb !important;
+}
+
+.border-ink {
+  border-color: #2563eb !important;
+}
+
+.accent-black {
+  accent-color: #2563eb;
+}
+
+.hover\:border-ink:hover {
+  border-color: #2563eb !important;
+}
+
+.focus\:border-ink:focus {
+  border-color: #2563eb !important;
+}
+
 ::selection {
   background: #111;
   color: #fff;
@@ -165,8 +188,119 @@ a {
 }
 
 .container-shell {
-  width: min(1180px, calc(100% - 40px));
+  width: min(1240px, calc(100% - 40px));
   margin-inline: auto;
+}
+
+/* Product UI follows the landing page system: white canvas, black type, blue action. */
+.mobile-app-page,
+.admin-page {
+  background: #f5f7fb;
+}
+
+.mobile-app-page > header,
+.admin-page > header,
+.study-page > header {
+  border-color: #e4e9f1;
+  background: rgb(255 255 255 / 0.94);
+  backdrop-filter: blur(18px);
+}
+
+.mobile-app-page > header a[class*="border"],
+.study-page > header a[class*="border"] {
+  border-color: #d7e3fb;
+  color: #2457bb;
+}
+
+.mobile-app-page > header a[class*="border"]:hover,
+.study-page > header a[class*="border"]:hover {
+  background: #eef5ff;
+}
+
+.mobile-app-page .display,
+.admin-page .display,
+.study-page .display {
+  font-family: var(--font-dm-sans), Arial, sans-serif;
+  font-weight: 720;
+  letter-spacing: -0.055em;
+}
+
+.mobile-app-page .display .italic,
+.admin-page .display .italic,
+.study-page .display .italic {
+  color: #2563eb;
+  font-style: normal;
+}
+
+.mobile-app-page .bg-ink,
+.admin-page .bg-ink,
+.study-page:not(.text-white) .bg-ink {
+  background-color: #2563eb !important;
+}
+
+.mobile-app-page .border-ink,
+.admin-page .border-ink,
+.study-page:not(.text-white) .border-ink {
+  border-color: #2563eb !important;
+}
+
+.mobile-app-page .text-ink,
+.admin-page .text-ink {
+  color: #111 !important;
+}
+
+.mobile-app-page section[class*="rounded-"][class*="bg-white"],
+.mobile-app-page article[class*="rounded-"][class*="bg-white"],
+.mobile-app-page div[class*="rounded-"][class*="border-line"][class*="bg-white"],
+.admin-page .admin-module,
+.admin-page section[class*="rounded-"][class*="bg-white"] {
+  border-color: #dfe5ef;
+  box-shadow: 0 14px 45px rgb(37 70 140 / 0.045);
+}
+
+.mobile-app-page input,
+.mobile-app-page select,
+.mobile-app-page textarea,
+.admin-page input,
+.admin-page select,
+.admin-page textarea {
+  border-color: #d9e1ed;
+  background-color: #fff;
+}
+
+.mobile-app-page input:focus,
+.mobile-app-page select:focus,
+.mobile-app-page textarea:focus,
+.admin-page input:focus,
+.admin-page select:focus,
+.admin-page textarea:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.09);
+}
+
+.mobile-app-page [class*="uppercase"][class*="tracking-"],
+.admin-page [class*="uppercase"][class*="tracking-"] {
+  color: #2563eb;
+}
+
+.mobile-app-page progress,
+.mobile-app-page [class*="transition-all"].bg-ink {
+  background-color: #2563eb;
+}
+
+.product-auth-page {
+  background: #f5f7fb;
+}
+
+.product-auth-page .display {
+  font-family: var(--font-dm-sans), Arial, sans-serif;
+  font-weight: 720;
+  letter-spacing: -0.055em;
+}
+
+.product-auth-page .display .italic {
+  color: #2563eb;
+  font-style: normal;
 }
 
 .landing-shell {

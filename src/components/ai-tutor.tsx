@@ -110,7 +110,7 @@ export function AiTutor() {
     <div className="floating-ai fixed right-3 z-[70] md:bottom-5 md:right-5">
       {open && (
         <section className="mb-3 flex h-[min(620px,calc(100vh-110px))] w-[min(390px,calc(100vw-28px))] flex-col overflow-hidden rounded-[26px] border border-black/10 bg-white shadow-2xl">
-          <header className="flex items-center justify-between bg-ink px-5 py-4 text-white">
+          <header className="flex items-center justify-between bg-[#2563eb] px-5 py-4 text-white">
             <div className="flex items-center gap-3">
               <span className="grid size-9 place-items-center rounded-full bg-white text-ink"><Bot size={18} /></span>
               <div><p className="text-sm font-bold">Твой AI-репетитор</p><p className="text-[11px] text-white/55">Видит контекст этой страницы</p></div>
@@ -137,7 +137,7 @@ export function AiTutor() {
               </>
             )}
             {messages.map((item, index) => (
-              <div key={`${item.role}-${index}`} className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 ${item.role === "user" ? "ml-auto bg-ink text-white" : "bg-paper text-ink"}`}>{item.content}</div>
+              <div key={`${item.role}-${index}`} className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 ${item.role === "user" ? "ml-auto bg-[#2563eb] text-white" : "bg-paper text-ink"}`}>{item.content}</div>
             ))}
             {loading && <div className="flex items-center gap-2 text-xs text-muted"><LoaderCircle className="animate-spin" size={15} /> Разбираю контекст...</div>}
             {upgrade && <Link href="/premium" className="block rounded-xl bg-ink px-4 py-3 text-center text-xs font-bold text-white">Открыть Premium</Link>}
@@ -152,7 +152,7 @@ export function AiTutor() {
         onClick={() => setOpen((value) => !value)}
         aria-label={selectedText ? "Спросить про выделенное" : "Спросить у ИИ"}
         title={selectedText ? "Спросить про выделенное" : "Спросить у ИИ"}
-        className="ml-auto hidden size-12 place-items-center rounded-full bg-ink text-white shadow-xl transition hover:scale-105 md:grid"
+        className="ml-auto hidden size-12 place-items-center rounded-full bg-[#2563eb] text-white shadow-[0_12px_30px_rgba(37,99,235,.28)] transition hover:scale-105 md:grid"
       >
         <Sparkles size={18} />
       </button>

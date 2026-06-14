@@ -107,7 +107,7 @@ export function SupportWidget() {
               <button type="button" onClick={capture} disabled={capturing} className="mt-2 inline-flex items-center gap-2 text-xs font-semibold"><Camera size={14} /> Обновить снимок</button>
               <textarea value={message} onChange={(event) => setMessage(event.target.value)} required minLength={5} maxLength={2_000} rows={4} placeholder="Опиши проблему или предложение" className="mt-4 w-full resize-none rounded-xl border border-line p-4 text-sm outline-none focus:border-ink" />
               {error && <p className="mt-2 text-xs text-danger">{error}</p>}
-              <button disabled={sending || message.trim().length < 5} className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-white disabled:opacity-40">{sending ? <LoaderCircle size={16} className="animate-spin" /> : <Send size={16} />} Отправить</button>
+              <button disabled={sending || message.trim().length < 5} className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#2563eb] text-sm font-semibold text-white disabled:opacity-40">{sending ? <LoaderCircle size={16} className="animate-spin" /> : <Send size={16} />} Отправить</button>
             </form>
           )}
         </section>
