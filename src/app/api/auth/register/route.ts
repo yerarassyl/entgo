@@ -25,7 +25,7 @@ const registrationSchema = z.object({
   onboarding: z.object({
     score: z.number().int().min(60).max(140),
     date: z.array(z.string()).max(1),
-    subjects: z.array(z.string()).max(10),
+    subjects: z.array(z.string().trim().min(2).max(80)).max(2),
     time: z.array(z.string()).max(1),
     method: z.array(z.string()).max(1),
   }),

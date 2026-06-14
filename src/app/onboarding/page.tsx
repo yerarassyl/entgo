@@ -6,13 +6,21 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
+  Atom,
   BookOpen,
   BrainCircuit,
+  Calculator,
   Check,
   CheckCircle2,
   ClockAlert,
+  Dna,
+  FlaskConical,
+  Globe2,
   GraduationCap,
+  Languages,
+  Laptop,
   Leaf,
+  Landmark,
   LockKeyhole,
   MapPin,
   Sparkles,
@@ -35,6 +43,11 @@ const steps = [
     subtitle: "Выбери университет, к гранту которого хочешь построить маршрут.",
   },
   {
+    key: "subjects",
+    title: "Какие 2 предмета ты сдаёшь?",
+    subtitle: "Выбери два профильных предмета. ENTGO учтёт их при построении персонального плана.",
+  },
+  {
     key: "city",
     title: "В каком городе ты живёшь?",
     subtitle: "Это поможет учитывать доступный темп и формат подготовки.",
@@ -54,6 +67,19 @@ const steps = [
     title: "Когда ты планируешь сдавать ЕНТ?",
     subtitle: "Это поможет определить интенсивность подготовки.",
   },
+] as const;
+
+const subjectOptions = [
+  { value: "Математика", icon: Calculator },
+  { value: "Физика", icon: Atom },
+  { value: "Информатика", icon: Laptop },
+  { value: "Химия", icon: FlaskConical },
+  { value: "Биология", icon: Dna },
+  { value: "География", icon: Globe2 },
+  { value: "Всемирная история", icon: Landmark },
+  { value: "Иностранный язык", icon: Languages },
+  { value: "Казахский язык", icon: BookOpen },
+  { value: "Русский язык", icon: BookOpen },
 ] as const;
 
 const cityOptions = ["Астана", "Алматы", "Шымкент", "Другой город"];
@@ -101,15 +127,18 @@ function SummaryCard({
   currentScore,
   targetScore,
   timeLeft,
+  subjects,
 }: {
   university: string;
   city: string;
   currentScore: number;
   targetScore: number;
   timeLeft?: string;
+  subjects?: string[];
 }) {
   const rows = [
     { icon: GraduationCap, label: "Университет", value: university },
+    ...(subjects?.length ? [{ icon: BookOpen, label: "Предметы", value: subjects.join(" + ") }] : []),
     { icon: MapPin, label: "Город", value: city || "Не указан" },
     { icon: TrendingUp, label: "Сейчас", value: `${currentScore}` },
     { icon: Target, label: "Цель", value: `${targetScore}` },
@@ -139,6 +168,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [phase, setPhase] = useState<Phase>("questions");
   const [university, setUniversity] = useState("mnu");
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [city, setCity] = useState("Астана");
   const [currentScore, setCurrentScore] = useState(90);
   const [targetScore, setTargetScore] = useState(125);
@@ -223,13 +253,14 @@ export default function OnboardingPage() {
       desiredUniversitySlug: university,
       city,
       date: [compatibleDate],
-      subjects: [],
+      subjects: selectedSubjects,
       time: ["30–45 минут"],
       method: ["Пока никак"],
     }));
   }
 
   function next() {
+    if (current.key === "subjects" && selectedSubjects.length !== 2) return;
     if (current.key === "date" && !timeLeft) return;
     if (step < steps.length - 1) {
       setStep((value) => value + 1);
@@ -483,6 +514,7 @@ export default function OnboardingPage() {
 
   const isGoal = current.key === "target";
   const isDeadline = current.key === "date";
+  const isSubjects = current.key === "subjects";
 
   return (
     <main className="min-h-screen bg-[#f8faff] text-[#172033]">
@@ -524,6 +556,49 @@ export default function OnboardingPage() {
                     </button>
                   );
                 })}
+              </div>
+            )}
+
+            {isSubjects && (
+              <div className="mt-10">
+                <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-[#667083]">Выбрано {selectedSubjects.length} из 2</p>
+                  <span className={`rounded-full px-3 py-1.5 text-xs font-bold ${selectedSubjects.length === 2 ? "bg-[#e9f2ff] text-[#2563eb]" : "bg-white text-[#8a93a3]"}`}>
+                    {selectedSubjects.length === 2 ? "Можно продолжать" : "Нужно выбрать два"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-3 xl:grid-cols-3">
+                  {subjectOptions.map(({ value, icon: Icon }) => {
+                    const selected = selectedSubjects.includes(value);
+                    const unavailable = !selected && selectedSubjects.length === 2;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        disabled={unavailable}
+                        onClick={() => setSelectedSubjects((subjects) => (
+                          subjects.includes(value)
+                            ? subjects.filter((subject) => subject !== value)
+                            : [...subjects, value]
+                        ))}
+                        className={`relative flex min-h-[132px] flex-col items-center justify-center gap-3 rounded-2xl border p-4 text-center transition-all sm:min-h-[112px] sm:flex-row sm:justify-start sm:gap-4 sm:p-5 sm:text-left ${
+                          selected
+                            ? "border-[#2563eb] bg-[#2563eb] text-white shadow-[0_15px_35px_rgba(37,99,235,.2)]"
+                            : "border-[#e1e6ef] bg-white hover:-translate-y-0.5 hover:border-[#aac3f8] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
+                        }`}
+                      >
+                        <span className={`grid size-12 shrink-0 place-items-center rounded-2xl ${selected ? "bg-white/15" : "bg-[#eff5ff] text-[#2563eb]"}`}>
+                          <Icon size={24} strokeWidth={1.8} />
+                        </span>
+                        <strong className={`text-sm leading-5 sm:pr-5 sm:text-base ${selected ? "text-white" : "text-[#172033]"}`}>{value}</strong>
+                        {selected && <CheckCircle2 className="absolute right-4 top-4" size={19} />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-5 text-sm leading-6 text-[#7b8495]">
+                  Обязательные предметы ЕНТ уже включены. Здесь нужны только два профильных предмета.
+                </p>
               </div>
             )}
 
@@ -625,7 +700,7 @@ export default function OnboardingPage() {
 
           {(isGoal || isDeadline) && (
             <div className="hidden lg:block">
-              <SummaryCard university={universityData.shortName} city={city} currentScore={currentScore} targetScore={targetScore} timeLeft={isDeadline ? timeLeft : undefined} />
+              <SummaryCard university={universityData.shortName} city={city} currentScore={currentScore} targetScore={targetScore} timeLeft={isDeadline ? timeLeft : undefined} subjects={selectedSubjects} />
             </div>
           )}
         </div>
@@ -640,7 +715,7 @@ export default function OnboardingPage() {
           <button onClick={() => step > 0 ? setStep((value) => value - 1) : router.push("/")} className="inline-flex min-h-12 items-center gap-2 rounded-full px-4 text-sm font-bold text-[#667083] hover:bg-white">
             <ArrowLeft size={17} /> Назад
           </button>
-          <button onClick={next} disabled={isDeadline && !timeLeft} className="inline-flex min-h-14 items-center gap-3 rounded-full bg-[#2563eb] px-7 text-sm font-bold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] disabled:cursor-not-allowed disabled:opacity-35">
+          <button onClick={next} disabled={(isSubjects && selectedSubjects.length !== 2) || (isDeadline && !timeLeft)} className="inline-flex min-h-14 items-center gap-3 rounded-full bg-[#2563eb] px-7 text-sm font-bold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] disabled:cursor-not-allowed disabled:opacity-35">
             {isDeadline ? "Построить мой план" : "Продолжить"} <ArrowRight size={17} />
           </button>
         </div>
