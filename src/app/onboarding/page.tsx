@@ -329,7 +329,7 @@ export default function OnboardingPage() {
           <p className="mx-auto mt-3 max-w-2xl text-base text-[#727b8b]">На основе твоей цели и текущего уровня мы сформировали персональный план подготовки.</p>
 
           <div className="mt-6 grid flex-1 gap-5 text-left lg:min-h-0 lg:grid-cols-[.95fr_1.05fr]">
-            <div className="flex h-full flex-col gap-5">
+            <div className="flex flex-col gap-5">
               <div className="grid overflow-hidden rounded-[24px] border border-[#e2e7f0] bg-white shadow-[0_18px_55px_rgba(24,50,100,.07)] sm:grid-cols-3">
                 {[
                   { icon: University, label: "Университет", value: universityData.shortName },
@@ -344,9 +344,9 @@ export default function OnboardingPage() {
                 ))}
               </div>
 
-              <div className="flex flex-1 flex-col rounded-[24px] border border-[#e2e7f0] p-7">
+              <div className="flex-1 rounded-[24px] border border-[#e2e7f0] p-6">
                 <h2 className="text-2xl font-extrabold tracking-[-.04em] text-[#172033]">Твой путь до цели</h2>
-                <div className="relative mt-9 grid grid-cols-4">
+                <div className="relative mt-7 grid grid-cols-4">
                   <div className="absolute left-[12.5%] right-[12.5%] top-2.5 h-1 bg-[#dce8ff]" />
                   {[
                     ["Сейчас", currentScore],
@@ -361,35 +361,26 @@ export default function OnboardingPage() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-9 grid gap-3 text-xs font-semibold sm:grid-cols-3">
+                <div className="mt-7 grid gap-2 text-xs font-semibold sm:grid-cols-3">
                   <span className="rounded-xl bg-[#f7f9fc] p-3"><BookOpen className="mb-1.5 text-[#2563eb]" size={16} />{priorityTopics} тем</span>
                   <span className="rounded-xl bg-[#f7f9fc] p-3"><BrainCircuit className="mb-1.5 text-[#2563eb]" size={16} />AI-анализ</span>
                   <span className="rounded-xl bg-[#f7f9fc] p-3"><TrendingUp className="mb-1.5 text-[#2563eb]" size={16} />Личный план</span>
                 </div>
-                <div className="mt-auto rounded-2xl bg-[#f7f9fc] p-5">
-                  <p className="text-xs font-bold uppercase tracking-[.12em] text-[#2563eb]">Первый этап</p>
-                  <p className="mt-2 text-sm font-semibold">Закрыть 3 темы с максимальным влиянием и проверить рост на следующем пробнике.</p>
-                </div>
               </div>
             </div>
 
-            <div className="flex h-full flex-col rounded-[24px] bg-[#eef5ff] p-7">
+            <div className="flex flex-col rounded-[24px] bg-[#eef5ff] p-6">
               <div className="flex items-center gap-3"><Target className="text-[#2563eb]" /><h2 className="text-xl font-extrabold">Что даст максимальный результат</h2></div>
-              <div className="mt-7 grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+              <div className="mt-5 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
                 {topTopics.map((topic) => (
-                  <div key={topic.name} className="flex items-center justify-between gap-4 rounded-2xl bg-white p-5">
+                  <div key={topic.name} className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
                     <strong>{topic.name}</strong>
                     <span className="shrink-0 text-sm font-bold text-[#2563eb]">+{topic.growth} баллов</span>
                   </div>
                 ))}
               </div>
-              <p className="mt-7 text-center text-sm font-semibold leading-6 text-[#172033]">Большая часть прироста будет достигнута за счет этих тем.</p>
-              <div className="mt-auto grid grid-cols-3 gap-3 text-center">
-                <span className="rounded-xl bg-white/75 p-4"><small className="block text-[#7b8495]">Старт</small><strong>{currentScore}</strong></span>
-                <span className="rounded-xl bg-white/75 p-4"><small className="block text-[#7b8495]">Рост</small><strong className="text-[#2563eb]">+{scoreGap}</strong></span>
-                <span className="rounded-xl bg-white/75 p-4"><small className="block text-[#7b8495]">Цель</small><strong>{targetScore}</strong></span>
-              </div>
-              <button onClick={() => setPhase("plan")} className="group mt-5 inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 font-bold text-white hover:bg-[#1d4ed8]">
+              <p className="mt-5 text-center text-sm font-semibold leading-6 text-[#172033]">Большая часть прироста будет достигнута за счет этих тем.</p>
+              <button onClick={() => setPhase("plan")} className="group mt-auto inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 font-bold text-white hover:bg-[#1d4ed8]">
                 Посмотреть мой план <ArrowRight className="transition-transform group-hover:translate-x-1" size={19} />
               </button>
               <p className="mt-2 text-center text-[11px] text-[#8b93a1]">Следующий шаг: персональный план подготовки</p>
