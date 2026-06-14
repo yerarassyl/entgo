@@ -146,15 +146,15 @@ function SummaryCard({
   ];
 
   return (
-    <aside className="rounded-[28px] border border-[#dfe6f4] bg-white p-6 shadow-[0_24px_70px_rgba(31,64,130,.07)]">
-      <p className="text-sm font-bold text-[#172033]">Что уже известно</p>
+    <aside className="rounded-[24px] border border-white/10 bg-white/8 p-5 text-white">
+      <p className="text-xs font-bold uppercase tracking-[.14em] text-white/55">Твой маршрут</p>
       <div className="mt-5 space-y-4">
         {rows.map(({ icon: Icon, label, value }) => (
           <div key={label} className="flex items-center gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#eff5ff] text-[#2563eb]"><Icon size={17} /></span>
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/10 text-white"><Icon size={17} /></span>
             <div className="min-w-0">
-              <p className="text-xs text-[#7b8495]">{label}</p>
-              <p className="truncate text-sm font-bold text-[#172033]">{value}</p>
+              <p className="text-[11px] text-white/50">{label}</p>
+              <p className="truncate text-sm font-bold text-white">{value}</p>
             </div>
           </div>
         ))}
@@ -277,65 +277,44 @@ export default function OnboardingPage() {
   if (phase === "analyzing") {
     const circumference = 2 * Math.PI * 52;
     return (
-      <main className="grid min-h-screen place-items-center bg-white px-5 py-10">
-        <section className="w-full max-w-[760px] rounded-[32px] bg-white p-7 text-center shadow-[0_28px_100px_rgba(24,50,100,.12)] sm:p-12">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]">
-            <BrainCircuit size={16} /> ENTGO AI
-          </span>
-          <div className="relative mx-auto mt-8 size-[120px]">
-            <svg className="-rotate-90" width="120" height="120" viewBox="0 0 120 120" aria-label={`Анализ выполнен на ${Math.round(analysisProgress)} процентов`}>
-              <circle cx="60" cy="60" r="52" fill="none" stroke="#e8edf6" strokeWidth="8" />
-              <circle
-                cx="60"
-                cy="60"
-                r="52"
-                fill="none"
-                stroke="#2563eb"
-                strokeLinecap="round"
-                strokeWidth="8"
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference * (1 - analysisProgress / 100)}
-              />
-            </svg>
-            <span className="absolute inset-0 grid place-items-center text-3xl font-extrabold text-[#172033]">AI</span>
+      <main className="grid min-h-screen place-items-center bg-[#eef3fb] p-4 sm:p-8">
+        <section className="grid w-full max-w-[1080px] overflow-hidden rounded-[36px] bg-white shadow-[0_35px_100px_rgba(37,70,140,.13)] lg:grid-cols-[.82fr_1.18fr]">
+          <div className="flex min-h-[360px] flex-col items-center justify-center bg-[#164fc9] p-8 text-center text-white sm:p-12">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[.12em]">
+              <BrainCircuit size={16} /> ENTGO AI
+            </span>
+            <div className="relative mt-8 size-[132px]">
+              <svg className="-rotate-90" width="132" height="132" viewBox="0 0 120 120" aria-label={`Анализ выполнен на ${Math.round(analysisProgress)} процентов`}>
+                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.18)" strokeWidth="7" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="white" strokeLinecap="round" strokeWidth="7" strokeDasharray={circumference} strokeDashoffset={circumference * (1 - analysisProgress / 100)} />
+              </svg>
+              <span className="absolute inset-0 grid place-items-center text-3xl font-extrabold">{Math.round(analysisProgress)}%</span>
+            </div>
+            <h1 className="mt-7 max-w-sm text-3xl font-extrabold leading-tight tracking-[-.04em] sm:text-4xl">Строим маршрут до твоей цели</h1>
+            <p className="mt-3 text-sm leading-6 text-white/65">Сверяем цель, срок и профильные предметы.</p>
           </div>
-          <h1 className="mt-7 text-3xl font-extrabold tracking-[-.04em] text-[#172033] sm:text-[40px]">
-            Создаем твой персональный план
-          </h1>
-          <p className="mt-3 text-lg text-[#727b8b]">Это займет всего несколько секунд.</p>
 
-          <div className="mx-auto mt-9 grid max-w-2xl gap-7 text-left sm:grid-cols-2">
-            <div className="space-y-3">
+          <div className="flex flex-col justify-center p-6 sm:p-10 lg:p-12">
+            <p className="text-xs font-bold uppercase tracking-[.14em] text-[#2563eb]">Персональный анализ</p>
+            <h2 className="mt-3 text-2xl font-extrabold tracking-[-.035em] text-[#172033] sm:text-3xl">Собираем всё в понятный план</h2>
+            <div className="mt-8 space-y-3">
               {analysisStages.map((stage, index) => {
                 const completed = index < analysisStep || analysisProgress === 100;
                 const active = index === analysisStep && analysisProgress < 100;
                 return (
-                  <div key={stage} className={`flex items-center gap-3 text-sm font-semibold transition-colors ${completed ? "text-[#168a52]" : active ? "text-[#2563eb]" : "text-[#a2a9b5]"}`}>
-                    <span className={`grid size-6 place-items-center rounded-full border ${completed ? "border-[#168a52] bg-[#e9f8f0]" : active ? "border-[#2563eb] bg-[#eef5ff]" : "border-[#d9dee7]"}`}>
-                      {completed ? <Check size={14} strokeWidth={3} /> : <span className="size-1.5 rounded-full bg-current" />}
+                  <div key={stage} className={`flex items-center gap-4 rounded-2xl border p-4 transition-all ${completed ? "border-[#caead9] bg-[#f1fbf6] text-[#168a52]" : active ? "border-[#bcd1ff] bg-[#eef5ff] text-[#2563eb]" : "border-[#e7ebf2] text-[#a2a9b5]"}`}>
+                    <span className={`grid size-8 shrink-0 place-items-center rounded-xl ${completed ? "bg-[#168a52] text-white" : active ? "bg-[#2563eb] text-white" : "bg-[#f1f3f7]"}`}>
+                      {completed ? <Check size={16} strokeWidth={3} /> : <span className="text-xs font-extrabold">{index + 1}</span>}
                     </span>
-                    {stage}
+                    <span className="text-sm font-bold">{stage}</span>
                   </div>
                 );
               })}
             </div>
-            <div className="space-y-3 rounded-2xl bg-[#f7f9fc] p-5">
-              {[
-                `Университет: ${universityData.shortName}`,
-                `Цель: ${targetScore} баллов`,
-                `Текущий уровень: ${currentScore}`,
-                `Срок: ${timeLeft.toLowerCase()}`,
-              ].map((item, index) => (
-                <div key={item} className={`flex items-center gap-2 text-sm font-semibold transition-all duration-500 ${analysisProgress >= (index + 1) * 20 ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}>
-                  <CheckCircle2 className="text-[#2563eb]" size={16} /> {item}
-                </div>
-              ))}
+            <div className={`mt-6 rounded-2xl bg-[#f7f9fc] p-4 transition-all duration-500 ${analysisProgress > 18 ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}>
+              <p className="text-xs font-semibold text-[#7b8495]">Учитываем</p>
+              <p className="mt-2 text-sm font-bold text-[#172033]">{universityData.shortName} · {selectedSubjects.join(" + ")} · цель {targetScore}</p>
             </div>
-          </div>
-
-          <div className={`mt-8 transition-all duration-500 ${analysisProgress === 100 ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}>
-            <p className="text-lg font-bold text-[#168a52]">План готов</p>
-            <p className="mt-1 text-sm text-[#727b8b]">Мы нашли оптимальный маршрут подготовки к выбранной цели.</p>
           </div>
         </section>
       </main>
@@ -344,8 +323,8 @@ export default function OnboardingPage() {
 
   if (phase === "route") {
     return (
-      <main className="min-h-screen bg-white px-5 py-12 sm:py-16">
-        <section className="mx-auto max-w-6xl text-center">
+      <main className="min-h-screen bg-[#eef3fb] p-3 sm:p-6">
+        <section className="mx-auto max-w-[1440px] rounded-[34px] bg-white px-5 py-10 text-center shadow-[0_30px_90px_rgba(37,70,140,.1)] sm:px-10 sm:py-14">
           <span className="route-fade-up inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]">
             <Sparkles size={15} /> Персональный анализ завершен
           </span>
@@ -361,16 +340,16 @@ export default function OnboardingPage() {
           </div>
           <p className="route-fade-up route-delay-2 mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#727b8b]">На основе твоей цели и текущего уровня мы сформировали персональный план подготовки.</p>
 
-          <div className="route-fade-up route-delay-2 mx-auto mt-12 grid min-h-[220px] w-full max-w-[800px] overflow-hidden rounded-[30px] border border-[#e2e7f0] bg-white shadow-[0_24px_80px_rgba(24,50,100,.08)] sm:grid-cols-3">
+          <div className="route-fade-up route-delay-2 mx-auto mt-12 grid min-h-[220px] w-full max-w-[900px] overflow-hidden rounded-[28px] bg-[#164fc9] text-white sm:grid-cols-3">
             {[
               { icon: University, label: "Университет", value: universityData.shortName },
               { icon: TrendingUp, label: "Разрыв до цели", value: `${scoreGap} баллов` },
               { icon: BookOpen, label: "Приоритетные темы", value: `${priorityTopics} тем` },
             ].map(({ icon: Icon, label, value }, index) => (
-              <div key={label} className={`flex min-h-[180px] flex-col items-center justify-center p-7 ${index > 0 ? "border-t border-[#e2e7f0] sm:border-l sm:border-t-0" : ""}`}>
-                <span className="grid size-12 place-items-center rounded-2xl bg-[#eef5ff] text-[#2563eb]"><Icon size={24} /></span>
-                <p className="mt-4 text-xs font-semibold text-[#7b8495]">{label}</p>
-                <strong className="mt-2 text-2xl text-[#172033]">{value}</strong>
+              <div key={label} className={`flex min-h-[180px] flex-col items-center justify-center p-7 ${index > 0 ? "border-t border-white/15 sm:border-l sm:border-t-0" : ""}`}>
+                <span className="grid size-12 place-items-center rounded-2xl bg-white/12 text-white"><Icon size={24} /></span>
+                <p className="mt-4 text-xs font-semibold text-white/55">{label}</p>
+                <strong className="mt-2 text-2xl text-white">{value}</strong>
               </div>
             ))}
           </div>
@@ -385,7 +364,7 @@ export default function OnboardingPage() {
                 { label: "Уверенный уровень", value: secondMilestone, caption: "Результат закреплён" },
                 { label: "Цель", value: targetScore, caption: universityData.shortName },
               ].map((milestone, index) => (
-                <article key={milestone.label} className="relative rounded-[22px] border border-[#dfe6f2] bg-white p-5 text-center shadow-[0_12px_35px_rgba(24,50,100,.05)]">
+                <article key={milestone.label} className="relative rounded-[22px] border border-[#dfe6f2] bg-[#fbfcff] p-5 text-center">
                   <span className="relative z-10 mx-auto grid size-16 place-items-center rounded-2xl border-[6px] border-[#dce8ff] bg-[#2563eb] text-lg font-extrabold text-white shadow-[0_8px_22px_rgba(37,99,235,.2)]">{index + 1}</span>
                   <p className="mt-4 text-xs font-bold uppercase tracking-[.1em] text-[#2563eb]">{milestone.label}</p>
                   <strong className="mt-2 block text-3xl tracking-[-.04em]">{milestone.value}</strong>
@@ -400,7 +379,7 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <div className="route-fade-up route-delay-3 mx-auto mt-14 max-w-5xl rounded-[30px] bg-[#eef5ff] p-7 text-left sm:p-10">
+          <div className="route-fade-up route-delay-3 mx-auto mt-14 max-w-5xl rounded-[30px] border border-[#d8e5ff] bg-[#f1f6ff] p-7 text-left sm:p-10">
             <div className="flex items-center gap-3"><span className="grid size-11 place-items-center rounded-2xl bg-white text-[#2563eb]"><Target size={23} /></span><h2 className="text-2xl font-extrabold">Что даст максимальный результат</h2></div>
             <div className="mt-7 grid gap-4 sm:grid-cols-3">
               {topTopics.map((topic) => (
@@ -428,8 +407,8 @@ export default function OnboardingPage() {
       ["Производные", "Анализ текста", "Геометрия"],
     ];
     return (
-      <main className="min-h-screen bg-white px-5 py-12 sm:py-16">
-        <section className="mx-auto max-w-6xl">
+      <main className="min-h-screen bg-[#eef3fb] p-3 sm:p-6">
+        <section className="mx-auto max-w-[1440px] rounded-[34px] bg-white px-5 py-10 shadow-[0_30px_90px_rgba(37,70,140,.1)] sm:px-10 sm:py-14">
           <div className="text-center">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]"><Sparkles size={15} /> Твой персональный план готов</span>
             <h1 className="mx-auto mt-7 max-w-4xl text-4xl font-extrabold tracking-[-.05em] text-[#172033] sm:text-6xl">ENTGO уже построил маршрут до твоей цели</h1>
@@ -437,7 +416,7 @@ export default function OnboardingPage() {
           </div>
 
           <div className="mt-14 grid gap-6 lg:grid-cols-[1.35fr_.65fr]">
-            <div className="relative overflow-hidden rounded-[30px] border border-[#e2e7f0] bg-white p-6 shadow-[0_24px_80px_rgba(24,50,100,.08)] sm:p-9">
+            <div className="relative overflow-hidden rounded-[30px] border border-[#dfe6f2] bg-[#fbfcff] p-6 sm:p-9">
               <div className="absolute bottom-0 left-0 right-0 z-10 h-40 bg-gradient-to-t from-white via-white/90 to-transparent" />
               <div className="space-y-7">
                 {weeks.map((topics, index) => (
@@ -459,7 +438,7 @@ export default function OnboardingPage() {
               </div>
             </div>
 
-            <aside className="rounded-[30px] bg-[#10234d] p-7 text-white sm:p-9">
+            <aside className="rounded-[30px] bg-[#164fc9] p-7 text-white sm:p-9">
               <h2 className="text-2xl font-extrabold">Что входит в твой план</h2>
               <div className="mt-7 space-y-5">
                 {[
@@ -485,7 +464,7 @@ export default function OnboardingPage() {
             <h2 className="text-3xl font-extrabold tracking-[-.04em]">Почему именно эти темы?</h2>
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               {topTopics.map((topic) => (
-                <article key={topic.name} className="rounded-2xl border border-[#e2e7f0] p-6">
+                <article key={topic.name} className="rounded-2xl border border-[#e2e7f0] bg-[#fbfcff] p-6">
                   <strong className="text-lg">{topic.name}</strong>
                   <p className="mt-3 text-sm leading-6 text-[#727b8b]">{topic.reason}</p>
                 </article>
@@ -517,23 +496,49 @@ export default function OnboardingPage() {
   const isSubjects = current.key === "subjects";
 
   return (
-    <main className="min-h-screen bg-[#f8faff] text-[#172033]">
-      <header className="border-b border-[#e3e8f0] bg-white">
-        <div className="container-shell flex h-18 items-center justify-between">
+    <main className="min-h-screen bg-[#eef3fb] p-3 text-[#172033] sm:p-6">
+      <header className="mx-auto max-w-[1440px]">
+        <div className="flex h-14 items-center justify-between px-2 sm:h-16">
           <Brand />
-          <Link href="/" className="text-sm font-semibold text-[#727b8b] hover:text-[#172033]">Выйти</Link>
+          <Link href="/" className="rounded-full px-4 py-2 text-sm font-semibold text-[#667083] hover:bg-white">Выйти</Link>
         </div>
       </header>
 
-      <div className="h-1 bg-[#e5eaf3]">
-        <div className="h-full bg-[#2563eb] transition-all duration-700" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
-      </div>
+      <section className={`mx-auto max-w-[1440px] transition-all duration-500 ${leaving ? "-translate-y-3 opacity-0" : "translate-y-0 opacity-100"}`}>
+        <div className="grid min-h-[calc(100vh-100px)] overflow-hidden rounded-[30px] bg-white shadow-[0_30px_90px_rgba(37,70,140,.1)] lg:grid-cols-[300px_1fr]">
+          <aside className="hidden bg-[#164fc9] p-7 text-white lg:flex lg:flex-col">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[.15em] text-white/55">Настройка маршрута</p>
+              <strong className="mt-3 block text-3xl tracking-[-.04em]">{step + 1}<span className="text-white/35"> / {steps.length}</span></strong>
+            </div>
+            <div className="mt-8 space-y-2">
+              {steps.map((item, index) => (
+                <div key={item.key} className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-sm transition-colors ${index === step ? "bg-white text-[#164fc9]" : index < step ? "text-white" : "text-white/45"}`}>
+                  <span className={`grid size-7 shrink-0 place-items-center rounded-lg text-xs font-extrabold ${index === step ? "bg-[#e8f0ff]" : index < step ? "bg-white/15" : "bg-white/8"}`}>
+                    {index < step ? <Check size={14} strokeWidth={3} /> : index + 1}
+                  </span>
+                  <span className="truncate font-semibold">{item.key === "university" ? "Университет" : item.key === "subjects" ? "Предметы" : item.key === "city" ? "Город" : item.key === "current" ? "Текущий балл" : item.key === "target" ? "Цель" : "Срок"}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-auto pt-7">
+              <SummaryCard university={universityData.shortName} city={city} currentScore={currentScore} targetScore={targetScore} timeLeft={timeLeft || undefined} subjects={selectedSubjects} />
+            </div>
+          </aside>
 
-      <section className={`container-shell py-8 transition-all duration-500 sm:py-12 ${leaving ? "-translate-y-4 opacity-0" : "translate-y-0 opacity-100"}`}>
-        <div className={`grid gap-8 ${isGoal || isDeadline ? "lg:grid-cols-[1fr_280px]" : ""}`}>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-[#8a93a3]">Шаг {step + 1} из {steps.length}</p>
-            <h1 className="mt-7 max-w-4xl text-4xl font-extrabold leading-[1.02] tracking-[-.055em] sm:text-6xl lg:text-[56px]">{current.title}</h1>
+          <div className="flex min-w-0 flex-col p-5 sm:p-8 lg:p-10 xl:p-12">
+            <div className="lg:hidden">
+              <div className="flex items-center justify-between text-xs font-bold text-[#7b8495]">
+                <span>Шаг {step + 1} из {steps.length}</span>
+                <span>{Math.round(((step + 1) / steps.length) * 100)}%</span>
+              </div>
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#e4eaf4]">
+                <div className="h-full rounded-full bg-[#2563eb] transition-all duration-700" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
+              </div>
+            </div>
+            <div className="flex-1">
+            <p className="hidden text-xs font-bold uppercase tracking-[.14em] text-[#2563eb] lg:block">Шаг {step + 1} из {steps.length}</p>
+            <h1 className="mt-6 max-w-4xl text-4xl font-extrabold leading-[1.02] tracking-[-.055em] sm:text-5xl xl:text-[58px]">{current.title}</h1>
             <p className="mt-4 text-lg text-[#727b8b]">{current.subtitle}</p>
 
             {current.key === "university" && (
@@ -698,26 +703,21 @@ export default function OnboardingPage() {
             )}
           </div>
 
-          {(isGoal || isDeadline) && (
-            <div className="hidden lg:block">
-              <SummaryCard university={universityData.shortName} city={city} currentScore={currentScore} targetScore={targetScore} timeLeft={isDeadline ? timeLeft : undefined} subjects={selectedSubjects} />
+            {isDeadline && timeLeft && (
+              <div className="mt-7 max-w-[700px] rounded-[22px] bg-[#eef5ff] p-5 text-[#2457bb]">
+                <div className="flex items-center gap-3"><Sparkles size={20} /><strong>Данных достаточно. Можно строить персональный маршрут.</strong></div>
+              </div>
+            )}
+
+            <div className="mt-8 flex max-w-[760px] items-center justify-between border-t border-[#e6eaf1] pt-6">
+              <button onClick={() => step > 0 ? setStep((value) => value - 1) : router.push("/")} className="inline-flex min-h-12 items-center gap-2 rounded-full px-4 text-sm font-bold text-[#667083] hover:bg-[#f4f7fb]">
+                <ArrowLeft size={17} /> Назад
+              </button>
+              <button onClick={next} disabled={(isSubjects && selectedSubjects.length !== 2) || (isDeadline && !timeLeft)} className="inline-flex min-h-14 items-center gap-3 rounded-full bg-[#2563eb] px-7 text-sm font-bold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0">
+                {isDeadline ? "Построить маршрут" : "Продолжить"} <ArrowRight size={17} />
+              </button>
             </div>
-          )}
-        </div>
-
-        {isDeadline && timeLeft && (
-          <div className="mt-8 max-w-[700px] rounded-[24px] bg-[#2563eb] p-6 text-white">
-            <div className="flex items-center gap-3"><Sparkles size={21} /><strong>Отлично. У нас достаточно данных для построения персонального плана.</strong></div>
           </div>
-        )}
-
-        <div className="mt-10 flex max-w-[700px] items-center justify-between border-t border-[#e1e6ef] pt-6">
-          <button onClick={() => step > 0 ? setStep((value) => value - 1) : router.push("/")} className="inline-flex min-h-12 items-center gap-2 rounded-full px-4 text-sm font-bold text-[#667083] hover:bg-white">
-            <ArrowLeft size={17} /> Назад
-          </button>
-          <button onClick={next} disabled={(isSubjects && selectedSubjects.length !== 2) || (isDeadline && !timeLeft)} className="inline-flex min-h-14 items-center gap-3 rounded-full bg-[#2563eb] px-7 text-sm font-bold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] disabled:cursor-not-allowed disabled:opacity-35">
-            {isDeadline ? "Построить мой план" : "Продолжить"} <ArrowRight size={17} />
-          </button>
         </div>
       </section>
     </main>
