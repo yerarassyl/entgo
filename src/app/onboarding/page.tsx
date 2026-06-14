@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowDown,
@@ -58,10 +59,34 @@ const steps = [
 const cityOptions = ["Астана", "Алматы", "Шымкент", "Другой город"];
 
 const timeOptions = [
-  { value: "Меньше месяца", title: "Меньше месяца", description: "Понадобится интенсивная подготовка.", icon: ClockAlert },
-  { value: "1–3 месяца", title: "1–3 месяца", description: "Можно быстро закрыть основные пробелы.", icon: Zap },
-  { value: "3–6 месяцев", title: "3–6 месяцев", description: "Достаточно времени для стабильного роста.", icon: TrendingUp },
-  { value: "Больше 6 месяцев", title: "Более 6 месяцев", description: "Можно подготовиться максимально спокойно.", icon: Leaf },
+  {
+    value: "Меньше месяца",
+    title: "Меньше месяца",
+    description: "Понадобится интенсивная подготовка.",
+    insight: "Составим интенсивный маршрут: ежедневные задания, быстрый разбор ошибок и фокус только на темах с максимальным приростом.",
+    icon: ClockAlert,
+  },
+  {
+    value: "1–3 месяца",
+    title: "1–3 месяца",
+    description: "Можно быстро закрыть основные пробелы.",
+    insight: "Оптимальный темп — 5 учебных дней в неделю. Сначала закроем основные пробелы, затем закрепим результат пробниками.",
+    icon: Zap,
+  },
+  {
+    value: "3–6 месяцев",
+    title: "3–6 месяцев",
+    description: "Достаточно времени для стабильного роста.",
+    insight: "Срок позволяет спокойно освоить слабые места, несколько раз проверить их на практике и снизить риск повторных ошибок.",
+    icon: TrendingUp,
+  },
+  {
+    value: "Больше 6 месяцев",
+    title: "Более 6 месяцев",
+    description: "Можно подготовиться максимально спокойно.",
+    insight: "Построим плавный маршрут без перегрузки: фундамент, регулярное повторение и постепенный выход на экзаменационный темп.",
+    icon: Leaf,
+  },
 ];
 
 const topTopics = [
@@ -130,6 +155,11 @@ export default function OnboardingPage() {
   const scoreGap = Math.max(0, targetScore - currentScore);
   const priorityTopics = Math.max(8, Math.ceil(scoreGap / 2));
   const readiness = Math.min(92, Math.max(48, 100 - Math.round(scoreGap * 0.8)));
+  const currentScoreProgress = ((currentScore - 20) / 120) * 100;
+  const targetScoreProgress = ((targetScore - 20) / 120) * 100;
+  const selectedTimeOption = timeOptions.find((option) => option.value === timeLeft);
+  const firstMilestone = Math.round(currentScore + scoreGap / 3);
+  const secondMilestone = Math.round(currentScore + (scoreGap * 2) / 3);
 
   const analysisStages = useMemo(() => [
     "Определяем проходной балл",
@@ -298,7 +328,7 @@ export default function OnboardingPage() {
           </div>
           <p className="mx-auto mt-3 max-w-2xl text-base text-[#727b8b]">На основе твоей цели и текущего уровня мы сформировали персональный план подготовки.</p>
 
-          <div className="mt-6 grid flex-1 gap-5 text-left lg:min-h-0 lg:grid-cols-[.95fr_1.05fr]">
+          <div className="mt-6 grid gap-5 text-left lg:grid-cols-[.95fr_1.05fr]">
             <div className="flex flex-col gap-5">
               <div className="grid overflow-hidden rounded-[24px] border border-[#e2e7f0] bg-white shadow-[0_18px_55px_rgba(24,50,100,.07)] sm:grid-cols-3">
                 {[
@@ -314,14 +344,14 @@ export default function OnboardingPage() {
                 ))}
               </div>
 
-              <div className="flex-1 rounded-[24px] border border-[#e2e7f0] p-6">
+              <div className="rounded-[24px] border border-[#e2e7f0] p-6">
                 <h2 className="text-2xl font-extrabold tracking-[-.04em] text-[#172033]">Твой путь до цели</h2>
                 <div className="relative mt-7 grid grid-cols-4">
                   <div className="absolute left-[12.5%] right-[12.5%] top-2.5 h-1 bg-[#dce8ff]" />
                   {[
                     ["Сейчас", currentScore],
-                    ["Первый прогресс", "100+"],
-                    ["Уверенный уровень", "110+"],
+                    ["Первый прогресс", firstMilestone],
+                    ["Уверенный уровень", secondMilestone],
                     ["Цель", targetScore],
                   ].map(([label, value]) => (
                     <div key={label} className="relative text-center">
@@ -335,6 +365,10 @@ export default function OnboardingPage() {
                   <span className="rounded-xl bg-[#f7f9fc] p-3"><BookOpen className="mb-1.5 text-[#2563eb]" size={16} />{priorityTopics} тем</span>
                   <span className="rounded-xl bg-[#f7f9fc] p-3"><BrainCircuit className="mb-1.5 text-[#2563eb]" size={16} />AI-анализ</span>
                   <span className="rounded-xl bg-[#f7f9fc] p-3"><TrendingUp className="mb-1.5 text-[#2563eb]" size={16} />Личный план</span>
+                </div>
+                <div className="mt-5 rounded-2xl bg-[#f7f9fc] p-4">
+                  <p className="text-xs font-bold uppercase tracking-[.12em] text-[#2563eb]">Первый этап</p>
+                  <p className="mt-2 text-sm font-semibold">Закрыть 3 темы с максимальным влиянием и проверить рост на следующем пробнике.</p>
                 </div>
               </div>
             </div>
@@ -350,7 +384,12 @@ export default function OnboardingPage() {
                 ))}
               </div>
               <p className="mt-5 text-center text-sm font-semibold leading-6 text-[#172033]">Большая часть прироста будет достигнута за счет этих тем.</p>
-              <button onClick={() => setPhase("plan")} className="group mt-auto inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 font-bold text-white hover:bg-[#1d4ed8]">
+              <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+                <span className="rounded-xl bg-white/75 p-3"><small className="block text-[#7b8495]">Старт</small><strong>{currentScore}</strong></span>
+                <span className="rounded-xl bg-white/75 p-3"><small className="block text-[#7b8495]">Рост</small><strong className="text-[#2563eb]">+{scoreGap}</strong></span>
+                <span className="rounded-xl bg-white/75 p-3"><small className="block text-[#7b8495]">Цель</small><strong>{targetScore}</strong></span>
+              </div>
+              <button onClick={() => setPhase("plan")} className="group mt-6 inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 font-bold text-white hover:bg-[#1d4ed8]">
                 Посмотреть мой план <ArrowRight className="transition-transform group-hover:translate-x-1" size={19} />
               </button>
               <p className="mt-2 text-center text-[11px] text-[#8b93a1]">Следующий шаг: персональный план подготовки</p>
@@ -480,7 +519,15 @@ export default function OnboardingPage() {
                   const selected = university === item.slug;
                   return (
                     <button key={item.slug} onClick={() => { setUniversity(item.slug); setCity(item.city); }} className={`relative flex min-h-24 items-center gap-4 rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5 ${selected ? "border-[#2563eb] bg-[#2563eb] text-white shadow-[0_15px_35px_rgba(37,99,235,.2)]" : "border-[#e1e6ef] bg-white hover:border-[#aac3f8]"}`}>
-                      <span className={`grid size-12 shrink-0 place-items-center rounded-xl text-xs font-extrabold ${selected ? "bg-white text-[#2563eb]" : "bg-[#eff5ff] text-[#2563eb]"}`}>{item.shortName.slice(0, 4)}</span>
+                      <span className={`grid h-14 w-16 shrink-0 place-items-center overflow-hidden rounded-xl p-1.5 ${selected ? "bg-white" : "bg-[#f7f9fc] ring-1 ring-[#e6eaf1]"}`}>
+                        <Image
+                          src={item.logoPath}
+                          alt={`Логотип ${item.shortName}`}
+                          width={96}
+                          height={56}
+                          className="h-full w-full object-contain"
+                        />
+                      </span>
                       <span><strong className="block">{item.shortName}</strong><small className={selected ? "text-white/75" : "text-[#7b8495]"}>{item.city} · грант от {item.grantScore}</small></span>
                       {selected && <CheckCircle2 className="absolute right-3 top-3" size={18} />}
                     </button>
@@ -507,7 +554,16 @@ export default function OnboardingPage() {
               <div className="mt-10 max-w-[700px] rounded-[32px] border border-[#e1e6ef] bg-white p-7 text-center shadow-[0_24px_80px_rgba(24,50,100,.08)] sm:p-10">
                 <p className="text-sm text-[#7b8495]">Текущий результат</p>
                 <strong className="mt-4 block text-[88px] font-extrabold leading-none tracking-[-.07em] sm:text-[110px]">{currentScore}</strong>
-                <input aria-label="Текущий балл" type="range" min="20" max="140" value={currentScore} onChange={(event) => setCurrentScore(Number(event.target.value))} className="entgo-range mt-12 w-full" />
+                <input
+                  aria-label="Текущий балл"
+                  type="range"
+                  min="20"
+                  max="140"
+                  value={currentScore}
+                  onChange={(event) => setCurrentScore(Number(event.target.value))}
+                  className="entgo-range mt-12 w-full"
+                  style={{ background: `linear-gradient(90deg, #2563eb 0 ${currentScoreProgress}%, #dfe6f2 ${currentScoreProgress}% 100%)` }}
+                />
                 <div className="mt-4 flex justify-between text-sm text-[#8a93a3]"><span>20</span><span>140</span></div>
               </div>
             )}
@@ -541,6 +597,7 @@ export default function OnboardingPage() {
                       setTargetScore(Math.max(currentScore, Number(event.target.value)));
                     }}
                     className="entgo-range w-full"
+                    style={{ background: `linear-gradient(90deg, #2563eb 0 ${targetScoreProgress}%, #dfe6f2 ${targetScoreProgress}% 100%)` }}
                   />
                   <div className="mt-4 flex justify-between text-sm text-[#8a93a3]"><span>20</span><span>140</span></div>
                   <p className={`mt-7 text-center text-base font-semibold text-[#2563eb] transition-all duration-500 ${showRouteHint ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}>
@@ -568,7 +625,7 @@ export default function OnboardingPage() {
                 {timeLeft && (
                   <div className="mt-6 max-w-[700px] rounded-2xl bg-[#eef5ff] p-5 text-sm leading-6 text-[#2457bb]">
                     <strong className="flex items-center gap-2"><BrainCircuit size={17} /> AI Insight</strong>
-                    <p className="mt-2">{timeLeft === "1–3 месяца" ? `Для достижения цели ${targetScore} баллов потребуется примерно 12 недель подготовки.` : "Срок позволяет сосредоточиться на ключевых темах и выстроить реалистичный темп без случайных заданий."}</p>
+                    <p className="mt-2">{selectedTimeOption?.insight}</p>
                   </div>
                 )}
               </>

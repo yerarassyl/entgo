@@ -29,12 +29,12 @@ export default function Home() {
             </div>
 
             <div className="landing-comparison mt-16 grid items-stretch gap-6 lg:grid-cols-[1fr_72px_1fr] lg:gap-7">
-              <article className="landing-comparison-card flex min-h-[570px] flex-col rounded-[32px] border border-line bg-[#f3f4f6] p-7 sm:p-9">
+              <article className="landing-comparison-card flex min-h-[520px] flex-col rounded-[32px] border border-line bg-[#f3f4f6] p-7 sm:p-9">
                 <div className="flex items-center gap-3">
                   <span className="grid size-11 place-items-center rounded-full border border-black/10 bg-white"><TrendingDown size={22} /></span>
                   <h3 className="text-xl font-semibold">Обычная подготовка</h3>
                 </div>
-                <div className="chaos-tags relative mt-10 min-h-[370px] flex-1">
+                <div className="chaos-tags relative mt-8 min-h-[310px] flex-1">
                   {[
                     "Случайный пробник", "Новая тема", "Ещё один пробник", "Видео на YouTube",
                     "Конспекты", "Теория", "Репетитор", "Telegram канал", "Ещё теория", "Новые задания",
@@ -49,7 +49,7 @@ export default function Home() {
                 <ArrowRight size={42} className="rotate-90 text-[#2563eb] lg:rotate-0" strokeWidth={1.5} />
               </div>
 
-              <article className="landing-comparison-card flex min-h-[570px] flex-col rounded-[32px] border border-[#2563eb]/20 bg-white p-7 shadow-[0_24px_80px_rgba(37,99,235,.10)] sm:p-9">
+              <article className="landing-comparison-card flex min-h-[520px] flex-col rounded-[32px] border border-[#2563eb]/20 bg-white p-7 shadow-[0_24px_80px_rgba(37,99,235,.10)] sm:p-9">
                 <div className="flex items-center gap-3">
                   <span className="grid size-11 place-items-center rounded-full bg-[#2563eb]/10 text-[#2563eb]"><Target size={23} /></span>
                   <h3 className="text-xl font-semibold text-[#2563eb]">ENTGO</h3>

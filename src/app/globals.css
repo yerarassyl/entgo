@@ -207,8 +207,9 @@ a {
 .chaos-tags {
   display: flex;
   flex-wrap: wrap;
-  align-content: flex-start;
+  align-content: space-evenly;
   align-items: flex-start;
+  justify-content: space-around;
   gap: 1.15rem 0.85rem;
   padding: 0.5rem 0.25rem 1rem;
 }
