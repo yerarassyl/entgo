@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { ArrowLeft, BookOpen, CheckCircle2, CircleHelp, Lightbulb, Target, TriangleAlert } from "lucide-react";
+import { BookOpen, CheckCircle2, CircleHelp, Lightbulb, Target, TriangleAlert } from "lucide-react";
 import { notFound } from "next/navigation";
-import { Brand } from "@/components/brand";
+import { ProductHeader } from "@/components/product-header";
 import { requirePaidUser } from "@/lib/paid-access";
 import { prisma } from "@/lib/prisma";
 import { lessonForTopic } from "@/lib/topic-content";
@@ -49,13 +48,8 @@ export default async function TopicPage({
   const readiness = Math.round(mastery?.masteryScore ?? 0);
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper pb-16">
-      <header className="border-b border-line bg-white">
-        <div className="container-shell flex h-18 items-center justify-between">
-          <Brand />
-          <Link href="/topics" className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold"><ArrowLeft size={16} /> Все темы</Link>
-        </div>
-      </header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
+      <ProductHeader />
       <article className="container-shell grid gap-8 py-10 lg:grid-cols-[1fr_300px] lg:py-16">
         <div>
           <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">{topic.subject.titleRu}</p>
@@ -67,7 +61,7 @@ export default async function TopicPage({
           </section>
           <p className="mt-6 max-w-3xl text-xl leading-8">{lesson.summary}</p>
 
-          <section className="mt-10 rounded-[26px] bg-ink p-7 text-white sm:p-9">
+          <section className="mt-10 rounded-[32px] bg-[#111] p-7 text-white shadow-[0_24px_70px_rgba(0,0,0,.14)] sm:p-9">
             <p className="text-xs font-bold uppercase tracking-[.15em] text-white/45">Главное правило</p>
             <p className="display mt-5 text-3xl leading-tight sm:text-5xl">{lesson.rule}</p>
           </section>

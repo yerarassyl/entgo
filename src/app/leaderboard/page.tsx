@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, Crown, Flame, Medal } from "lucide-react";
-import { Brand } from "@/components/brand";
+import { Crown, Flame, Medal } from "lucide-react";
+import { ProductHeader } from "@/components/product-header";
 import { requirePaidUser } from "@/lib/paid-access";
 import { prisma } from "@/lib/prisma";
 
@@ -65,13 +65,8 @@ export default async function LeaderboardPage({
   const xpToNext = nextUser && currentRankedUser ? Math.max(1, nextUser.xp - currentRankedUser.xp + 1) : null;
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper pb-16">
-      <header className="sticky top-0 z-20 border-b border-line bg-white/90 backdrop-blur-xl">
-        <div className="container-shell flex h-18 items-center justify-between">
-          <Brand />
-          <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold"><ArrowLeft size={16} /> В кабинет</Link>
-        </div>
-      </header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
+      <ProductHeader />
       <div className="container-shell py-10 sm:py-16">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">Рейтинг учеников</p>
         <h1 className="display mt-4 text-5xl sm:text-7xl">Соревнуйся <span className="italic">с собой и друзьями.</span></h1>
@@ -82,7 +77,7 @@ export default async function LeaderboardPage({
         </div>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl bg-ink p-5 text-white"><p className="text-xs text-white/45">Активных учеников</p><p className="display mt-1 text-4xl">{ranking.length}</p></div>
+          <div className="rounded-[26px] bg-[#111] p-6 text-white"><p className="text-xs text-white/45">Активных учеников</p><p className="display mt-1 text-4xl">{ranking.length}</p></div>
           <div className="rounded-2xl border border-line bg-white p-5"><p className="text-xs text-muted">Следующая цель</p><p className="mt-2 font-semibold">{xpToNext && nextUser ? `${xpToNext} XP, чтобы обогнать ${publicName(nextUser.name, currentPosition - 1)}` : "Ты на вершине этого рейтинга"}</p></div>
           <div className="rounded-2xl border border-line bg-white p-5"><p className="text-xs text-muted">Изменение за неделю</p><p className="display mt-1 text-4xl">+{currentRankedUser?.weeklyXp ? Math.max(1, Math.round(currentRankedUser.weeklyXp / 30)) : 0} мест</p></div>
         </div>

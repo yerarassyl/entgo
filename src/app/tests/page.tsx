@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, BrainCircuit, Clock3, ListChecks, Target } from "lucide-react";
-import { Brand } from "@/components/brand";
+import { ArrowRight, BrainCircuit, Clock3, ListChecks, Target } from "lucide-react";
+import { ProductHeader } from "@/components/product-header";
 import { requirePaidUser } from "@/lib/paid-access";
 import { getEntitlements } from "@/lib/entitlements";
 import { ensureDiagnosticTest } from "@/lib/exam";
@@ -18,15 +18,15 @@ export default async function TestsPage() {
     getEntitlements(user.id),
   ]);
   return (
-    <main className="mobile-app-page min-h-screen bg-paper pb-16">
-      <header className="border-b border-line bg-white"><div className="container-shell flex h-18 items-center justify-between"><Brand /><Link href="/dashboard" className="inline-flex items-center gap-2 text-sm font-semibold"><ArrowLeft size={16} /> В кабинет</Link></div></header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
+      <ProductHeader />
       <div className="container-shell py-12 sm:py-16">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">Пробники и практика</p>
         <h1 className="display mt-4 text-5xl sm:text-7xl">Проверь уровень <span className="italic">без подсматривания.</span></h1>
         <p className="mt-5 max-w-2xl text-base leading-7 text-muted">Ответы и объяснения открываются только после завершения. AI во время теста даёт намёк, но уменьшает награду XP.</p>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {tests.map((test, index) => (
-            <article key={test.id} className={`flex min-h-64 flex-col rounded-[26px] border p-7 md:min-h-80 ${index === 0 ? "border-ink bg-ink text-white" : "border-line bg-white"}`}>
+            <article key={test.id} className={`flex min-h-64 flex-col rounded-[32px] border p-7 md:min-h-80 ${index === 0 ? "border-[#111] bg-[#111] text-white shadow-[0_24px_70px_rgba(0,0,0,.16)]" : "border-line bg-white"}`}>
               {test.type === "DIAGNOSTIC" ? <Target /> : test.type === "TOPIC" ? <BrainCircuit /> : <ListChecks />}
               <h2 className="mt-8 text-xl font-semibold">{test.titleRu}</h2>
               <div className={`mt-4 flex gap-4 text-xs ${index === 0 ? "text-white/55" : "text-muted"}`}><span>{test._count.questions} вопросов</span><span className="inline-flex items-center gap-1"><Clock3 size={13} /> {Math.round(test.durationSec / 60)} мин</span></div>

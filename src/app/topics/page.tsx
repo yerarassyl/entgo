@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2 } from "lucide-react";
-import { Brand } from "@/components/brand";
+import { ArrowRight, BookOpen, CheckCircle2 } from "lucide-react";
+import { ProductHeader } from "@/components/product-header";
 import { requirePaidUser } from "@/lib/paid-access";
 import { ensureDiagnosticTest } from "@/lib/exam";
 import { prisma } from "@/lib/prisma";
@@ -42,13 +42,8 @@ export default async function TopicsPage() {
   }
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper pb-16">
-      <header className="sticky top-0 z-20 border-b border-line bg-white/90 backdrop-blur-xl">
-        <div className="container-shell flex h-18 items-center justify-between">
-          <Brand />
-          <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-paper"><ArrowLeft size={16} /> В кабинет</Link>
-        </div>
-      </header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
+      <ProductHeader />
       <div className="container-shell py-10 sm:py-16">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">Библиотека знаний</p>
         <h1 className="display mt-4 max-w-4xl text-5xl leading-none sm:text-7xl">Каждая тема — <span className="italic">понятным языком.</span></h1>
@@ -56,12 +51,12 @@ export default async function TopicsPage() {
 
         <div className="mt-12 space-y-6">
           {subjects.map((subject) => (
-            <section key={subject.id} className="rounded-[26px] border border-line bg-white p-6 sm:p-8">
+            <section key={subject.id} className="rounded-[32px] border border-line bg-white p-6 sm:p-9">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div><p className="text-xs font-bold uppercase tracking-[.14em] text-muted">{subject.isRequired ? "Обязательный предмет" : "Профильный предмет"}</p><h2 className="mt-2 text-2xl font-semibold">{subject.titleRu}</h2></div>
                 <span className="rounded-full bg-paper px-3 py-2 text-xs font-bold">{subject.topics.length} {countWord(subject.topics.length, "тема", "темы", "тем")}</span>
               </div>
-              <div className="mt-6 grid gap-3 md:grid-cols-2">
+              <div className="mt-6 grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-3">
                 {subject.topics.map((topic) => {
                   const row = progress.get(topic.id);
                   const percent = row?.total ? Math.round((row.correct / row.total) * 100) : 0;

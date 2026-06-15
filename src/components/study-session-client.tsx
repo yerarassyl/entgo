@@ -176,8 +176,8 @@ export function StudySessionClient({
   }
 
   return (
-    <main className={`study-page min-h-screen ${focusMode ? "bg-ink text-white" : "bg-paper text-ink"}`}>
-      <header className={`sticky top-0 z-40 border-b ${focusMode ? "border-white/10 bg-ink/95" : "border-line bg-white/95"} backdrop-blur-xl`}>
+    <main className={`study-page product-v2 min-h-screen ${focusMode ? "bg-[#111] text-white" : "bg-paper text-ink"}`}>
+      <header className={`sticky top-0 z-40 border-b ${focusMode ? "border-white/10 bg-[#111]/95" : "border-line bg-white/95"} backdrop-blur-xl`}>
         <div className="container-shell flex h-15 items-center justify-between sm:h-18">
           <Brand inverse={focusMode} />
           <div className="flex items-center gap-2">
@@ -195,14 +195,14 @@ export function StudySessionClient({
         </div>
       </header>
 
-      <div className={`container-shell grid gap-4 py-3 sm:py-5 lg:grid-cols-[.68fr_1.32fr] lg:gap-8 lg:py-12 ${focusMode ? "max-w-5xl lg:grid-cols-1" : ""}`}>
-        <section className={`order-2 rounded-[24px] p-5 sm:p-7 lg:order-1 ${focusMode ? "mx-auto block w-full max-w-xl border border-white/15 bg-white/[.04]" : "hidden bg-ink text-white lg:block"}`}>
+      <div className={`container-shell grid gap-5 py-4 sm:py-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-8 lg:py-10 ${focusMode ? "max-w-5xl lg:grid-cols-1" : ""}`}>
+        <section className={`order-2 rounded-[30px] p-5 sm:p-7 lg:order-1 ${focusMode ? "mx-auto block w-full max-w-xl border border-white/15 bg-white/[.04]" : "hidden h-fit bg-[#111] text-white shadow-[0_24px_70px_rgba(0,0,0,.16)] lg:block lg:sticky lg:top-28"}`}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-[.16em] opacity-50">{status}</span>
             <Clock3 size={20} className="opacity-60" />
           </div>
           <div className="mt-5 text-center lg:mt-9">
-            <p className="display text-6xl leading-none sm:text-7xl lg:text-[92px]">{completed ? "Готово" : formatTime(seconds)}</p>
+            <p className="display text-5xl leading-none sm:text-6xl">{completed ? "Готово" : formatTime(seconds)}</p>
             <p className="mt-2 text-sm opacity-60">{completed ? "Результат сохранён в плане" : `${task.durationMin} минут на эту задачу`}</p>
           </div>
           <div className="mt-10 h-2 overflow-hidden rounded-full bg-white/15">
@@ -220,7 +220,7 @@ export function StudySessionClient({
         </section>
 
         {!focusMode && (
-          <section className="order-1 rounded-[22px] border border-line bg-white p-4 sm:p-8 lg:order-2">
+          <section className="order-1 rounded-[32px] border border-line bg-white p-5 shadow-[0_24px_70px_rgba(0,0,0,.045)] sm:p-9 lg:order-2">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[.15em] text-muted">{task.label} · {activityNames[task.activity] ?? "Занятие"} · этап {task.stage}</p>
@@ -233,7 +233,7 @@ export function StudySessionClient({
             <div className="mt-5 rounded-2xl bg-paper p-4 sm:p-5">
               <div className="flex gap-3"><Sparkles className="mt-0.5 shrink-0" size={19} /><p className="text-sm font-semibold leading-6">{content.lead}</p></div>
             </div>
-            <div className="mt-4 rounded-2xl bg-ink p-4 text-white lg:hidden">
+            <div className="mt-4 rounded-[22px] bg-[#111] p-4 text-white lg:hidden">
               <div className="flex items-center justify-between gap-3">
                 <div><p className="text-[10px] font-bold uppercase tracking-[.13em] text-white/55">{status}</p><p className="display mt-1 text-4xl">{completed ? "Готово" : formatTime(seconds)}</p></div>
                 {!completed && <button onClick={() => setRunning((value) => !value)} className="grid size-12 place-items-center rounded-full bg-white text-ink" aria-label={running ? "Поставить таймер на паузу" : "Запустить таймер"}>{running ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}</button>}

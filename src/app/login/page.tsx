@@ -50,12 +50,13 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="product-auth-page grid min-h-screen bg-white lg:grid-cols-[3fr_2fr]">
-      <section className="relative hidden overflow-hidden bg-[#2563eb] p-10 text-white lg:flex lg:flex-col xl:p-14">
-        <Brand inverse />
+    <main className="product-auth-page grid min-h-screen bg-white lg:grid-cols-[1.08fr_.92fr]">
+      <section className="relative hidden overflow-hidden border-r border-line bg-[#f7f7f4] p-10 text-[#111] lg:flex lg:flex-col xl:p-14">
+        <Brand />
         <div className="my-auto max-w-2xl py-10">
-          <h1 className="max-w-xl text-6xl font-extrabold leading-[.98] tracking-[-.055em] xl:text-7xl">До гранта осталось меньше, чем кажется.</h1>
-          <p className="mt-6 max-w-lg text-lg leading-8 text-white/70">Войди в аккаунт и продолжи обучение с того места, где остановился.</p>
+          <p className="text-xs font-bold uppercase tracking-[.16em] text-[#2563eb]">Персональный маршрут до гранта</p>
+          <h1 className="display mt-5 max-w-xl text-6xl leading-[.92] xl:text-8xl">До гранта осталось <span className="italic text-[#2563eb]">меньше, чем кажется.</span></h1>
+          <p className="mt-6 max-w-lg text-lg leading-8 text-muted">Войди в аккаунт и продолжи обучение с того места, где остановился.</p>
           <div className="mt-9 space-y-5">
             {[
               [Target, "Узнаешь, сколько баллов не хватает до цели"],
@@ -63,24 +64,24 @@ export default function LoginPage() {
               [TrendingUp, "Сможешь отслеживать прогресс до ЕНТ"],
             ].map(([Icon, label]) => {
               const ItemIcon = Icon as typeof Target;
-              return <div key={label as string} className="flex items-center gap-4 text-sm font-semibold"><span className="grid size-10 place-items-center rounded-xl bg-white/12 text-white"><ItemIcon size={19} /></span>{label as string}</div>;
+              return <div key={label as string} className="flex items-center gap-4 text-sm font-semibold"><span className="grid size-10 place-items-center rounded-full border border-line bg-white text-[#2563eb]"><ItemIcon size={19} /></span>{label as string}</div>;
             })}
           </div>
-          <div className="mt-10 max-w-lg rounded-[28px] border border-white/12 bg-white/[.07] p-6 backdrop-blur-sm">
+          <div className="mt-10 max-w-lg rounded-[30px] border border-line bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,.06)]">
             <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-4 text-center">
-              <span><small className="block text-white/50">Текущий уровень</small><strong className="mt-2 block text-3xl">90</strong></span>
-              <ArrowDown className="-rotate-90 text-white/65" size={18} />
-              <span><small className="block text-white/50">Цель</small><strong className="mt-2 block text-3xl">125</strong></span>
-              <ArrowDown className="-rotate-90 text-white/65" size={18} />
-              <span><small className="block text-white/50">План</small><strong className="mt-2 block text-3xl">18</strong><small className="text-white/50">тем</small></span>
+              <span><small className="block text-muted">Текущий уровень</small><strong className="mt-2 block text-3xl">90</strong></span>
+              <ArrowDown className="-rotate-90 text-[#2563eb]" size={18} />
+              <span><small className="block text-muted">Цель</small><strong className="mt-2 block text-3xl">125</strong></span>
+              <ArrowDown className="-rotate-90 text-[#2563eb]" size={18} />
+              <span><small className="block text-muted">План</small><strong className="mt-2 block text-3xl">18</strong><small className="text-muted">тем</small></span>
             </div>
-            <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/15"><div className="login-growth-line h-full rounded-full bg-white" /></div>
+            <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-[#e9e8e3]"><div className="login-growth-line h-full rounded-full bg-[#2563eb]" /></div>
           </div>
         </div>
-        <p className="text-xs text-white/40">© 2026 entgo.kz</p>
+        <p className="text-xs text-muted">© 2026 entgo.kz</p>
       </section>
 
-      <section className="flex min-h-screen flex-col bg-[#f8faff]">
+      <section className="flex min-h-screen flex-col bg-white">
         <header className="flex min-h-18 items-center justify-between border-b border-[#e3e8f0] px-5 sm:px-9 lg:justify-end">
           <div className="lg:hidden"><Brand /></div>
           <p className="text-sm text-[#737d8e]">Нет аккаунта? <Link href="/onboarding" className="font-extrabold text-[#172033]">Создать</Link></p>

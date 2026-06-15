@@ -1,14 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { BarChart3, BookOpen, CalendarDays, Check, ChevronRight, Clock3, Flame, Home, ListChecks, Medal, Play, Settings, Target, Trophy } from "lucide-react";
+import { Check, ChevronRight, Clock3, Flame, Medal, Play, Target } from "lucide-react";
 import { useMemo } from "react";
-import { Brand } from "@/components/brand";
-import { LogoutButton } from "@/components/logout-button";
-
-const nav = [
-  ["Главная", "/dashboard", Home], ["Пробники", "/tests", ListChecks], ["Темы", "/topics", BookOpen], ["Мой план", "/plan", CalendarDays], ["Статистика", "/statistics", BarChart3], ["Рейтинг", "/leaderboard", Trophy], ["Программа 130+", "/rewards/130", Medal],
-];
+import { ProductHeader } from "@/components/product-header";
 
 type DashboardTask = {
   id: string;
@@ -96,43 +91,17 @@ export function DashboardClient({
   );
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper lg:grid lg:grid-cols-[270px_1fr]">
-      <aside className="hidden min-h-screen border-r border-[#e5eaf2] bg-white p-5 pb-24 lg:flex lg:flex-col">
-        <div className="px-2 py-2"><Brand /></div>
-        <nav className="mt-8 space-y-1">
-          {nav.map(([label, href, Icon], index) => {
-            const IconComponent = Icon as typeof Home;
-            return <Link key={label as string} href={href as string} className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold ${index === 0 ? "bg-[#2563eb] text-white shadow-[0_10px_25px_rgba(37,99,235,.18)]" : "text-muted hover:bg-[#f2f6fd] hover:text-ink"}`}><IconComponent size={18} />{label as string}</Link>;
-          })}
-        </nav>
-        <div className="mt-auto rounded-[22px] border border-[#d6e4ff] bg-[#eef5ff] p-4">
-          <p className="text-xs font-bold text-[#174dbd]">Открыть Premium</p>
-          <p className="mt-1 text-xs leading-5 text-[#667085]">Все тесты, AI и полный персональный план.</p>
-          <Link href="/premium" className="mt-3 block w-full rounded-full bg-[#2563eb] py-2.5 text-center text-xs font-semibold text-white">Попробовать</Link>
-        </div>
-        <Link href="/settings" className="mt-3 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-muted hover:bg-paper hover:text-ink"><Settings size={18} />Настройки</Link>
-        <LogoutButton />
-      </aside>
-
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper">
+      <ProductHeader />
       <section className="min-w-0">
-        <header className="border-b border-line bg-white">
-          <div className="flex h-18 items-center justify-between px-5 sm:px-8">
-            <div className="lg:hidden"><Brand /></div>
-            <p className="hidden text-sm font-semibold capitalize lg:block">{dateLabel}</p>
-            <div className="flex items-center gap-3">
-              <div className="hidden items-center gap-2 rounded-full bg-[#fff1df] px-3 py-2 text-xs font-bold sm:flex"><Flame size={16} /> {xp} XP</div>
-              <div className="grid size-10 place-items-center rounded-full bg-ink text-xs font-bold text-white">{initials}</div>
-            </div>
-          </div>
-        </header>
 
-        <div className="mx-auto min-w-0 max-w-6xl p-4 sm:p-8">
-          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-            <div><p className="text-sm text-muted">Доброе утро, {firstName}</p><h1 className="display mt-1 text-4xl sm:text-6xl">Сегодня станем <span className="italic">на балл ближе.</span></h1></div>
-            <div className="rounded-2xl border border-line bg-white px-5 py-3 text-sm"><span className="text-muted">До ЕНТ</span><strong className="ml-3 text-xl">{daysToExam} дней</strong></div>
+        <div className="container-shell min-w-0 pb-28 pt-8 sm:pt-12">
+          <div className="flex flex-col justify-between gap-6 border-b border-line pb-9 sm:flex-row sm:items-end">
+            <div><p className="text-xs font-bold uppercase tracking-[.16em] text-[#2563eb]">{dateLabel} · {xp} XP</p><h1 className="display mt-3 max-w-4xl text-5xl leading-[.94] sm:text-7xl">Сегодня станем <span className="italic">на балл ближе.</span></h1><p className="mt-4 text-base text-muted">Доброе утро, {firstName}. План уже собран по влиянию на твой результат.</p></div>
+            <div className="flex items-center gap-3"><div className="rounded-full border border-line bg-white px-5 py-3 text-sm"><span className="text-muted">До ЕНТ</span><strong className="ml-3 text-xl">{daysToExam} дней</strong></div><div className="grid size-12 place-items-center rounded-full bg-[#111] text-xs font-bold text-white">{initials}</div></div>
           </div>
 
-          <section className="mt-6 grid gap-4 rounded-[24px] border border-line bg-white p-5 sm:grid-cols-[1fr_auto] sm:items-center sm:p-6">
+          <section className="mt-8 grid gap-6 rounded-[32px] border border-line bg-white p-6 sm:grid-cols-[1fr_auto] sm:items-center sm:p-8">
             <div>
               <p className="text-xs font-bold uppercase tracking-[.14em] text-muted">Твой прогресс сегодня</p>
               <h2 className="mt-2 text-xl font-semibold">Сегодня ты ближе к цели на {completedTasks ? `+${Math.min(4, completedTasks * 1.4).toFixed(1)} балла` : "0 баллов"}</h2>
@@ -146,7 +115,7 @@ export function DashboardClient({
           </section>
 
           <div className="mt-8 grid min-w-0 gap-5 xl:grid-cols-[1.4fr_.6fr]">
-            <section id="plan" className="min-w-0 rounded-[26px] border border-line bg-white p-6 sm:p-8">
+            <section id="plan" className="min-w-0 rounded-[32px] border border-line bg-white p-6 sm:p-9">
               <div className="flex items-center justify-between">
                 <div className="min-w-0"><p className="text-xs font-bold uppercase tracking-[.14em] text-muted">План на сегодня · до цели {targetScore}</p><h2 className="mt-2 text-lg font-semibold sm:text-xl">Сегодня нужно закрыть {tasks.length} темы</h2><p className="mt-1 text-xs text-muted">Ожидаемый прирост к прогнозу: +2–4 балла</p></div>
                 <span className="ml-3 shrink-0 text-sm font-bold">{completedTasks} / {tasks.length}</span>
@@ -166,7 +135,7 @@ export function DashboardClient({
               <p className="border-t border-line pt-4 text-xs text-muted">Выполнено сегодня: {completedMinutes} из {totalMinutes} минут</p>
             </section>
 
-            <section className="rounded-[26px] bg-[#2563eb] p-6 text-white shadow-[0_20px_55px_rgba(37,99,235,.18)] sm:p-8">
+            <section className="rounded-[32px] bg-[#111] p-6 text-white shadow-[0_24px_70px_rgba(0,0,0,.16)] sm:p-8">
               <div className="flex items-center justify-between"><p className="text-xs font-bold uppercase tracking-[.14em] text-white/45">Прогноз</p><Target size={19} /></div>
               <p className="display mt-8 text-7xl">{forecastScore}</p>
               <p className="mt-1 text-sm text-white/45">прогноз ЕНТ · {forecastMinimum}–{forecastOptimistic}</p>

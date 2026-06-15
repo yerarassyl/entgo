@@ -95,7 +95,7 @@ export default async function AdminPage() {
   ] as const;
 
   return (
-    <main className="admin-page min-h-screen bg-paper pb-16">
+    <main className="admin-page product-v2 min-h-screen bg-paper pb-24">
       <header className="border-b border-line bg-white">
         <div className="container-shell flex h-18 items-center justify-between gap-4">
           <Brand />
@@ -109,12 +109,12 @@ export default async function AdminPage() {
       </header>
       <div className="container-shell py-10 sm:py-16">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">Панель управления · {user.role}</p>
-        <h1 className="display mt-4 text-5xl sm:text-7xl">{superAdmin ? <>Состояние <span className="italic">платформы.</span></> : <>Управление <span className="italic">контентом.</span></>}</h1>
+        <h1 className="display mt-4 max-w-5xl text-5xl leading-[.94] sm:text-7xl">{superAdmin ? <>Состояние <span className="italic">платформы.</span></> : <>Управление <span className="italic">контентом.</span></>}</h1>
         {!superAdmin && <p className="mt-5 max-w-2xl text-muted">Создавайте вопросы, уроки и темы. Все материалы отправляются суперадмину на проверку перед публикацией.</p>}
         {superAdmin && <div className="mt-10 grid gap-4 sm:grid-cols-3">
           {[[users, "пользователей", UsersRound], [attempts, "завершённых тестов", FileCheck2], [published, "вопросов опубликовано", BookOpen]].map(([value, label, Icon]) => {
             const IconComponent = Icon as typeof UsersRound;
-            return <div key={label as string} className="rounded-[22px] border border-line bg-white p-6"><IconComponent size={20} /><p className="display mt-8 text-5xl">{value as number}</p><p className="mt-1 text-sm text-muted">{label as string}</p></div>;
+            return <div key={label as string} className="rounded-[30px] border border-line bg-white p-7"><IconComponent size={20} /><p className="display mt-10 text-5xl">{value as number}</p><p className="mt-1 text-sm text-muted">{label as string}</p></div>;
           })}
         </div>}
 

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  ArrowLeft,
   BarChart3,
   CalendarCheck,
   Clock3,
@@ -8,7 +7,7 @@ import {
   Target,
   Trophy,
 } from "lucide-react";
-import { Brand } from "@/components/brand";
+import { ProductHeader } from "@/components/product-header";
 
 type Attempt = {
   id: string;
@@ -76,15 +75,8 @@ export function StatisticsView({
   const maxActivity = Math.max(...Object.values(activityTotals), 1);
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper">
-      <header className="sticky top-0 z-20 border-b border-line bg-white/90 backdrop-blur-xl">
-        <div className="container-shell flex h-18 items-center justify-between">
-          <Brand />
-          <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-paper">
-            <ArrowLeft size={16} /> В кабинет
-          </Link>
-        </div>
-      </header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper">
+      <ProductHeader />
 
       <div className="container-shell py-10 sm:py-16">
         <div>
@@ -112,7 +104,7 @@ export function StatisticsView({
           })}
         </div>
 
-        <section className="mt-5 rounded-[26px] bg-ink p-6 text-white sm:p-8">
+        <section className="mt-7 rounded-[32px] bg-[#111] p-7 text-white shadow-[0_24px_70px_rgba(0,0,0,.16)] sm:p-9">
           <div className="grid gap-5 sm:grid-cols-3">
             <div><p className="text-xs text-white/45">Сейчас</p><p className="display mt-2 text-5xl">{latestScore}</p></div>
             <div><p className="text-xs text-white/45">Через месяц</p><p className="display mt-2 text-5xl">{forecast.minimum}–{forecast.optimistic}</p></div>
@@ -143,7 +135,7 @@ export function StatisticsView({
             {attempts.length > 0 && attempts.length < 3 && <p className="mt-5 rounded-xl bg-paper p-4 text-sm text-muted">Нужны ещё {3 - attempts.length} пробника для точного прогноза динамики.</p>}
           </section>
 
-          <section className="rounded-[26px] bg-ink p-6 text-white sm:p-8">
+          <section className="rounded-[30px] bg-[#111] p-6 text-white sm:p-8">
             <div className="flex items-center justify-between"><p className="text-xs font-bold uppercase tracking-[.14em] text-white/45">План недели</p><CalendarCheck size={19} /></div>
             <p className="display mt-8 text-7xl">{completedTasks}<span className="font-sans text-base text-white/35"> / {totalTasks}</span></p>
             <p className="mt-2 text-sm text-white/45">задач выполнено</p>

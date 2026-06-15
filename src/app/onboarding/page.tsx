@@ -277,9 +277,9 @@ export default function OnboardingPage() {
   if (phase === "analyzing") {
     const circumference = 2 * Math.PI * 52;
     return (
-      <main className="grid min-h-screen place-items-center bg-[#eef3fb] p-4 sm:p-8">
+      <main className="grid min-h-screen place-items-center bg-[#f7f7f4] p-4 sm:p-8">
         <section className="grid w-full max-w-[1080px] overflow-hidden rounded-[36px] bg-white shadow-[0_35px_100px_rgba(37,70,140,.13)] lg:grid-cols-[.82fr_1.18fr]">
-          <div className="flex min-h-[360px] flex-col items-center justify-center bg-[#164fc9] p-8 text-center text-white sm:p-12">
+          <div className="flex min-h-[360px] flex-col items-center justify-center bg-[#111] p-8 text-center text-white sm:p-12">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[.12em]">
               <BrainCircuit size={16} /> ENTGO AI
             </span>
@@ -323,7 +323,7 @@ export default function OnboardingPage() {
 
   if (phase === "route") {
     return (
-      <main className="min-h-screen bg-[#eef3fb] p-3 sm:p-6">
+      <main className="min-h-screen bg-[#f7f7f4] p-3 sm:p-6">
         <section className="mx-auto max-w-[1440px] rounded-[34px] bg-white px-5 py-10 text-center shadow-[0_30px_90px_rgba(37,70,140,.1)] sm:px-10 sm:py-14">
           <span className="route-fade-up inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]">
             <Sparkles size={15} /> Персональный анализ завершен
@@ -340,7 +340,7 @@ export default function OnboardingPage() {
           </div>
           <p className="route-fade-up route-delay-2 mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#727b8b]">На основе твоей цели и текущего уровня мы сформировали персональный план подготовки.</p>
 
-          <div className="route-fade-up route-delay-2 mx-auto mt-12 grid min-h-[220px] w-full max-w-[900px] overflow-hidden rounded-[28px] bg-[#164fc9] text-white sm:grid-cols-3">
+          <div className="route-fade-up route-delay-2 mx-auto mt-12 grid min-h-[220px] w-full max-w-[900px] overflow-hidden rounded-[28px] bg-[#111] text-white sm:grid-cols-3">
             {[
               { icon: University, label: "Университет", value: universityData.shortName },
               { icon: TrendingUp, label: "Разрыв до цели", value: `${scoreGap} баллов` },
@@ -407,7 +407,7 @@ export default function OnboardingPage() {
       ["Производные", "Анализ текста", "Геометрия"],
     ];
     return (
-      <main className="min-h-screen bg-[#eef3fb] p-3 sm:p-6">
+      <main className="min-h-screen bg-[#f7f7f4] p-3 sm:p-6">
         <section className="mx-auto max-w-[1440px] rounded-[34px] bg-white px-5 py-10 shadow-[0_30px_90px_rgba(37,70,140,.1)] sm:px-10 sm:py-14">
           <div className="text-center">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]"><Sparkles size={15} /> Твой персональный план готов</span>
@@ -438,7 +438,7 @@ export default function OnboardingPage() {
               </div>
             </div>
 
-            <aside className="rounded-[30px] bg-[#164fc9] p-7 text-white sm:p-9">
+            <aside className="rounded-[30px] bg-[#111] p-7 text-white sm:p-9">
               <h2 className="text-2xl font-extrabold">Что входит в твой план</h2>
               <div className="mt-7 space-y-5">
                 {[
@@ -496,7 +496,7 @@ export default function OnboardingPage() {
   const isSubjects = current.key === "subjects";
 
   return (
-    <main className="min-h-screen bg-[#eef3fb] p-3 text-[#172033] sm:p-6">
+    <main className="min-h-screen bg-[#f7f7f4] p-3 text-[#172033] sm:p-6">
       <header className="mx-auto max-w-[1440px]">
         <div className="flex h-14 items-center justify-between px-2 sm:h-16">
           <Brand />
@@ -506,14 +506,14 @@ export default function OnboardingPage() {
 
       <section className={`mx-auto max-w-[1440px] transition-all duration-500 ${leaving ? "-translate-y-3 opacity-0" : "translate-y-0 opacity-100"}`}>
         <div className="grid min-h-[calc(100vh-100px)] overflow-hidden rounded-[30px] bg-white shadow-[0_30px_90px_rgba(37,70,140,.1)] lg:grid-cols-[300px_1fr]">
-          <aside className="hidden bg-[#164fc9] p-7 text-white lg:flex lg:flex-col">
+          <aside className="hidden bg-[#111] p-7 text-white lg:flex lg:flex-col">
             <div>
               <p className="text-xs font-bold uppercase tracking-[.15em] text-white/55">Настройка маршрута</p>
               <strong className="mt-3 block text-3xl tracking-[-.04em]">{step + 1}<span className="text-white/35"> / {steps.length}</span></strong>
             </div>
             <div className="mt-8 space-y-2">
               {steps.map((item, index) => (
-                <div key={item.key} className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-sm transition-colors ${index === step ? "bg-white text-[#164fc9]" : index < step ? "text-white" : "text-white/45"}`}>
+                <div key={item.key} className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-sm transition-colors ${index === step ? "bg-white text-[#111]" : index < step ? "text-white" : "text-white/45"}`}>
                   <span className={`grid size-7 shrink-0 place-items-center rounded-lg text-xs font-extrabold ${index === step ? "bg-[#e8f0ff]" : index < step ? "bg-white/15" : "bg-white/8"}`}>
                     {index < step ? <Check size={14} strokeWidth={3} /> : index + 1}
                   </span>

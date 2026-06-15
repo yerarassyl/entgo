@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, ExternalLink, GraduationCap } from "lucide-react";
+import { ArrowRight, CheckCircle2, ExternalLink, GraduationCap } from "lucide-react";
 import { notFound } from "next/navigation";
-import { Brand } from "@/components/brand";
+import { ProductHeader } from "@/components/product-header";
 import { universityCatalog } from "@/data/universities";
 import { getSessionUser } from "@/lib/auth";
 import { calculateAdmissionChance, calculateForecast } from "@/lib/forecast";
@@ -22,8 +22,8 @@ export default async function UniversityPage({ params }: { params: Promise<{ slu
   const catalogEntry = universityCatalog.find((item) => item.slug === university.slug);
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper pb-16">
-      <header className="border-b border-line bg-white"><div className="container-shell flex h-18 items-center justify-between"><Brand /><Link href="/universities" className="inline-flex items-center gap-2 text-sm font-semibold"><ArrowLeft size={16} /> Все вузы</Link></div></header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
+      <ProductHeader />
       <div className="container-shell grid gap-8 py-12 lg:grid-cols-[1.15fr_.85fr] lg:py-20">
         <section>
           <div className="grid h-24 w-40 place-items-center overflow-hidden rounded-[24px] border border-line bg-white p-3 shadow-[0_12px_35px_rgba(37,70,140,.06)]"><Image src={catalogEntry?.logoPath ?? "/universities/aitu.svg"} alt={`Логотип ${university.shortName}`} width={180} height={88} className="h-full w-full object-contain" /></div>
@@ -34,7 +34,7 @@ export default async function UniversityPage({ params }: { params: Promise<{ slu
           <div className="mt-4 flex flex-wrap gap-2">{programs.map((program) => <span key={program} className="rounded-full border border-line bg-white px-4 py-2 text-sm">{program}</span>)}</div>
           {university.website && <a href={university.website} target="_blank" rel="noreferrer" className="mt-8 inline-flex items-center gap-2 text-sm font-bold underline underline-offset-4">Официальный сайт <ExternalLink size={15} /></a>}
         </section>
-        <aside className="h-fit rounded-[28px] bg-[#2563eb] p-7 text-white shadow-[0_24px_65px_rgba(37,99,235,.18)] sm:p-9 lg:sticky lg:top-8">
+        <aside className="h-fit rounded-[32px] bg-[#111] p-7 text-white shadow-[0_24px_70px_rgba(0,0,0,.16)] sm:p-9 lg:sticky lg:top-28">
           <div className="flex items-center justify-between"><p className="text-xs font-bold uppercase tracking-[.15em] text-white/45">Твой прогноз поступления</p><GraduationCap size={20} /></div>
           <h2 className="display mt-6 text-5xl">{university.shortName}</h2>
           {forecast ? (

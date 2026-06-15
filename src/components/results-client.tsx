@@ -10,7 +10,7 @@ import {
   TrendingUp,
   XCircle,
 } from "lucide-react";
-import { Brand } from "@/components/brand";
+import { ProductHeader } from "@/components/product-header";
 import { useState } from "react";
 
 type Result = {
@@ -88,13 +88,8 @@ export function ResultsClient({ result }: { result: Result }) {
   }
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper pb-16">
-      <header className="border-b border-line bg-white">
-        <div className="container-shell flex h-18 items-center justify-between">
-          <Brand />
-          <span className="text-xs font-semibold text-muted">Результаты пробника</span>
-        </div>
-      </header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
+      <ProductHeader />
 
       <div className="container-shell py-10 sm:py-16">
         <div className="text-center">
@@ -109,7 +104,7 @@ export function ResultsClient({ result }: { result: Result }) {
         </div>
 
         <div className="mt-12 grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
-          <section className="flex min-h-96 flex-col items-center justify-center rounded-[28px] bg-ink p-8 text-white">
+          <section className="flex min-h-96 flex-col items-center justify-center rounded-[32px] bg-[#111] p-8 text-white shadow-[0_24px_70px_rgba(0,0,0,.16)]">
             <div className="relative grid size-52 place-items-center">
               <svg className="absolute inset-0 -rotate-90" width="208" height="208" viewBox="0 0 208 208" aria-hidden="true">
                 <circle cx="104" cy="104" r="76" fill="none" stroke="rgba(255,255,255,.12)" strokeWidth="12" />

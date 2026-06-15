@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Check, ChevronRight, Clock3, Target } from "lucide-react";
-import { Brand } from "@/components/brand";
+import { Check, ChevronRight, Clock3, Target } from "lucide-react";
+import { ProductHeader } from "@/components/product-header";
 import { useState } from "react";
 
 type PlanTask = {
@@ -57,15 +57,8 @@ export function WeeklyPlanClient({
   const todayGain = Math.min(4, todayCompleted * 1.4);
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper">
-      <header className="sticky top-0 z-20 border-b border-line bg-white/90 backdrop-blur-xl">
-        <div className="container-shell flex h-18 items-center justify-between">
-          <Brand />
-          <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-paper">
-            <ArrowLeft size={16} /> В кабинет
-          </Link>
-        </div>
-      </header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper">
+      <ProductHeader />
 
       <div className="container-shell py-10 sm:py-16">
         <div className="grid gap-8 lg:grid-cols-[1fr_340px] lg:items-end">
@@ -77,7 +70,7 @@ export function WeeklyPlanClient({
             <p className="mt-5 max-w-2xl text-base leading-7 text-muted">Сегодняшние задачи дадут примерно +2–4 балла к прогнозу. В начале стоят действия с максимальным ожидаемым приростом.</p>
             <p className="mt-2 text-sm font-semibold">План для {name.split(/\s+/)[0]}</p>
           </div>
-          <div className="rounded-[22px] bg-ink p-6 text-white">
+          <div className="rounded-[30px] bg-[#111] p-7 text-white shadow-[0_24px_70px_rgba(0,0,0,.16)]">
             <div className="flex items-center justify-between text-xs text-white/50"><span>Прогноз до цели</span><Target size={17} /></div>
             <p className="mt-5 text-sm font-semibold">Сегодня ты ближе к цели на {todayGain ? `+${todayGain.toFixed(1)} балла` : "0 баллов"}</p>
             <div className="mt-5 space-y-3 border-t border-white/15 pt-5 text-xs">
@@ -92,7 +85,7 @@ export function WeeklyPlanClient({
           </div>
         </div>
 
-        <section className="mt-6 rounded-[22px] border border-line bg-white p-5 sm:flex sm:items-center sm:justify-between">
+        <section className="mt-8 rounded-[30px] border border-line bg-white p-6 sm:flex sm:items-center sm:justify-between">
           <div><p className="text-xs font-bold uppercase tracking-[.14em] text-muted">Связь действий с целью</p><h2 className="mt-2 text-xl font-semibold">Сейчас {forecast.current} → прогноз {forecast.expected} → цель {targetScore}</h2></div>
           <p className="mt-3 text-sm text-muted sm:mt-0">Неделя: {completed} из {allTasks.length} задач · {totalMinutes} минут в плане</p>
         </section>

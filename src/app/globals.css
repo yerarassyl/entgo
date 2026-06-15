@@ -2,9 +2,9 @@
 
 :root {
   --ink: #111111;
-  --paper: #f5f7fb;
-  --line: #dfe5ef;
-  --muted: #667085;
+  --paper: #f7f7f4;
+  --line: #e4e3de;
+  --muted: #686863;
   --blue: #2563eb;
   --blue-dark: #1d4ed8;
   --blue-soft: #eef5ff;
@@ -139,24 +139,8 @@ a {
     transform 160ms ease;
 }
 
-.bg-ink {
-  background-color: #2563eb !important;
-}
-
-.border-ink {
-  border-color: #2563eb !important;
-}
-
 .accent-black {
   accent-color: #2563eb;
-}
-
-.hover\:border-ink:hover {
-  border-color: #2563eb !important;
-}
-
-.focus\:border-ink:focus {
-  border-color: #2563eb !important;
 }
 
 ::selection {
@@ -192,16 +176,18 @@ a {
   margin-inline: auto;
 }
 
-/* Product UI follows the landing page system: white canvas, black type, blue action. */
+/* Product UI mirrors the landing: warm white, editorial scale, black surfaces, blue actions. */
 .mobile-app-page,
 .admin-page {
-  background: #f5f7fb;
+  background:
+    radial-gradient(circle at 92% 4%, rgb(37 99 235 / 0.055), transparent 26rem),
+    #f7f7f4;
 }
 
 .mobile-app-page > header,
 .admin-page > header,
 .study-page > header {
-  border-color: #e4e9f1;
+  border-color: #e4e3de;
   background: rgb(255 255 255 / 0.94);
   backdrop-filter: blur(18px);
 }
@@ -221,8 +207,8 @@ a {
 .admin-page .display,
 .study-page .display {
   font-family: var(--font-dm-sans), Arial, sans-serif;
-  font-weight: 720;
-  letter-spacing: -0.055em;
+  font-weight: 680;
+  letter-spacing: -0.06em;
 }
 
 .mobile-app-page .display .italic,
@@ -230,18 +216,6 @@ a {
 .study-page .display .italic {
   color: #2563eb;
   font-style: normal;
-}
-
-.mobile-app-page .bg-ink,
-.admin-page .bg-ink,
-.study-page:not(.text-white) .bg-ink {
-  background-color: #2563eb !important;
-}
-
-.mobile-app-page .border-ink,
-.admin-page .border-ink,
-.study-page:not(.text-white) .border-ink {
-  border-color: #2563eb !important;
 }
 
 .mobile-app-page .text-ink,
@@ -254,8 +228,8 @@ a {
 .mobile-app-page div[class*="rounded-"][class*="border-line"][class*="bg-white"],
 .admin-page .admin-module,
 .admin-page section[class*="rounded-"][class*="bg-white"] {
-  border-color: #dfe5ef;
-  box-shadow: 0 14px 45px rgb(37 70 140 / 0.045);
+  border-color: #e4e3de;
+  box-shadow: 0 18px 55px rgb(17 17 17 / 0.035);
 }
 
 .mobile-app-page input,
@@ -264,7 +238,7 @@ a {
 .admin-page input,
 .admin-page select,
 .admin-page textarea {
-  border-color: #d9e1ed;
+  border-color: #dfded8;
   background-color: #fff;
 }
 
@@ -283,9 +257,35 @@ a {
   color: #2563eb;
 }
 
-.mobile-app-page progress,
-.mobile-app-page [class*="transition-all"].bg-ink {
-  background-color: #2563eb;
+.product-v2 section,
+.product-v2 article {
+  isolation: isolate;
+}
+
+.product-v2 .bg-paper {
+  background-color: #f3f2ee;
+}
+
+.product-v2 a.bg-ink,
+.product-v2 button.bg-ink {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 12px 30px rgb(37 99 235 / 0.16);
+}
+
+.product-v2 a.bg-ink:hover,
+.product-v2 button.bg-ink:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.product-v2 .product-dark {
+  background: #111;
+  color: white;
+}
+
+.product-header {
+  box-shadow: 0 1px 0 rgb(17 17 17 / 0.02);
 }
 
 .product-auth-page {

@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Bell, Check, Headphones, KeyRound, Save, UserRound } from "lucide-react";
+import { Bell, Check, Headphones, KeyRound, Save, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { Brand } from "@/components/brand";
+import { ProductHeader } from "@/components/product-header";
 
 type SettingsData = {
   name: string;
@@ -89,15 +88,8 @@ export function SettingsClient({ initial }: { initial: SettingsData }) {
   }
 
   return (
-    <main className="mobile-app-page min-h-screen bg-paper pb-16">
-      <header className="sticky top-0 z-20 border-b border-line bg-white/90 backdrop-blur-xl">
-        <div className="container-shell flex h-18 items-center justify-between">
-          <Brand />
-          <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-semibold hover:bg-paper">
-            <ArrowLeft size={16} /> В кабинет
-          </Link>
-        </div>
-      </header>
+    <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
+      <ProductHeader />
 
       <div className="container-shell py-10 sm:py-16">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">Аккаунт</p>

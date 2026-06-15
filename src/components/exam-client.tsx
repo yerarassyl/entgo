@@ -141,23 +141,23 @@ export function ExamClient({ topicId }: { topicId?: string }) {
   }
 
   if (!payload || !question) {
-    return <main className="grid min-h-screen place-items-center bg-paper px-5 text-center"><div>{error ? <><p className="font-semibold">{error}</p><button onClick={() => location.reload()} className="mt-5 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white">Попробовать снова</button></> : <><LoaderCircle className="mx-auto animate-spin" /><p className="mt-4 text-sm text-muted">Готовим пробник...</p></>}</div></main>;
+    return <main className="grid min-h-screen place-items-center bg-[#f7f7f4] px-5 text-center"><div>{error ? <><p className="font-semibold">{error}</p><button onClick={() => location.reload()} className="mt-5 rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white">Попробовать снова</button></> : <><LoaderCircle className="mx-auto animate-spin text-[#2563eb]" /><p className="mt-4 text-sm text-muted">Готовим пробник...</p></>}</div></main>;
   }
 
   return (
-    <main className="min-h-screen bg-paper">
-      <header className="border-b border-line bg-white"><div className="container-shell flex h-18 items-center justify-between"><Brand /><div className="flex items-center gap-2 rounded-full bg-ink px-4 py-2 font-mono text-xs font-semibold text-white"><Clock3 size={14} /> {time}</div></div></header>
-      <div className="landing-shell grid gap-6 py-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <aside className="hidden rounded-[24px] border border-line bg-white p-5 lg:block">
+    <main className="product-v2 min-h-screen bg-paper">
+      <header className="border-b border-line bg-white"><div className="container-shell flex h-[76px] items-center justify-between"><Brand /><div className="flex items-center gap-2 rounded-full bg-[#111] px-4 py-2 font-mono text-xs font-semibold text-white"><Clock3 size={14} /> {time}</div></div></header>
+      <div className="landing-shell grid gap-6 py-5 lg:grid-cols-[280px_minmax(0,1fr)] lg:py-8">
+        <aside className="hidden rounded-[30px] border border-line bg-white p-6 lg:block">
           <p className="text-xs font-bold uppercase tracking-[.15em] text-muted">Пробный ЕНТ</p>
           <div className="mt-6 grid grid-cols-5 gap-2">{payload.questions.map((item, index) => <button key={item.id} onClick={() => setCurrent(index)} className={`relative aspect-square rounded-lg text-xs font-bold ${current === index ? "bg-ink text-white" : answers[item.id] ? "bg-[#e9f7ef] text-success" : "bg-paper"}`}>{index + 1}{flagged.has(item.id) && <span className="absolute right-1 top-1 size-1.5 rounded-full bg-[#ef7c30]" />}</button>)}</div>
           <div className="mt-7 border-t border-line pt-5 text-xs leading-5 text-muted"><p><strong className="text-ink">{answeredCount}</strong> отвечено</p><p><strong className="text-ink">{payload.questions.length - answeredCount}</strong> осталось</p></div>
           <p className="mt-5 rounded-xl bg-paper p-3 text-xs leading-5 text-muted">Правильные ответы и объяснения откроются только после завершения.</p>
         </aside>
-        <section className="overflow-hidden rounded-[24px] border border-line bg-white">
+        <section className="overflow-hidden rounded-[32px] border border-line bg-white shadow-[0_24px_70px_rgba(0,0,0,.05)]">
           <div className="border-b border-line px-6 py-5 sm:px-9"><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-muted">{question.subject}</p><p className="mt-1 text-xs text-muted">{question.topic}</p></div><span className="rounded-full bg-paper px-3 py-1.5 text-xs font-semibold">Вопрос {current + 1} из {payload.questions.length}</span></div></div>
           <div className="px-6 py-8 sm:px-9 sm:py-10">
-            <h1 className="max-w-3xl text-xl font-semibold leading-8 sm:text-2xl">{question.body}</h1>
+            <h1 className="max-w-4xl text-2xl font-semibold leading-[1.3] tracking-[-.025em] sm:text-3xl">{question.body}</h1>
             <div className="mt-8 grid gap-3">{question.options.map((option, index) => { const selected = answers[question.id] === option.id; return <button key={option.id} data-testid="answer-option" disabled={saving} onClick={() => void answer(option.id)} className={`flex min-h-16 items-center gap-4 rounded-2xl border px-5 text-left text-sm font-medium ${selected ? "border-ink bg-ink text-white" : "border-line hover:border-black/40"}`}><span className={`grid size-8 shrink-0 place-items-center rounded-full border text-xs font-bold ${selected ? "border-white bg-white text-ink" : "border-line"}`}>{String.fromCharCode(65 + index)}</span>{option.content}</button>; })}</div>
             <button onClick={() => void askHelp()} disabled={askingHelp || Boolean(hints[question.id])} className="mt-6 inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-sm font-semibold disabled:opacity-50"><Lightbulb size={17} /> {askingHelp ? "Готовим подсказку..." : hints[question.id] ? "AI уже помог" : "Попросить помощь у AI · −8 XP"}</button>
             {hints[question.id] && <div className="mt-4 rounded-2xl bg-[#fff8dc] p-5"><p className="text-xs font-bold uppercase tracking-[.12em]">AI-подсказка без ответа</p><p className="mt-2 text-sm leading-6 text-muted">{hints[question.id]}</p></div>}
@@ -166,7 +166,7 @@ export function ExamClient({ topicId }: { topicId?: string }) {
           <div className="flex items-center justify-between border-t border-line px-6 py-5 sm:px-9">
             <button onClick={() => setCurrent((value) => Math.max(0, value - 1))} disabled={current === 0} className="inline-flex items-center gap-2 text-sm font-semibold disabled:opacity-25"><ChevronLeft size={18} /> Назад</button>
             <button onClick={() => setFlagged((state) => { const next = new Set(state); if (next.has(question.id)) next.delete(question.id); else next.add(question.id); return next; })} className="hidden items-center gap-2 text-xs font-semibold text-muted sm:flex"><Flag size={15} fill={flagged.has(question.id) ? "currentColor" : "none"} /> Отметить</button>
-            {current === payload.questions.length - 1 ? <button data-testid="finish-exam" disabled={finishing} onClick={() => void finish()} className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white disabled:opacity-50">{finishing ? "Сохраняем..." : `Завершить · ${answeredCount}/${payload.questions.length}`}</button> : <button data-testid="next-question" onClick={() => setCurrent((value) => Math.min(payload.questions.length - 1, value + 1))} className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white">Дальше <ChevronRight size={18} /></button>}
+              {current === payload.questions.length - 1 ? <button data-testid="finish-exam" disabled={finishing} onClick={() => void finish()} className="rounded-full bg-[#2563eb] px-6 py-3 text-sm font-semibold text-white disabled:opacity-50">{finishing ? "Сохраняем..." : `Завершить · ${answeredCount}/${payload.questions.length}`}</button> : <button data-testid="next-question" onClick={() => setCurrent((value) => Math.min(payload.questions.length - 1, value + 1))} className="inline-flex items-center gap-2 rounded-full bg-[#2563eb] px-5 py-3 text-sm font-semibold text-white">Дальше <ChevronRight size={18} /></button>}
           </div>
         </section>
       </div>
