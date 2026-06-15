@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
 const optionSchema = z.object({

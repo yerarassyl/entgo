@@ -1,5 +1,5 @@
 import "server-only";
-import type { Prisma, XpReason } from "@/generated/prisma/client";
+import type { Prisma, XpReason } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export async function awardXp({

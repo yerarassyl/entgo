@@ -1,5 +1,5 @@
 import { hash } from "bcryptjs";
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { createEmailVerification } from "@/lib/email-verification";
 import { createMobileSession } from "@/lib/mobile-auth";

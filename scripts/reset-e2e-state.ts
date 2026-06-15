@@ -1,5 +1,5 @@
 import { createClient } from "redis";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 async function main() {
   const databaseUrl = new URL(process.env.DATABASE_URL ?? "");

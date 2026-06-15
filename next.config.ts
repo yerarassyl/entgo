@@ -21,9 +21,6 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  outputFileTracingIncludes: {
-    "/*": ["src/generated/prisma/*query_engine-*.node"],
-  },
   poweredByHeader: false,
   allowedDevOrigins: ["127.0.0.1"],
   async headers() {

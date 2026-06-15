@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRole } from "@/generated/prisma/enums";
+import type { UserRole } from "@prisma/client";
 
 const staffRoles = new Set<UserRole>([
   "ADMIN",

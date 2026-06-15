@@ -1,5 +1,5 @@
 import { hash } from "bcryptjs";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 async function main() {
   if (process.env.NODE_ENV === "production") {
