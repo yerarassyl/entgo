@@ -114,7 +114,7 @@ export default function RegisterPage() {
         </div>
       </header>
 
-      <section className="container-shell grid min-h-[calc(100vh-72px)] items-center gap-10 py-10 lg:grid-cols-[.85fr_1.15fr] lg:py-16">
+      <section className="container-shell grid min-h-[calc(100vh-72px)] items-start gap-10 py-10 lg:grid-cols-[.85fr_1.15fr] lg:gap-16 lg:py-16">
         <div className="max-w-xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 text-xs font-bold">
             <LockKeyhole size={14} /> Результат сохранится в аккаунте

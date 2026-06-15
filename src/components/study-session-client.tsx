@@ -7,15 +7,10 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Clock3,
-  Focus,
-  Pause,
-  Play,
-  RotateCcw,
   Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Brand } from "@/components/brand";
 
 type SessionTask = {
@@ -23,7 +18,6 @@ type SessionTask = {
   title: string;
   label: string;
   activity: string;
-  durationMin: number;
   completedAt: string | null;
   scheduledAt: string;
   stage: number;
@@ -80,12 +74,6 @@ const sessionContent: Record<
   },
 };
 
-function formatTime(seconds: number) {
-  const minutes = Math.floor(seconds / 60);
-  const rest = seconds % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
-}
-
 export function StudySessionClient({
   task,
   lesson,
@@ -96,12 +84,9 @@ export function StudySessionClient({
   questions: PracticeQuestion[];
 }) {
   const router = useRouter();
-  const initialSeconds = task.durationMin * 60;
-  const [seconds, setSeconds] = useState(initialSeconds);
-  const [running, setRunning] = useState(false);
+  const startedAt = useRef<number | null>(null);
   const [completed, setCompleted] = useState(Boolean(task.completedAt));
   const [saving, setSaving] = useState(false);
-  const [focusMode, setFocusMode] = useState(false);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [activeQuestion, setActiveQuestion] = useState(0);
   const [completion, setCompletion] = useState<{
@@ -115,7 +100,6 @@ export function StudySessionClient({
     : fallback;
   const stageLabels = ["Понять основу", "Применить правило", "Закрепить без подсказки"];
   const stageLabel = stageLabels[(task.stage - 1) % stageLabels.length];
-  const progress = completed ? 100 : ((initialSeconds - seconds) / initialSeconds) * 100;
   const answeredCount = Object.keys(answers).length;
   const correctCount = questions.filter((question) =>
     question.options.find((option) => option.id === answers[question.id])?.correct,
@@ -125,27 +109,8 @@ export function StudySessionClient({
   const checkPassed = !requiresCheck || (answeredCount === questions.length && accuracy > 40);
 
   useEffect(() => {
-    if (!running || seconds <= 0) return;
-    const timer = window.setInterval(
-      () => setSeconds((value) => Math.max(0, value - 1)),
-      1_000,
-    );
-    return () => window.clearInterval(timer);
-  }, [running, seconds]);
-
-  useEffect(() => {
-    if (seconds === 0) {
-      const timer = window.setTimeout(() => setRunning(false), 0);
-      return () => window.clearTimeout(timer);
-    }
-  }, [seconds]);
-
-  const status = useMemo(() => {
-    if (completed) return "Задача выполнена";
-    if (seconds === 0) return "Фокус-сессия завершена";
-    if (running) return "Сейчас работаем";
-    return "Готов к фокусу";
-  }, [completed, running, seconds]);
+    startedAt.current = Date.now();
+  }, []);
 
   async function finish() {
     if (saving || completed) return;
@@ -156,7 +121,7 @@ export function StudySessionClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           completed: true,
-          durationSec: initialSeconds - seconds,
+          durationSec: Math.max(1, Math.round((Date.now() - (startedAt.current ?? Date.now())) / 1_000)),
           answers,
         }),
       });
@@ -168,7 +133,6 @@ export function StudySessionClient({
       };
       setCompletion(result);
       setCompleted(true);
-      setRunning(false);
       router.refresh();
     } finally {
       setSaving(false);
@@ -176,51 +140,18 @@ export function StudySessionClient({
   }
 
   return (
-    <main className={`study-page product-v2 min-h-screen ${focusMode ? "bg-[#111] text-white" : "bg-paper text-ink"}`}>
-      <header className={`sticky top-0 z-40 border-b ${focusMode ? "border-white/10 bg-[#111]/95" : "border-line bg-white/95"} backdrop-blur-xl`}>
+    <main className="study-page product-v2 min-h-screen bg-paper text-ink">
+      <header className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur-xl">
         <div className="container-shell flex h-15 items-center justify-between sm:h-18">
-          <Brand inverse={focusMode} />
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setFocusMode((value) => !value)}
-              className={`grid size-10 place-items-center rounded-full border sm:inline-flex sm:w-auto sm:px-4 ${focusMode ? "border-white/20 hover:bg-white/10" : "border-line hover:bg-paper"}`}
-              aria-label={focusMode ? "Обычный режим" : "Режим фокуса"}
-            >
-              <Focus size={16} /> <span className="hidden text-xs font-semibold sm:inline">{focusMode ? "Обычный режим" : "Режим фокуса"}</span>
-            </button>
-            <Link href="/plan" className={`grid size-10 place-items-center rounded-full border ${focusMode ? "border-white/20" : "border-line bg-white"}`} aria-label="Вернуться к плану">
-              <ArrowLeft size={17} />
-            </Link>
-          </div>
+          <Brand />
+          <Link href="/plan" className="grid size-10 place-items-center rounded-full border border-line bg-white hover:bg-paper" aria-label="Вернуться к плану">
+            <ArrowLeft size={17} />
+          </Link>
         </div>
       </header>
 
-      <div className={`container-shell grid gap-5 py-4 sm:py-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-8 lg:py-10 ${focusMode ? "max-w-5xl lg:grid-cols-1" : ""}`}>
-        <section className={`order-2 rounded-[30px] p-5 sm:p-7 lg:order-1 ${focusMode ? "mx-auto block w-full max-w-xl border border-white/15 bg-white/[.04]" : "hidden h-fit bg-[#111] text-white shadow-[0_24px_70px_rgba(0,0,0,.16)] lg:block lg:sticky lg:top-28"}`}>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-[.16em] opacity-50">{status}</span>
-            <Clock3 size={20} className="opacity-60" />
-          </div>
-          <div className="mt-5 text-center lg:mt-9">
-            <p className="display text-5xl leading-none sm:text-6xl">{completed ? "Готово" : formatTime(seconds)}</p>
-            <p className="mt-2 text-sm opacity-60">{completed ? "Результат сохранён в плане" : `${task.durationMin} минут на эту задачу`}</p>
-          </div>
-          <div className="mt-10 h-2 overflow-hidden rounded-full bg-white/15">
-            <div className="h-full rounded-full bg-white transition-all" style={{ width: `${progress}%` }} />
-          </div>
-          {!completed && <div className="mt-6 flex justify-center gap-3">
-            <button onClick={() => setRunning((value) => !value)} disabled={seconds === 0} className="inline-flex h-12 min-w-36 items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-ink disabled:opacity-35">
-              {running ? <Pause size={17} fill="currentColor" /> : <Play size={17} fill="currentColor" />}
-              {running ? "Пауза" : "Начать"}
-            </button>
-            <button onClick={() => { setRunning(false); setSeconds(initialSeconds); }} className="grid size-12 place-items-center rounded-full border border-white/20" aria-label="Сбросить таймер">
-              <RotateCcw size={17} />
-            </button>
-          </div>}
-        </section>
-
-        {!focusMode && (
-          <section className="order-1 rounded-[32px] border border-line bg-white p-5 shadow-[0_24px_70px_rgba(0,0,0,.045)] sm:p-9 lg:order-2">
+      <div className="container-shell py-4 sm:py-6 lg:py-10">
+          <section className="mx-auto w-full max-w-6xl rounded-[32px] border border-line bg-white p-5 shadow-[0_24px_70px_rgba(0,0,0,.045)] sm:p-9">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[.15em] text-muted">{task.label} · {activityNames[task.activity] ?? "Занятие"} · этап {task.stage}</p>
@@ -232,13 +163,6 @@ export function StudySessionClient({
 
             <div className="mt-5 rounded-2xl bg-paper p-4 sm:p-5">
               <div className="flex gap-3"><Sparkles className="mt-0.5 shrink-0" size={19} /><p className="text-sm font-semibold leading-6">{content.lead}</p></div>
-            </div>
-            <div className="mt-4 rounded-[22px] bg-[#111] p-4 text-white lg:hidden">
-              <div className="flex items-center justify-between gap-3">
-                <div><p className="text-[10px] font-bold uppercase tracking-[.13em] text-white/55">{status}</p><p className="display mt-1 text-4xl">{completed ? "Готово" : formatTime(seconds)}</p></div>
-                {!completed && <button onClick={() => setRunning((value) => !value)} className="grid size-12 place-items-center rounded-full bg-white text-ink" aria-label={running ? "Поставить таймер на паузу" : "Запустить таймер"}>{running ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}</button>}
-              </div>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-white" style={{ width: `${progress}%` }} /></div>
             </div>
             <details className="mt-4 rounded-2xl border border-line p-4 sm:hidden">
               <summary className="cursor-pointer text-sm font-bold">Короткая теория и подсказки</summary>
@@ -341,7 +265,6 @@ export function StudySessionClient({
             </button>
             {requiresCheck && !checkPassed && <p className="mt-3 text-center text-xs text-muted">Для завершения набери больше 40%. XP зависит от результата: 41–60% — 10 XP, 61–80% — 20 XP, 81–100% — 25 XP.</p>}
           </section>
-        )}
       </div>
     </main>
   );

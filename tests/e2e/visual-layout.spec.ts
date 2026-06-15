@@ -127,3 +127,21 @@ test("repeated topic sessions expose distinct learning stages", async ({ page })
   }
   expect(new Set(stages).size).toBe(3);
 });
+
+test("registration columns align and study sessions have no focus timer", async ({ page }) => {
+  test.skip(test.info().project.name.includes("mobile"));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/register");
+
+  const heroTop = await page.getByRole("heading", { level: 1 }).evaluate((element) =>
+    element.parentElement?.getBoundingClientRect().top ?? 0,
+  );
+  const formTop = await page.locator("form").evaluate((element) => element.getBoundingClientRect().top);
+  expect(Math.abs(heroTop - formTop)).toBeLessThanOrEqual(2);
+
+  await login(page, "premium@entgo.local", "PremiumDemo2026!");
+  await page.goto("/study/cmq81w2y9001nes60qome1ovf");
+  await expect(page.getByText("Режим фокуса")).toHaveCount(0);
+  await expect(page.getByText("Готов к фокусу")).toHaveCount(0);
+  await expect(page.getByLabel(/таймер/i)).toHaveCount(0);
+});

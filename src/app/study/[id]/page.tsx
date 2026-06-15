@@ -18,7 +18,6 @@ export default async function StudyPage({
       id: true,
       title: true,
       activity: true,
-      durationMin: true,
       completedAt: true,
       scheduledAt: true,
       topic: {
@@ -56,7 +55,6 @@ export default async function StudyPage({
         title: task.title,
         label,
         activity,
-        durationMin: task.durationMin,
         completedAt: task.completedAt?.toISOString() ?? null,
         scheduledAt: task.scheduledAt.toISOString(),
         stage,
