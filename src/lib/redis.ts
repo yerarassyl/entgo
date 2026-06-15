@@ -7,6 +7,7 @@ const globalForRedis = globalThis as unknown as {
 };
 
 export async function getRedis() {
+  if (!process.env.REDIS_URL) return null;
   if (globalForRedis.redis?.isReady) return globalForRedis.redis;
   if (globalForRedis.redisPromise) return globalForRedis.redisPromise;
 
