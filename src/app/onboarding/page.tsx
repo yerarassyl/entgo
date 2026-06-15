@@ -122,6 +122,7 @@ const topTopics = [
 ];
 
 function SummaryCard({
+  step,
   university,
   city,
   currentScore,
@@ -129,6 +130,7 @@ function SummaryCard({
   timeLeft,
   subjects,
 }: {
+  step: number;
   university: string;
   city: string;
   currentScore: number;
@@ -137,12 +139,12 @@ function SummaryCard({
   subjects?: string[];
 }) {
   const rows = [
-    { icon: GraduationCap, label: "Университет", value: university },
-    ...(subjects?.length ? [{ icon: BookOpen, label: "Предметы", value: subjects.join(" + ") }] : []),
-    { icon: MapPin, label: "Город", value: city || "Не указан" },
-    { icon: TrendingUp, label: "Сейчас", value: `${currentScore}` },
-    { icon: Target, label: "Цель", value: `${targetScore}` },
-    ...(timeLeft ? [{ icon: ClockAlert, label: "ЕНТ", value: timeLeft }] : []),
+    ...(step >= 0 ? [{ icon: GraduationCap, label: "Университет", value: university }] : []),
+    ...(step >= 1 && subjects?.length ? [{ icon: BookOpen, label: "Предметы", value: subjects.join(" + ") }] : []),
+    ...(step >= 2 && city ? [{ icon: MapPin, label: "Город", value: city }] : []),
+    ...(step >= 3 ? [{ icon: TrendingUp, label: "Сейчас", value: `${currentScore}` }] : []),
+    ...(step >= 4 ? [{ icon: Target, label: "Цель", value: `${targetScore}` }] : []),
+    ...(step >= 5 && timeLeft ? [{ icon: ClockAlert, label: "ЕНТ", value: timeLeft }] : []),
   ];
 
   return (
@@ -522,7 +524,7 @@ export default function OnboardingPage() {
               ))}
             </div>
             <div className="mt-auto pt-7">
-              <SummaryCard university={universityData.shortName} city={city} currentScore={currentScore} targetScore={targetScore} timeLeft={timeLeft || undefined} subjects={selectedSubjects} />
+              <SummaryCard step={step} university={universityData.shortName} city={city} currentScore={currentScore} targetScore={targetScore} timeLeft={timeLeft || undefined} subjects={selectedSubjects} />
             </div>
           </aside>
 
@@ -622,7 +624,7 @@ export default function OnboardingPage() {
             )}
 
             {current.key === "current" && (
-              <div className="mt-10 max-w-[700px] rounded-[32px] border border-[#e1e6ef] bg-white p-7 text-center shadow-[0_24px_80px_rgba(24,50,100,.08)] sm:p-10">
+              <div className="mt-10 w-full rounded-[32px] border border-[#e1e6ef] bg-white p-7 text-center shadow-[0_24px_80px_rgba(24,50,100,.08)] sm:min-h-[390px] sm:p-12">
                 <p className="text-sm text-[#7b8495]">Текущий результат</p>
                 <strong className="mt-4 block text-[88px] font-extrabold leading-none tracking-[-.07em] sm:text-[110px]">{currentScore}</strong>
                 <input
@@ -641,13 +643,13 @@ export default function OnboardingPage() {
 
             {isGoal && (
               <>
-                <div className="mt-10 max-w-[700px] rounded-[32px] border border-[#e1e6ef] bg-white p-7 text-center shadow-[0_24px_80px_rgba(24,50,100,.09)] sm:min-h-[360px] sm:p-10">
+                <div className="mt-10 w-full rounded-[32px] border border-[#e1e6ef] bg-white p-7 text-center shadow-[0_24px_80px_rgba(24,50,100,.09)] sm:min-h-[390px] sm:p-12">
                   <strong className="block text-[92px] font-extrabold leading-none tracking-[-.075em] sm:text-[110px]">{displayScore}</strong>
                   <p className="mt-3 text-sm text-[#7b8495]">Целевой результат</p>
                   <div className="mt-7 flex min-h-9 flex-wrap justify-center gap-2">
                     <span className={`inline-flex items-center gap-2 rounded-full bg-[#2563eb] px-4 py-2 text-sm font-bold text-white transition-all duration-300 ${targetSettled ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}><Target size={15} /> Цель зафиксирована</span>
                   </div>
-                  <div className="mx-auto mt-6 grid max-w-md grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-3 rounded-2xl bg-[#f7f9fc] p-4">
+                  <div className="mx-auto mt-7 grid w-full max-w-2xl grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-5 rounded-2xl bg-[#f7f9fc] p-5">
                     <span><small className="block text-[#8a93a3]">Сейчас</small><strong className="text-xl">{currentScore}</strong></span>
                     <ArrowDown className="-rotate-90 text-[#9ca4b1]" size={18} />
                     <span><small className="block text-[#8a93a3]">Цель</small><strong className="text-xl">{targetScore}</strong></span>
@@ -655,7 +657,7 @@ export default function OnboardingPage() {
                     <span><small className="block text-[#8a93a3]">Разрыв</small><strong className="text-xl text-[#2563eb]">{scoreGap}</strong></span>
                   </div>
                 </div>
-                <div className="mt-8 max-w-[700px]">
+                <div className="mt-8 w-full">
                   <input
                     aria-label="Целевой результат"
                     type="range"
@@ -680,11 +682,11 @@ export default function OnboardingPage() {
 
             {isDeadline && (
               <>
-                <div className="mt-10 grid max-w-[700px] gap-5 sm:grid-cols-2">
+                <div className="mt-10 grid w-full gap-5 sm:grid-cols-2 xl:grid-cols-4">
                   {timeOptions.map(({ value, title, description, icon: Icon }) => {
                     const selected = timeLeft === value;
                     return (
-                      <button key={value} onClick={() => setTimeLeft(value)} className={`relative flex min-h-[170px] flex-col items-center justify-center rounded-[24px] border p-6 text-center transition-all duration-200 ${selected ? "scale-[1.02] border-[#2563eb] bg-[#2563eb] text-white shadow-[0_18px_40px_rgba(37,99,235,.24)]" : "border-[#e1e6ef] bg-white shadow-[0_12px_35px_rgba(24,50,100,.05)] hover:-translate-y-1"}`}>
+                      <button key={value} onClick={() => setTimeLeft(value)} className={`relative flex min-h-[210px] flex-col items-center justify-center rounded-[28px] border p-6 text-center transition-all duration-200 ${selected ? "scale-[1.02] border-[#2563eb] bg-[#2563eb] text-white shadow-[0_18px_40px_rgba(37,99,235,.24)]" : "border-[#e1e6ef] bg-white shadow-[0_12px_35px_rgba(24,50,100,.05)] hover:-translate-y-1"}`}>
                         {selected && <CheckCircle2 className="absolute right-4 top-4" size={21} />}
                         <Icon size={38} strokeWidth={1.7} />
                         <strong className="mt-4 text-xl">{title}</strong>
@@ -694,7 +696,7 @@ export default function OnboardingPage() {
                   })}
                 </div>
                 {timeLeft && (
-                  <div className="mt-6 max-w-[700px] rounded-2xl bg-[#eef5ff] p-5 text-sm leading-6 text-[#2457bb]">
+                  <div className="mt-6 w-full rounded-2xl bg-[#eef5ff] p-5 text-sm leading-6 text-[#2457bb]">
                     <strong className="flex items-center gap-2"><BrainCircuit size={17} /> AI Insight</strong>
                     <p className="mt-2">{selectedTimeOption?.insight}</p>
                   </div>
@@ -704,16 +706,16 @@ export default function OnboardingPage() {
           </div>
 
             {isDeadline && timeLeft && (
-              <div className="mt-7 max-w-[700px] rounded-[22px] bg-[#eef5ff] p-5 text-[#2457bb]">
+              <div className="mt-7 w-full rounded-[22px] bg-[#eef5ff] p-5 text-[#2457bb]">
                 <div className="flex items-center gap-3"><Sparkles size={20} /><strong>Данных достаточно. Можно строить персональный маршрут.</strong></div>
               </div>
             )}
 
-            <div className="mt-8 flex max-w-[760px] items-center justify-between border-t border-[#e6eaf1] pt-6">
+            <div className="mt-8 flex w-full items-center justify-between border-t border-[#e6eaf1] pt-6">
               <button onClick={() => step > 0 ? setStep((value) => value - 1) : router.push("/")} className="inline-flex min-h-12 items-center gap-2 rounded-full px-4 text-sm font-bold text-[#667083] hover:bg-[#f4f7fb]">
                 <ArrowLeft size={17} /> Назад
               </button>
-              <button onClick={next} disabled={(isSubjects && selectedSubjects.length !== 2) || (isDeadline && !timeLeft)} className="inline-flex min-h-14 items-center gap-3 rounded-full bg-[#2563eb] px-7 text-sm font-bold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0">
+              <button onClick={next} disabled={(isSubjects && selectedSubjects.length !== 2) || (isDeadline && !timeLeft)} className="ml-auto inline-flex min-h-14 min-w-[210px] items-center justify-center gap-3 rounded-full bg-[#2563eb] px-8 text-sm font-bold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0">
                 {isDeadline ? "Построить маршрут" : "Продолжить"} <ArrowRight size={17} />
               </button>
             </div>
