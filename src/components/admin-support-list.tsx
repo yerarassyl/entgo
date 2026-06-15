@@ -7,7 +7,7 @@ type Ticket = {
   id: string;
   message: string;
   pageUrl: string;
-  screenshotUrl: string | null;
+  screenshotAttached: boolean;
   status: "NEW" | "IN_PROGRESS" | "ANSWERED" | "CLOSED";
   response: string | null;
   user: string;
@@ -32,7 +32,7 @@ export function AdminSupportList({ initialTickets }: { initialTickets: Ticket[] 
 
   return <div className="mt-5 space-y-4">{tickets.map((ticket) => <article key={ticket.id} className="rounded-[24px] border border-line bg-white p-5">
     <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.12em] text-muted">{ticket.user} · {ticket.subscription}</p><p className="mt-2 text-sm leading-6">{ticket.message}</p></div><span className="rounded-full bg-paper px-3 py-2 text-xs font-bold">{ticket.status}</span></div>
-    <div className="mt-4 flex flex-wrap gap-3 text-xs"><a href={ticket.pageUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold">Страница <ExternalLink size={13} /></a>{ticket.screenshotUrl && <a href={ticket.screenshotUrl} target="_blank" className="font-semibold">Открыть скриншот</a>}<span className="text-muted">{ticket.createdAt}</span></div>
+    <div className="mt-4 flex flex-wrap gap-3 text-xs"><a href={ticket.pageUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold">Страница <ExternalLink size={13} /></a>{ticket.screenshotAttached && <a href={`/api/admin/support/${ticket.id}`} target="_blank" rel="noreferrer" className="font-semibold">Открыть скриншот</a>}<span className="text-muted">{ticket.createdAt}</span></div>
     <textarea defaultValue={ticket.response ?? ""} id={`response-${ticket.id}`} rows={3} placeholder="Ответ пользователю" className="mt-4 w-full rounded-xl border border-line p-3 text-sm" />
     <div className="mt-3 flex flex-wrap items-center gap-2">
       <select id={`status-${ticket.id}`} defaultValue={ticket.status} className="h-10 rounded-xl border border-line bg-white px-3 text-xs"><option value="NEW">Новый</option><option value="IN_PROGRESS">В работе</option><option value="ANSWERED">Ответ отправлен</option><option value="CLOSED">Закрыт</option></select>

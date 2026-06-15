@@ -1,6 +1,3 @@
-import { randomUUID } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
 import { getEntitlements } from "@/lib/entitlements";
@@ -22,15 +19,9 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "Проверьте текст обращения." }, { status: 400 });
 
-  let screenshotUrl: string | undefined;
-  const image = parsed.data.screenshot?.match(/^data:image\/jpeg;base64,(.+)$/);
-  if (image) {
-    const directory = path.join(process.cwd(), "public", "uploads", "support");
-    await mkdir(directory, { recursive: true });
-    const filename = `${randomUUID()}.jpg`;
-    await writeFile(path.join(directory, filename), Buffer.from(image[1], "base64"));
-    screenshotUrl = `/uploads/support/${filename}`;
-  }
+  const screenshotUrl = parsed.data.screenshot?.match(/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/)
+    ? parsed.data.screenshot
+    : undefined;
   const entitlements = user ? await getEntitlements(user.id) : null;
   const ticket = await prisma.supportTicket.create({
     data: {

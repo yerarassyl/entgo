@@ -141,7 +141,7 @@ export default async function AdminPage() {
 
         {superAdmin && <details className="admin-module mt-10 rounded-[24px] border border-line bg-white p-5 sm:p-7">
           <summary className="cursor-pointer text-xl font-semibold">Служба поддержки</summary>
-          <AdminSupportList initialTickets={tickets.map((ticket) => ({ id: ticket.id, message: ticket.message, pageUrl: ticket.pageUrl, screenshotUrl: ticket.screenshotUrl, status: ticket.status, response: ticket.response, user: ticket.user?.email ?? ticket.user?.name ?? "Гость", subscription: ticket.subscription ?? "free", createdAt: new Intl.DateTimeFormat("ru-RU", { dateStyle: "short", timeStyle: "short" }).format(ticket.createdAt) }))} />
+          <AdminSupportList initialTickets={tickets.map((ticket) => ({ id: ticket.id, message: ticket.message, pageUrl: ticket.pageUrl, screenshotAttached: Boolean(ticket.screenshotUrl), status: ticket.status, response: ticket.response, user: ticket.user?.email ?? ticket.user?.name ?? "Гость", subscription: ticket.subscription ?? "free", createdAt: new Intl.DateTimeFormat("ru-RU", { dateStyle: "short", timeStyle: "short" }).format(ticket.createdAt) }))} />
         </details>}
 
         <section className="mt-10">

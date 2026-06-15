@@ -9,6 +9,34 @@ const schema = z.object({
   response: z.string().trim().max(4_000).optional(),
 });
 
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUser();
+  if (!user || !isSuperAdmin(user.role)) return Response.json({ error: "Только суперадмин может просматривать вложения." }, { status: 403 });
+  const { id } = await context.params;
+  const ticket = await prisma.supportTicket.findUnique({
+    where: { id },
+    select: { screenshotUrl: true },
+  });
+  if (!ticket?.screenshotUrl) return Response.json({ error: "Скриншот не найден." }, { status: 404 });
+
+  const image = ticket.screenshotUrl.match(/^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/);
+  if (image) {
+    return new Response(Buffer.from(image[1], "base64"), {
+      headers: {
+        "Cache-Control": "private, no-store",
+        "Content-Disposition": `inline; filename="support-${id}.jpg"`,
+        "Content-Type": "image/jpeg",
+        "X-Content-Type-Options": "nosniff",
+      },
+    });
+  }
+
+  if (ticket.screenshotUrl.startsWith("/uploads/support/")) {
+    return Response.redirect(new URL(ticket.screenshotUrl, request.url));
+  }
+  return Response.json({ error: "Некорректное вложение." }, { status: 422 });
+}
+
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   if (!isSameOriginRequest(request)) return Response.json({ error: "Недопустимый источник запроса." }, { status: 403 });
   const user = await getSessionUser();

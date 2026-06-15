@@ -51,6 +51,16 @@ test("premium plan, statistics and AI expose goal-oriented UX", async ({ page })
   await expect(page.getByText("балла за месяц")).toBeVisible();
 });
 
+test("support automatically attaches a screenshot from settings", async ({ page }) => {
+  await login(page, "premium@entgo.local", "PremiumDemo2026!");
+  await page.goto("/settings");
+  await page.getByRole("button", { name: "Написать в поддержку" }).click();
+  const screenshot = page.getByRole("img", { name: "Снимок текущей страницы" });
+  await expect(screenshot).toBeVisible({ timeout: 20_000 });
+  await expect(screenshot).toHaveAttribute("src", /^data:image\/jpeg;base64,/);
+  await expect(page.getByText("Снимок не прикреплён")).toHaveCount(0);
+});
+
 test("admin and superadmin permissions stay separate", async ({ browser }) => {
   const adminContext = await browser.newContext();
   const adminPage = await adminContext.newPage();

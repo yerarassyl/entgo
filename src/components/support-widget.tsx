@@ -3,7 +3,7 @@
 
 import { Camera, CheckCircle2, Headphones, LoaderCircle, Send, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 
 export function SupportWidget() {
   const pathname = usePathname();
@@ -16,31 +16,21 @@ export function SupportWidget() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const openSupport = () => {
-      setOpen(true);
-      setSent(false);
-    };
-    window.addEventListener("entgo:support-open", openSupport);
-    return () => window.removeEventListener("entgo:support-open", openSupport);
-  }, []);
-
-  if (
+  const hidden =
     pathname === "/" ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/exam") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
     pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/premium")
-  ) return null;
+    pathname.startsWith("/premium");
 
-  async function capture() {
+  const capture = useCallback(async () => {
     if (capturing) return;
     setCapturing(true);
     setError("");
     try {
-      const { default: html2canvas } = await import("html2canvas");
+      const { default: html2canvas } = await import("html2canvas-pro");
       const canvas = await html2canvas(document.documentElement, {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -53,18 +43,30 @@ export function SupportWidget() {
         ignoreElements: (element) => element.hasAttribute("data-support-widget"),
       });
       setScreenshot(canvas.toDataURL("image/jpeg", 0.72));
-    } catch {
+    } catch (captureError) {
+      console.error("Support screenshot capture failed", captureError);
       setError("Не удалось сделать снимок. Сообщение можно отправить без него.");
     } finally {
       setCapturing(false);
     }
-  }
+  }, [capturing]);
 
-  async function show() {
+  const show = useCallback(async () => {
     setOpen(true);
     setSent(false);
-    if (!screenshot) await capture();
-  }
+    setScreenshot(undefined);
+    await capture();
+  }, [capture]);
+
+  useEffect(() => {
+    const openSupport = () => {
+      void show();
+    };
+    window.addEventListener("entgo:support-open", openSupport);
+    return () => window.removeEventListener("entgo:support-open", openSupport);
+  }, [show]);
+
+  if (hidden) return null;
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -107,7 +109,7 @@ export function SupportWidget() {
               <button type="button" onClick={capture} disabled={capturing} className="mt-2 inline-flex items-center gap-2 text-xs font-semibold"><Camera size={14} /> Обновить снимок</button>
               <textarea value={message} onChange={(event) => setMessage(event.target.value)} required minLength={5} maxLength={2_000} rows={4} placeholder="Опиши проблему или предложение" className="mt-4 w-full resize-none rounded-xl border border-line p-4 text-sm outline-none focus:border-ink" />
               {error && <p className="mt-2 text-xs text-danger">{error}</p>}
-              <button disabled={sending || message.trim().length < 5} className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#2563eb] text-sm font-semibold text-white disabled:opacity-40">{sending ? <LoaderCircle size={16} className="animate-spin" /> : <Send size={16} />} Отправить</button>
+              <button disabled={capturing || sending || message.trim().length < 5} className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#2563eb] text-sm font-semibold text-white disabled:opacity-40">{sending ? <LoaderCircle size={16} className="animate-spin" /> : <Send size={16} />} Отправить</button>
             </form>
           )}
         </section>
