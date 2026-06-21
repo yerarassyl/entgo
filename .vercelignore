@@ -9,6 +9,6 @@ screenshots-all-pages-*.zip
 verification-latest/
 *.log
 docs/
-tests/
+/tests/
 playwright-report/
 test-results/
