@@ -1,4 +1,6 @@
-import { notFound } from "next/navigation";
+import Link from "next/link";
+import { AlertCircle, ArrowRight } from "lucide-react";
+import { ProductHeader } from "@/components/product-header";
 import { ResultsClient } from "@/components/results-client";
 import { requirePaidUser } from "@/lib/paid-access";
 import { jsonText } from "@/lib/exam";
@@ -36,7 +38,23 @@ export default async function ResultsPage({
       },
     },
   });
-  if (!attempt) notFound();
+  if (!attempt) {
+    return (
+      <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
+        <ProductHeader />
+        <section className="container-shell grid min-h-[calc(100vh-76px)] place-items-center py-12">
+          <div className="max-w-xl rounded-[32px] border border-line bg-white p-8 text-center shadow-[0_24px_70px_rgba(0,0,0,.05)] sm:p-12">
+            <AlertCircle className="mx-auto text-[#2563eb]" size={34} />
+            <h1 className="mt-6 text-3xl font-extrabold tracking-[-.04em]">Разбор ошибок появится после пробника</h1>
+            <p className="mt-4 text-sm leading-6 text-muted">ENTGO покажет, где именно потеряны баллы, какие темы дадут прирост и что делать дальше. AI-разбор встроен в пробники и задания автоматически.</p>
+            <Link href="/tests" className="mt-7 inline-flex h-13 items-center justify-center gap-2 rounded-full bg-[#2563eb] px-7 text-sm font-bold text-white">
+              Перейти к пробникам <ArrowRight size={17} />
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
   const entitlements = await getEntitlements(user.id);
   const [allAttempts, lowerAttempts, forecast, profile] = await Promise.all([
     prisma.testAttempt.count({ where: { status: "COMPLETED", score: { not: null } } }),

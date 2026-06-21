@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Check, ChevronRight, Clock3, Flame, Medal, Play, Target } from "lucide-react";
-import { useMemo } from "react";
+import { Check, ChevronRight, Flame, Medal, Play, Target } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductHeader } from "@/components/product-header";
 
 type DashboardTask = {
@@ -49,6 +49,7 @@ export function DashboardClient({
   weakTopics,
   dateLabel,
   daysToExam,
+  examAt,
   initialTasks,
   initialStreakDays,
   initialStreakCount,
@@ -65,6 +66,7 @@ export function DashboardClient({
   weakTopics: Array<{ id: string; title: string; subject: string; score: number; expectedScoreGain: number }>;
   dateLabel: string;
   daysToExam: number;
+  examAt: string | null;
   initialTasks: DashboardTask[];
   initialStreakDays: StreakDay[];
   initialStreakCount: number;
@@ -89,6 +91,26 @@ export function DashboardClient({
         .reduce((sum, task) => sum + task.durationMin, 0),
     [tasks],
   );
+  const [countdown, setCountdown] = useState({ days: daysToExam, hours: 0, minutes: 0 });
+  useEffect(() => {
+    if (!examAt) {
+      return;
+    }
+    const tick = () => {
+      const diff = Math.max(0, new Date(examAt).getTime() - Date.now());
+      const totalMinutesLeft = Math.floor(diff / 60_000);
+      setCountdown({
+        days: Math.floor(totalMinutesLeft / 1440),
+        hours: Math.floor((totalMinutesLeft % 1440) / 60),
+        minutes: totalMinutesLeft % 60,
+      });
+    };
+    tick();
+    const timer = window.setInterval(tick, 60_000);
+    return () => window.clearInterval(timer);
+  }, [daysToExam, examAt]);
+  const goalGap = Math.max(0, targetScore - forecastScore);
+  const grantChance = university?.chance ?? chanceTarget;
 
   return (
     <main className="mobile-app-page product-v2 min-h-screen bg-paper">
@@ -97,9 +119,23 @@ export function DashboardClient({
 
         <div className="container-shell min-w-0 pb-28 pt-8 sm:pt-12">
           <div className="flex flex-col justify-between gap-6 border-b border-line pb-9 sm:flex-row sm:items-end">
-            <div><p className="text-xs font-bold uppercase tracking-[.16em] text-[#2563eb]">{dateLabel} · {xp} XP</p><h1 className="display mt-3 max-w-4xl text-5xl leading-[.94] sm:text-7xl">Сегодня станем <span className="italic">на балл ближе.</span></h1><p className="mt-4 text-base text-muted">Доброе утро, {firstName}. План уже собран по влиянию на твой результат.</p></div>
-            <div className="flex items-center gap-3"><div className="rounded-full border border-line bg-white px-5 py-3 text-sm"><span className="text-muted">До ЕНТ</span><strong className="ml-3 text-xl">{daysToExam} дней</strong></div><div className="grid size-12 place-items-center rounded-full bg-[#111] text-xs font-bold text-white">{initials}</div></div>
+            <div><p className="text-xs font-bold uppercase tracking-[.16em] text-[#2563eb]">{dateLabel} · {xp} XP</p><h1 className="display mt-3 max-w-4xl text-5xl leading-[.94] sm:text-7xl">До цели {targetScore} баллов осталось <span className="italic">{goalGap} баллов.</span></h1><p className="mt-4 text-base text-muted">{firstName}, AI подстраивает план под твои предметы, пробники и ошибки.</p></div>
+            <div className="flex items-center gap-3"><div className="rounded-[24px] border border-line bg-white px-5 py-4 text-sm"><span className="text-muted">Шанс на грант</span><strong className="ml-3 text-2xl">{grantChance}%</strong></div><div className="grid size-12 place-items-center rounded-full bg-[#111] text-xs font-bold text-white">{initials}</div></div>
           </div>
+
+          <section className="mt-8 grid gap-3 sm:grid-cols-4">
+            {[
+              ["Цель", `${targetScore}`],
+              ["Осталось", `${goalGap} баллов`],
+              ["Шанс на грант", `${grantChance}%`],
+              ["До ЕНТ", `${countdown.days}д ${countdown.hours}ч ${countdown.minutes}м`],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-[24px] border border-line bg-white p-5">
+                <p className="text-xs font-bold uppercase tracking-[.12em] text-muted">{label}</p>
+                <strong className="mt-3 block text-2xl">{value}</strong>
+              </div>
+            ))}
+          </section>
 
           <section className="mt-8 grid gap-6 rounded-[32px] border border-line bg-white p-6 sm:grid-cols-[1fr_auto] sm:items-center sm:p-8">
             <div>
@@ -174,11 +210,6 @@ export function DashboardClient({
             </section>
           </div>
 
-          <section className="mt-5 flex flex-col gap-5 rounded-[24px] border border-line bg-white p-6 sm:flex-row sm:items-center">
-            <div className="grid size-12 shrink-0 place-items-center rounded-full bg-ink text-white"><Clock3 size={20} /></div>
-            <div className="flex-1"><h2 className="font-semibold">Время сфокусироваться</h2><p className="mt-1 text-sm text-muted">Запусти 25-минутную сессию без отвлечений.</p></div>
-            <Link href={tasks.find((task) => !task.completedAt) ? `/study/${tasks.find((task) => !task.completedAt)!.id}` : "/plan"} className="rounded-full border border-ink bg-ink px-6 py-3 text-center text-sm font-semibold text-white">Запустить Pomodoro</Link>
-          </section>
         </div>
       </section>
     </main>

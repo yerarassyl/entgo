@@ -1,0 +1,1 @@
+ALTER TABLE "User" ADD COLUMN "profileSubjects" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];

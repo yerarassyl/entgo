@@ -7,6 +7,15 @@ import { FormEvent, useEffect, useState } from "react";
 import { Brand } from "@/components/brand";
 import { universityCatalog } from "@/data/universities";
 
+const registerUniversities = [
+  ...universityCatalog,
+  {
+    slug: "other",
+    shortName: "Другой вуз",
+    city: "Казахстан",
+  },
+];
+
 type OnboardingData = {
   score: number;
   currentScore?: number;
@@ -161,7 +170,7 @@ export default function RegisterPage() {
               <span className="mb-2 block text-sm font-semibold">Желаемый университет</span>
               <select key={onboarding.desiredUniversitySlug ?? "empty"} name="desiredUniversitySlug" required defaultValue={onboarding.desiredUniversitySlug ?? ""} className="h-13 w-full rounded-xl border border-line bg-white px-4 text-sm outline-none focus:border-ink">
                 <option value="" disabled>Выберите университет</option>
-                {universityCatalog.map((university) => <option key={university.slug} value={university.slug}>{university.shortName} · {university.city}</option>)}
+                {registerUniversities.map((university) => <option key={university.slug} value={university.slug}>{university.shortName} · {university.city}</option>)}
               </select>
             </label>
             <label className="block">

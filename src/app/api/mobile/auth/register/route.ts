@@ -13,6 +13,7 @@ const schema = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
   password: z.string().min(10).max(128).regex(/[A-Za-zА-Яа-яЁё]/).regex(/\d/),
   targetScore: z.number().int().min(60).max(140),
+  profileSubjects: z.array(z.string().trim().min(2).max(80)).max(2).default([]),
   dailyMinutes: z.number().int().min(10).max(240).default(45),
   desiredUniversitySlug: z.string().min(2).max(80),
   examDate: z.string().date().nullable().optional(),
@@ -33,16 +34,16 @@ export async function POST(request: Request) {
       where: { slug: parsed.data.desiredUniversitySlug },
       select: { id: true },
     });
-    if (!university) return mobileJson({ error: "Выберите университет." }, { status: 400 });
     const user = await prisma.user.create({
       data: {
         name: parsed.data.name,
         email: parsed.data.email,
         passwordHash: await hash(parsed.data.password, 12),
         targetScore: parsed.data.targetScore,
+        profileSubjects: parsed.data.profileSubjects,
         dailyMinutes: parsed.data.dailyMinutes,
         examDate: parsed.data.examDate ? new Date(`${parsed.data.examDate}T09:00:00`) : null,
-        desiredUniversityId: university.id,
+        desiredUniversityId: university?.id,
       },
     });
     await prisma.$transaction([

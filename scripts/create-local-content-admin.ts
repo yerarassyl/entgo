@@ -6,7 +6,7 @@ async function main() {
     throw new Error("Local admin bootstrap is disabled in production.");
   }
 
-  const email = "content-admin@entgo.local";
+  const email = "content-admin@entgo.kz";
   const password = "ContentAdmin2026!";
   const prisma = new PrismaClient();
 

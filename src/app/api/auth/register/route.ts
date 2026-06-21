@@ -94,6 +94,7 @@ export async function POST(request: Request) {
         email,
         passwordHash: await hash(password, 12),
         targetScore: onboarding.score,
+        profileSubjects: onboarding.subjects,
         dailyMinutes: dailyMinutes(onboarding.time[0]),
         examDate: examDate ? new Date(`${examDate}T09:00:00`) : targetExamDate(onboarding.date[0]),
         desiredUniversityId: university?.id,

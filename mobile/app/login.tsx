@@ -17,7 +17,7 @@ import { colors, radius } from "@/src/theme";
 
 export default function LoginScreen() {
   const { login } = useAuth();
-  const [email, setEmail] = useState("premium@entgo.local");
+  const [email, setEmail] = useState("premium@entgo.kz");
   const [password, setPassword] = useState("PremiumDemo2026!");
   const [secure, setSecure] = useState(true);
   const [error, setError] = useState<string | null>(null);

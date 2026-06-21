@@ -109,6 +109,7 @@ model User {
   city                String?
   school              String?
   targetScore         Int?
+  profileSubjects     String[]                 @default([])
   examDate            DateTime?
   dailyMinutes        Int?
   desiredUniversityId String?

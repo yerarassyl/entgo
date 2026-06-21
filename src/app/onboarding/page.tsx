@@ -6,21 +6,13 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
-  Atom,
   BookOpen,
   BrainCircuit,
-  Calculator,
   Check,
   CheckCircle2,
   ClockAlert,
-  Dna,
-  FlaskConical,
-  Globe2,
   GraduationCap,
-  Languages,
-  Laptop,
   Leaf,
-  Landmark,
   LockKeyhole,
   MapPin,
   Sparkles,
@@ -32,6 +24,7 @@ import {
 import { useRouter } from "next/navigation";
 import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { Brand } from "@/components/brand";
+import { profileSubjects, topicsForSubjects } from "@/data/profile-subjects";
 import { universityCatalog } from "@/data/universities";
 
 type Phase = "questions" | "analyzing" | "route" | "plan";
@@ -69,19 +62,6 @@ const steps = [
   },
 ] as const;
 
-const subjectOptions = [
-  { value: "Математика", icon: Calculator },
-  { value: "Физика", icon: Atom },
-  { value: "Информатика", icon: Laptop },
-  { value: "Химия", icon: FlaskConical },
-  { value: "Биология", icon: Dna },
-  { value: "География", icon: Globe2 },
-  { value: "Всемирная история", icon: Landmark },
-  { value: "Иностранный язык", icon: Languages },
-  { value: "Казахский язык", icon: BookOpen },
-  { value: "Русский язык", icon: BookOpen },
-] as const;
-
 const cityOptions = ["Астана", "Алматы", "Шымкент", "Другой город"];
 
 const timeOptions = [
@@ -113,12 +93,6 @@ const timeOptions = [
     insight: "Построим плавный маршрут без перегрузки: фундамент, регулярное повторение и постепенный выход на экзаменационный темп.",
     icon: Leaf,
   },
-];
-
-const topTopics = [
-  { name: "Производные", growth: 5, reason: "Высокая частота появления на ЕНТ" },
-  { name: "Грамотность чтения", growth: 4, reason: "Самый быстрый источник дополнительных баллов" },
-  { name: "Теория вероятности", growth: 3, reason: "Часто вызывает ошибки" },
 ];
 
 function SummaryCard({
@@ -183,10 +157,26 @@ export default function OnboardingPage() {
   const [leaving, setLeaving] = useState(false);
 
   const current = steps[step];
-  const universityData = universityCatalog.find((item) => item.slug === university) ?? universityCatalog[0];
+  const allUniversities = useMemo(() => [
+    ...universityCatalog,
+    {
+      slug: "other",
+      name: "Другой университет",
+      shortName: "Другой вуз",
+      city: "Казахстан",
+      logoText: "ENTGO",
+      logoPath: "/entgo-mark-dark.svg",
+      grantScore: targetScore,
+      website: "",
+      description: "Если твоего университета нет в списке, выбери этот вариант. План всё равно построится по цели и предметам.",
+      programs: ["Индивидуальная цель"],
+    },
+  ], [targetScore]);
+  const universityData = allUniversities.find((item) => item.slug === university) ?? allUniversities[0];
   const scoreGap = Math.max(0, targetScore - currentScore);
   const priorityTopics = Math.max(8, Math.ceil(scoreGap / 2));
   const readiness = Math.min(92, Math.max(48, 100 - Math.round(scoreGap * 0.8)));
+  const topTopics = useMemo(() => topicsForSubjects(selectedSubjects).slice(0, 3), [selectedSubjects]);
   const currentScoreProgress = ((currentScore - 20) / 120) * 100;
   const targetScoreProgress = ((targetScore - 20) / 120) * 100;
   const selectedTimeOption = timeOptions.find((option) => option.value === timeLeft);
@@ -330,9 +320,9 @@ export default function OnboardingPage() {
           <span className="route-fade-up inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]">
             <Sparkles size={15} /> Персональный анализ завершен
           </span>
-          <div className="route-fade-up route-delay-1 relative mx-auto mt-7 max-w-5xl">
+          <div className="route-fade-up route-delay-1 mx-auto mt-7 max-w-5xl">
             <h1 className="mx-auto max-w-4xl text-4xl font-extrabold tracking-[-.055em] text-[#172033] sm:text-6xl lg:text-[64px]">Твой маршрут до гранта готов</h1>
-            <div className="mt-6 flex justify-center lg:absolute lg:-right-4 lg:top-0 lg:mt-0">
+            <div className="mt-6 flex justify-center">
               <div className="grid size-28 place-items-center rounded-full bg-[conic-gradient(#2563eb_var(--readiness),#dbe8ff_0)] p-[7px] shadow-[0_12px_35px_rgba(37,99,235,.14)]" style={{ "--readiness": `${readiness}%` } as CSSProperties}>
                 <span className="grid size-full place-items-center rounded-full bg-white text-center">
                   <span><small className="block text-[10px] font-semibold text-[#7b8495]">Готовность</small><strong className="mt-1 block text-2xl">{readiness}%</strong></span>
@@ -405,8 +395,8 @@ export default function OnboardingPage() {
 
   if (phase === "plan") {
     const weeks = [
-      ["Функции", "Тригонометрия", "Грамотность чтения"],
-      ["Производные", "Анализ текста", "Геометрия"],
+      topTopics.map((topic) => topic.name),
+      topicsForSubjects(selectedSubjects).slice(3, 6).map((topic) => topic.name),
     ];
     return (
       <main className="min-h-screen bg-[#f7f7f4] p-3 sm:p-6">
@@ -545,7 +535,7 @@ export default function OnboardingPage() {
 
             {current.key === "university" && (
               <div className="mt-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {universityCatalog.map((item) => {
+                {allUniversities.map((item) => {
                   const selected = university === item.slug;
                   return (
                     <button key={item.slug} onClick={() => { setUniversity(item.slug); setCity(item.city); }} className={`relative flex min-h-24 items-center gap-4 rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5 ${selected ? "border-[#2563eb] bg-[#2563eb] text-white shadow-[0_15px_35px_rgba(37,99,235,.2)]" : "border-[#e1e6ef] bg-white hover:border-[#aac3f8]"}`}>
@@ -575,7 +565,7 @@ export default function OnboardingPage() {
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-3 xl:grid-cols-3">
-                  {subjectOptions.map(({ value, icon: Icon }) => {
+                  {profileSubjects.map(({ value, icon: Icon }) => {
                     const selected = selectedSubjects.includes(value);
                     const unavailable = !selected && selectedSubjects.length === 2;
                     return (
@@ -610,16 +600,29 @@ export default function OnboardingPage() {
             )}
 
             {current.key === "city" && (
-              <div className="mt-10 grid gap-4 sm:grid-cols-2">
-                {cityOptions.map((option) => {
-                  const selected = city === option;
-                  return (
-                    <button key={option} onClick={() => setCity(option)} className={`flex min-h-24 items-center justify-between rounded-2xl border px-6 text-left text-lg font-bold transition-all ${selected ? "border-[#2563eb] bg-[#2563eb] text-white" : "border-[#e1e6ef] bg-white hover:border-[#aac3f8]"}`}>
-                      <span className="flex items-center gap-3"><MapPin size={21} /> {option}</span>
-                      {selected && <CheckCircle2 size={20} />}
-                    </button>
-                  );
-                })}
+              <div className="mt-10">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {cityOptions.map((option) => {
+                    const selected = city === option || (option === "Другой город" && !cityOptions.includes(city));
+                    return (
+                      <button key={option} onClick={() => setCity(option)} className={`flex min-h-24 items-center justify-between rounded-2xl border px-6 text-left text-lg font-bold transition-all ${selected ? "border-[#2563eb] bg-[#2563eb] text-white" : "border-[#e1e6ef] bg-white hover:border-[#aac3f8]"}`}>
+                        <span className="flex items-center gap-3"><MapPin size={21} /> {option}</span>
+                        {selected && <CheckCircle2 size={20} />}
+                      </button>
+                    );
+                  })}
+                </div>
+                {(city === "Другой город" || !cityOptions.includes(city)) && (
+                  <label className="mt-5 block">
+                    <span className="mb-2 block text-sm font-semibold text-[#667083]">Напиши свой город</span>
+                    <input
+                      value={city === "Другой город" ? "" : city}
+                      onChange={(event) => setCity(event.target.value)}
+                      placeholder="Например, Караганда"
+                      className="h-14 w-full rounded-2xl border border-[#e1e6ef] bg-white px-5 text-sm outline-none focus:border-[#2563eb]"
+                    />
+                  </label>
+                )}
               </div>
             )}
 

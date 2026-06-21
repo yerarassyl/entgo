@@ -81,6 +81,11 @@ export default async function DashboardPage() {
   const daysToExam = user.examDate
     ? Math.max(0, Math.ceil((user.examDate.getTime() - now.getTime()) / 86_400_000))
     : 47;
+  const relevantMastery = profile.profileSubjects.length
+    ? forecast.mastery.filter((row) =>
+        row.topic.subject.isRequired || profile.profileSubjects.includes(row.topic.subject.titleRu),
+      )
+    : forecast.mastery;
 
   return (
     <DashboardClient
@@ -98,7 +103,7 @@ export default async function DashboardPage() {
         grantScore: profile.desiredUniversity.grantScore,
         chance: calculateAdmissionChance(forecast.expected, profile.desiredUniversity.grantScore),
       } : null}
-      weakTopics={forecast.mastery.slice(0, 3).map((row) => ({
+      weakTopics={relevantMastery.slice(0, 3).map((row) => ({
         id: row.topicId,
         title: row.topic.titleRu,
         subject: row.topic.subject.titleRu,
@@ -107,6 +112,7 @@ export default async function DashboardPage() {
       }))}
       dateLabel={dateLabel}
       daysToExam={daysToExam}
+      examAt={user.examDate?.toISOString() ?? null}
       initialTasks={todayTasks}
       initialStreakDays={streakDays}
       initialStreakCount={streakCount}

@@ -1,0 +1,9 @@
+<svg width="280" height="64" viewBox="0 0 280 64" xmlns="http://www.w3.org/2000/svg">
+  <rect width="280" height="64" rx="12" fill="#f9f9f7" stroke="#e4e4de"/>
+  <g transform="translate(20,15)">
+    <path d="M17 8L29 13.5L17 19L5 13.5L17 8Z" stroke="#111110" stroke-width="2" stroke-linejoin="round" fill="none"/>
+    <path d="M10 16V22C10 22 13 25 17 25C21 25 24 22 24 22V16" stroke="#111110" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <line x1="29" y1="13.5" x2="29" y2="21" stroke="#111110" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text x="68" y="40" font-family="Georgia, serif" font-size="26" fill="#111110" letter-spacing="-0.5">entgo<tspan fill="#7a7a75" font-style="italic">.kz</tspan></text>
+</svg>

@@ -42,28 +42,32 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
   const plans = [
     {
       id: "premium" as const,
-      title: "До ЕНТ",
-      subtitle: "Для системной подготовки в текущем учебном сезоне.",
+      title: "Premium",
+      subtitle: "Самый популярный тариф для регулярной подготовки.",
       price: "4 990 ₸",
+      oldPrice: "15 000 ₸",
       note: "в месяц",
-      dark: false,
+      dark: true,
       items: [
         "Полный персональный план",
         "Все пробники ЕНТ",
         "Анализ ошибок",
         "Статистика прогресса",
         "Библиотека тем",
+        "AI объяснение ошибок",
+        "AI помощник 24/7",
       ],
     },
     {
       id: "until-ent" as const,
-      title: "Premium",
-      subtitle: "Максимальный результат с полным набором инструментов.",
+      title: "До ЕНТ",
+      subtitle: "Разовый доступ до экзамена в текущем сезоне.",
       price: "19 990 ₸",
+      oldPrice: "28 000 ₸",
       note: "один платёж до экзамена",
-      dark: true,
+      dark: false,
       items: [
-        "Всё из тарифа «До ЕНТ»",
+        "Всё из Premium",
         "AI объяснение ошибок",
         "AI помощник 24/7",
         "Персональные рекомендации",
@@ -82,6 +86,7 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
             <h2 className="text-3xl font-extrabold tracking-[-.04em]">{plan.title}</h2>
             <p className={`mt-3 min-h-12 text-sm leading-6 ${plan.dark ? "text-white/65" : "text-[#737d8e]"}`}>{plan.subtitle}</p>
             <p className="mt-8 text-5xl font-extrabold tracking-[-.055em]">{plan.price}</p>
+            <p className={`mt-2 text-sm line-through ${plan.dark ? "text-white/45" : "text-[#9aa3b2]"}`}>раньше {plan.oldPrice}</p>
             <p className={`mt-2 text-sm ${plan.dark ? "text-white/55" : "text-[#7b8495]"}`}>{plan.note}</p>
             <div className={`my-8 h-px ${plan.dark ? "bg-white/15" : "bg-[#e2e7ef]"}`} />
             <p className="text-sm font-extrabold">Что входит</p>

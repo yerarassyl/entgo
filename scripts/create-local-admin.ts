@@ -5,7 +5,7 @@ async function main() {
   if (process.env.NODE_ENV === "production") {
     throw new Error("Local admin bootstrap is disabled in production.");
   }
-  const email = "admin@entgo.local";
+  const email = "admin@entgo.kz";
   const password = "AdminDemo2026!";
   const prisma = new PrismaClient();
   await prisma.user.upsert({

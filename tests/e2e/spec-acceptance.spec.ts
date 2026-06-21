@@ -37,7 +37,7 @@ test("landing and registration match the product specification", async ({ page }
 });
 
 test("premium plan, statistics and AI expose goal-oriented UX", async ({ page }) => {
-  await login(page, "premium@entgo.local", "PremiumDemo2026!");
+  await login(page, "premium@entgo.kz", "PremiumDemo2026!");
   await page.goto("/plan");
   await expect(page.getByText("Сегодня ты ближе к цели")).toBeVisible();
   await expect(page.getByText("Текущий прогноз")).toBeVisible();
@@ -52,7 +52,7 @@ test("premium plan, statistics and AI expose goal-oriented UX", async ({ page })
 });
 
 test("support automatically attaches a screenshot from settings", async ({ page }) => {
-  await login(page, "premium@entgo.local", "PremiumDemo2026!");
+  await login(page, "premium@entgo.kz", "PremiumDemo2026!");
   await page.goto("/settings");
   await page.getByRole("button", { name: "Написать в поддержку" }).click();
   const screenshot = page.getByRole("img", { name: "Снимок текущей страницы" });
@@ -64,7 +64,7 @@ test("support automatically attaches a screenshot from settings", async ({ page 
 test("admin and superadmin permissions stay separate", async ({ browser }) => {
   const adminContext = await browser.newContext();
   const adminPage = await adminContext.newPage();
-  await login(adminPage, "content-admin@entgo.local", "ContentAdmin2026!");
+  await login(adminPage, "content-admin@entgo.kz", "ContentAdmin2026!");
   await expect(adminPage).toHaveURL(/\/admin$/);
   await expect(adminPage.getByText("Контент-админ · ограниченный доступ")).toBeVisible();
   await expect(adminPage.getByText("Пользователи, роли и подписки")).toHaveCount(0);
@@ -73,7 +73,7 @@ test("admin and superadmin permissions stay separate", async ({ browser }) => {
 
   const superContext = await browser.newContext();
   const superPage = await superContext.newPage();
-  await login(superPage, "admin@entgo.local", "AdminDemo2026!");
+  await login(superPage, "admin@entgo.kz", "AdminDemo2026!");
   await expect(superPage).toHaveURL(/\/admin$/);
   await expect(superPage.getByText("Пользователи, роли и подписки")).toBeVisible();
   await expect(superPage.getByText("Заявки на подарок 130+")).toBeVisible();

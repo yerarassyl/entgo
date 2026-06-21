@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   if (!localHost || process.env.LOCAL_ADMIN_DEMO !== "true") {
     return new Response("Not found", { status: 404 });
   }
-  const user = await prisma.user.findUnique({ where: { email: "admin@entgo.local" } });
+  const user = await prisma.user.findUnique({ where: { email: "admin@entgo.kz" } });
   if (!user || (user.role !== "ADMIN" && user.role !== "SUPERADMIN")) {
     return new Response("Local admin is not initialized", { status: 404 });
   }

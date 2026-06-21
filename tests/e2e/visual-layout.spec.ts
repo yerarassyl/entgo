@@ -58,7 +58,7 @@ test.describe("visual regression and responsive safety", () => {
     test(`authenticated layouts at ${width}px`, async ({ page }) => {
       test.skip(test.info().project.name.includes("mobile"));
       await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
-      await login(page, "premium@entgo.local", "PremiumDemo2026!");
+      await login(page, "premium@entgo.kz", "PremiumDemo2026!");
 
       for (const [name, route] of [
         ["dashboard", "/dashboard"],
@@ -80,7 +80,7 @@ test.describe("visual regression and responsive safety", () => {
     test(`superadmin layout at ${width}px`, async ({ page }) => {
       test.skip(test.info().project.name.includes("mobile"));
       await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
-      await login(page, "admin@entgo.local", "AdminDemo2026!");
+      await login(page, "admin@entgo.kz", "AdminDemo2026!");
       await expectNoOverflow(page);
       await expect(page).toHaveScreenshot(`admin-${width}.png`, {
         animations: "disabled",
@@ -92,7 +92,7 @@ test.describe("visual regression and responsive safety", () => {
 
 test("mobile app controls remain usable from 320 to 430px", async ({ page }) => {
   test.skip(test.info().project.name.includes("mobile"));
-  await login(page, "premium@entgo.local", "PremiumDemo2026!");
+  await login(page, "premium@entgo.kz", "PremiumDemo2026!");
   for (const width of [320, 375, 390, 430]) {
     await page.setViewportSize({ width, height: 844 });
     for (const route of ["/dashboard", "/tests", "/plan", "/study/cmq81w2y90020es60p58zpcxh", "/settings"]) {
@@ -114,7 +114,7 @@ test("mobile app controls remain usable from 320 to 430px", async ({ page }) => 
 
 test("repeated topic sessions expose distinct learning stages", async ({ page }) => {
   test.skip(test.info().project.name.includes("mobile"));
-  await login(page, "premium@entgo.local", "PremiumDemo2026!");
+  await login(page, "premium@entgo.kz", "PremiumDemo2026!");
   const routes = [
     "/study/cmq81w2y9001nes60qome1ovf",
     "/study/cmq81w2y9001qes607v22jomc",
@@ -139,7 +139,7 @@ test("registration columns align and study sessions have no focus timer", async 
   const formTop = await page.locator("form").evaluate((element) => element.getBoundingClientRect().top);
   expect(Math.abs(heroTop - formTop)).toBeLessThanOrEqual(2);
 
-  await login(page, "premium@entgo.local", "PremiumDemo2026!");
+  await login(page, "premium@entgo.kz", "PremiumDemo2026!");
   await page.goto("/study/cmq81w2y9001nes60qome1ovf");
   await expect(page.getByText("Режим фокуса")).toHaveCount(0);
   await expect(page.getByText("Готов к фокусу")).toHaveCount(0);

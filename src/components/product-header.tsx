@@ -7,9 +7,9 @@ import { Brand } from "@/components/brand";
 
 const navigation = [
   ["Главная", "/dashboard"],
-  ["Пробники", "/tests"],
-  ["Темы", "/topics"],
   ["Мой план", "/plan"],
+  ["Пробники", "/tests"],
+  ["Разбор ошибок", "/results"],
   ["Статистика", "/statistics"],
 ] as const;
 

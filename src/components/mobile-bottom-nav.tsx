@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, CalendarDays, Home, ListChecks, Sparkles } from "lucide-react";
+import { BarChart3, CalendarDays, Home, ListChecks, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const items = [
   ["Главная", "/dashboard", Home],
-  ["Пробники", "/tests", ListChecks],
-  ["Темы", "/topics", BookOpen],
   ["План", "/plan", CalendarDays],
+  ["Пробники", "/tests", ListChecks],
+  ["Статистика", "/statistics", BarChart3],
 ] as const;
 
 const enabledPrefixes = [

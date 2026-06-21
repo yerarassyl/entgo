@@ -1,4 +1,5 @@
 import "server-only";
+import { topicsForSubjects } from "@/data/profile-topic-catalog";
 import { getMasteryMap } from "@/lib/mastery";
 import { prisma } from "@/lib/prisma";
 
@@ -39,6 +40,52 @@ type PlanTopic = {
   expectedGain: number;
 };
 
+function slugPart(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-zа-яё0-9]+/gi, "-")
+    .replace(/^-|-$/g, "");
+}
+
+async function ensureSelectedSubjectTopics(subjects: string[]) {
+  if (!subjects.length) return;
+  for (const subjectName of subjects) {
+    const subject = await prisma.subject.upsert({
+      where: { slug: slugPart(subjectName) },
+      update: { titleRu: subjectName, titleKk: subjectName, isRequired: false },
+      create: {
+        slug: slugPart(subjectName),
+        titleRu: subjectName,
+        titleKk: subjectName,
+        isRequired: false,
+      },
+    });
+    for (const topic of topicsForSubjects([subjectName])) {
+      await prisma.topic.upsert({
+        where: { subjectId_slug: { subjectId: subject.id, slug: slugPart(topic.name) } },
+        update: {
+          titleRu: topic.name,
+          titleKk: topic.name,
+          expectedScoreGain: topic.growth,
+          description: topic.reason,
+          weight: Math.max(1, topic.growth / 2),
+          status: "PUBLISHED",
+        },
+        create: {
+          subjectId: subject.id,
+          slug: slugPart(topic.name),
+          titleRu: topic.name,
+          titleKk: topic.name,
+          expectedScoreGain: topic.growth,
+          description: topic.reason,
+          weight: Math.max(1, topic.growth / 2),
+          status: "PUBLISHED",
+        },
+      });
+    }
+  }
+}
+
 function taskFor(topic: PlanTopic, activity: "THEORY" | "PRACTICE" | "REVIEW", duration: number) {
   if (activity === "THEORY") {
     return {
@@ -62,9 +109,23 @@ function taskFor(topic: PlanTopic, activity: "THEORY" | "PRACTICE" | "REVIEW", d
 }
 
 async function buildTopicQueue(userId: string): Promise<PlanTopic[]> {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { profileSubjects: true },
+  });
+  await ensureSelectedSubjectTopics(user.profileSubjects);
+  const subjectFilter = user.profileSubjects.length
+    ? {
+        OR: [
+          { subject: { is: { isRequired: true } } },
+          { subject: { is: { titleRu: { in: user.profileSubjects } } } },
+        ],
+      }
+    : undefined;
   const [mastery, topics] = await Promise.all([
     getMasteryMap(userId),
     prisma.topic.findMany({
+      where: subjectFilter,
       include: { subject: true },
       orderBy: [{ weight: "desc" }, { titleRu: "asc" }],
     }),

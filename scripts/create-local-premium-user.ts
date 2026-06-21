@@ -6,7 +6,7 @@ async function main() {
     throw new Error("Local premium bootstrap is disabled in production.");
   }
 
-  const email = "premium@entgo.local";
+  const email = "premium@entgo.kz";
   const password = "PremiumDemo2026!";
   const now = new Date();
   const currentEnd = new Date(now);
