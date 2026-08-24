@@ -65,6 +65,16 @@ export function ExamClient({ topicId }: { topicId?: string }) {
   }, [payload, seconds]);
 
   const question = payload?.questions[current];
+  const subjectGroups = useMemo(() => {
+    if (!payload) return [];
+    const groups = new Map<string, Array<{ item: ExamQuestion; index: number }>>();
+    payload.questions.forEach((item, index) => {
+      const group = groups.get(item.subject) ?? [];
+      group.push({ item, index });
+      groups.set(item.subject, group);
+    });
+    return [...groups.entries()];
+  }, [payload]);
   const answeredCount = Object.keys(answers).length;
   const elapsed = payload ? Math.min(payload.attempt.durationSec, payload.attempt.durationSec - seconds) : 0;
   const time = useMemo(() => `${String(Math.floor(seconds / 3600)).padStart(2, "0")}:${String(Math.floor((seconds % 3600) / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`, [seconds]);
@@ -150,7 +160,7 @@ export function ExamClient({ topicId }: { topicId?: string }) {
       <div className="landing-shell grid gap-6 py-5 lg:grid-cols-[280px_minmax(0,1fr)] lg:py-8">
         <aside className="hidden rounded-[30px] border border-line bg-white p-6 lg:block">
           <p className="text-xs font-bold uppercase tracking-[.15em] text-muted">Пробный ЕНТ</p>
-          <div className="mt-6 grid grid-cols-5 gap-2">{payload.questions.map((item, index) => <button key={item.id} onClick={() => setCurrent(index)} className={`relative aspect-square rounded-lg text-xs font-bold ${current === index ? "bg-ink text-white" : answers[item.id] ? "bg-[#e9f7ef] text-success" : "bg-paper"}`}>{index + 1}{flagged.has(item.id) && <span className="absolute right-1 top-1 size-1.5 rounded-full bg-[#ef7c30]" />}</button>)}</div>
+          <div className="mt-5 space-y-5">{subjectGroups.map(([subject, items]) => <div key={subject}><div className="mb-2 flex items-center justify-between gap-2"><p className="truncate text-[11px] font-bold uppercase tracking-[.08em] text-muted">{subject}</p><span className="text-[11px] text-muted">{items.length}</span></div><div className="grid grid-cols-5 gap-2">{items.map(({ item, index }) => <button key={item.id} aria-label={`${subject}, вопрос ${index + 1}`} onClick={() => setCurrent(index)} className={`relative aspect-square rounded-lg text-xs font-bold ${current === index ? "bg-ink text-white" : answers[item.id] ? "bg-[#e9f7ef] text-success" : "bg-paper"}`}>{index + 1}{flagged.has(item.id) && <span className="absolute right-1 top-1 size-1.5 rounded-full bg-[#ef7c30]" />}</button>)}</div></div>)}</div>
           <div className="mt-7 border-t border-line pt-5 text-xs leading-5 text-muted"><p><strong className="text-ink">{answeredCount}</strong> отвечено</p><p><strong className="text-ink">{payload.questions.length - answeredCount}</strong> осталось</p></div>
           <p className="mt-5 rounded-xl bg-paper p-3 text-xs leading-5 text-muted">Правильные ответы и объяснения откроются только после завершения.</p>
         </aside>

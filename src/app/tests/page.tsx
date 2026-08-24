@@ -3,12 +3,12 @@ import { ArrowRight, BrainCircuit, Clock3, ListChecks, Target } from "lucide-rea
 import { ProductHeader } from "@/components/product-header";
 import { requirePaidUser } from "@/lib/paid-access";
 import { getEntitlements } from "@/lib/entitlements";
-import { ensureDiagnosticTest } from "@/lib/exam";
+import { ensureDiagnosticTestReady } from "@/lib/exam";
 import { prisma } from "@/lib/prisma";
 
 export default async function TestsPage() {
   const user = await requirePaidUser();
-  await ensureDiagnosticTest();
+  await ensureDiagnosticTestReady();
   const [tests, entitlements] = await Promise.all([
     prisma.test.findMany({
       where: { isPublished: true },

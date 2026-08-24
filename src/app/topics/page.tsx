@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, CheckCircle2 } from "lucide-react";
 import { ProductHeader } from "@/components/product-header";
 import { requirePaidUser } from "@/lib/paid-access";
-import { ensureDiagnosticTest } from "@/lib/exam";
 import { prisma } from "@/lib/prisma";
 
 function countWord(value: number, one: string, few: string, many: string) {
@@ -15,7 +14,6 @@ function countWord(value: number, one: string, few: string, many: string) {
 
 export default async function TopicsPage() {
   const user = await requirePaidUser();
-  await ensureDiagnosticTest();
 
   const [subjects, answers] = await Promise.all([
     prisma.subject.findMany({

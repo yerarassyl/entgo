@@ -1,4 +1,3 @@
-import { ensureDiagnosticTest } from "@/lib/exam";
 import { getMobileSessionUser } from "@/lib/mobile-auth";
 import { mobileJson, mobileOptions } from "@/lib/mobile-response";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +9,6 @@ export function OPTIONS() {
 export async function GET(request: Request) {
   const user = await getMobileSessionUser(request);
   if (!user) return mobileJson({ error: "Требуется вход." }, { status: 401 });
-  await ensureDiagnosticTest();
   const [subjects, answers] = await Promise.all([
     prisma.subject.findMany({
       include: {

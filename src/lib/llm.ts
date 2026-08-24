@@ -45,7 +45,7 @@ export async function generateQwenText({
       temperature,
       enable_thinking: false,
     }),
-    signal: AbortSignal.timeout(20_000),
+    signal: AbortSignal.timeout(10_000),
   });
   const result = (await response.json().catch(() => ({}))) as QwenResponse;
   if (!response.ok) {

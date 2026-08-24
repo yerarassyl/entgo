@@ -82,6 +82,7 @@ export function DashboardClient({
     .map((part) => part[0]?.toUpperCase())
     .join("") || "У";
   const completedTasks = tasks.filter((task) => task.completedAt).length;
+  const daysUntilReward = Math.max(0, 7 - streakCount);
   const totalMinutes = tasks.reduce((sum, task) => sum + task.durationMin, 0);
   const progress = tasks.length ? (completedTasks / tasks.length) * 100 : 0;
   const completedMinutes = useMemo(
@@ -202,11 +203,11 @@ export function DashboardClient({
             </section>
             <section className="rounded-[24px] border border-line bg-white p-6">
               <div className="flex items-center justify-between"><h2 className="font-semibold">Серия</h2><Flame className="text-[#ef7c30]" /></div>
-              <p className="display mt-5 text-5xl">{streakCount} <span className="font-sans text-sm text-muted">{dayWord(streakCount)}</span></p>
+              <p className="display mt-5 flex items-baseline gap-2 text-5xl">{streakCount}<span className="font-sans text-sm font-medium tracking-normal text-muted">{dayWord(streakCount)}</span></p>
               <div className="mt-6 grid grid-cols-7 gap-1.5">
                 {streakDays.map((day) => <div key={day.key} className="text-center"><div className={`mx-auto grid size-7 place-items-center rounded-full text-[10px] font-bold ${day.active ? "bg-ink text-white" : "bg-paper text-muted"}`}>{day.active ? <Check size={12} /> : ""}</div><p className="mt-2 text-[10px] uppercase text-muted">{day.label}</p></div>)}
               </div>
-              <div className="mt-6 flex items-center gap-3 rounded-xl bg-paper p-3"><Medal size={20} /><p className="text-xs leading-5"><strong>{Math.max(0, 7 - streakCount)} дней до награды</strong><br /><span className="text-muted">бейдж «Неделя силы»</span></p></div>
+              <div className="mt-6 flex items-center gap-3 rounded-xl bg-paper p-3"><Medal size={20} /><p className="text-xs leading-5"><strong>{daysUntilReward} {dayWord(daysUntilReward)} до награды</strong><br /><span className="text-muted">бейдж «Неделя силы»</span></p></div>
             </section>
           </div>
 
