@@ -75,7 +75,7 @@ def parse_docx(path: Path, subject: str):
         correct = [i for i, value in enumerate(current["options"]) if value[1]]
         if len(correct) == 1 and len(current["options"]) >= 2:
             items.append(base_item(
-                f"docx-{slug(subject)}-{topic_number}-{current['number']}", subject, topic_title,
+                f"docx-{slug(subject)}-{slug(topic_title)}-{current['number']}", subject, topic_title,
                 current["question"], [value[0] for value in current["options"]], correct[0],
                 current.get("explanation", ""), path.name,
             ))
@@ -105,18 +105,37 @@ def parse_docx(path: Path, subject: str):
     return items
 
 
+DOCX_SUBJECTS = {
+    "ent_biology_db.docx": "Биология",
+    "ent_chemistry_db.docx": "Химия",
+    "ent_geo_db.docx": "География",
+    "ent_history_db2.docx": "История Казахстана",
+    "ent_history_db_2.docx": "История Казахстана",
+    "ent_informatics_db.docx": "Информатика",
+    "ent_law_db.docx": "Основы права",
+    "ent_math_db.docx": "Математика",
+    "ent_mathlit_db.docx": "Математическая грамотность",
+    "ent_physics_db.docx": "Физика",
+    "ent_reading_db.docx": "Грамотность чтения",
+    "ent_worldhistory_db.docx": "Всемирная история",
+}
+
+
 def main():
     output = Path(sys.argv[1])
     files = [Path(value) for value in sys.argv[2:]]
     items = []
-    # Prefer the newer archive when both archives contain the same question slug.
     for path in files:
         if path.suffix.lower() == ".zip":
-            items.extend(parse_raw_zip(path))
-        elif path.name == "ent_math_db.docx":
-            items.extend(parse_docx(path, "Математика"))
-        else:
-            items.extend(parse_docx(path, "История Казахстана"))
+            # Zip questions overlap the docx for 11 subjects; the 3 literature
+            # subjects are already populated in the DB. Lessons were imported
+            # separately. Skip to avoid duplicate questions.
+            continue
+        subject = DOCX_SUBJECTS.get(path.name)
+        if subject is None:
+            print(f"WARN: no subject mapping for {path.name}", file=sys.stderr)
+            continue
+        items.extend(parse_docx(path, subject))
     unique = {}
     for item in items:
         unique[item["slug"]] = item

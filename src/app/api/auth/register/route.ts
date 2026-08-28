@@ -7,6 +7,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { isSameOriginRequest } from "@/lib/request-security";
 import { createEmailVerification } from "@/lib/email-verification";
 import { ensureUniversities } from "@/lib/universities";
+import { isValidProfilePair } from "@/data/profile-pairs";
 
 const registrationSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -24,6 +25,7 @@ const registrationSchema = z.object({
   school: z.string().trim().max(120).nullable().optional(),
   onboarding: z.object({
     score: z.number().int().min(60).max(140),
+    currentScore: z.number().int().min(0).max(140).optional(),
     date: z.array(z.string()).max(1),
     subjects: z.array(z.string().trim().min(2).max(80)).max(2),
     time: z.array(z.string()).max(1),
@@ -81,6 +83,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "Проверьте заполненные поля." }, { status: 400 });
   }
 
+  if (!isValidProfilePair(parsed.data.onboarding.subjects)) {
+    return Response.json({ error: "Выберите допустимую пару профильных предметов." }, { status: 400 });
+  }
+
   try {
     const { name, email, password, onboarding, desiredUniversitySlug, examDate, city, school } = parsed.data;
     await ensureUniversities();
@@ -94,6 +100,7 @@ export async function POST(request: Request) {
         email,
         passwordHash: await hash(password, 12),
         targetScore: onboarding.score,
+        baselineScore: onboarding.currentScore,
         profileSubjects: onboarding.subjects,
         dailyMinutes: dailyMinutes(onboarding.time[0]),
         examDate: examDate ? new Date(`${examDate}T09:00:00`) : targetExamDate(onboarding.date[0]),

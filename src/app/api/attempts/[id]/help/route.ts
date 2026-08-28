@@ -25,7 +25,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   if (!user) return Response.json({ error: "Требуется вход." }, { status: 401 });
   const entitlements = await getEntitlements(user.id);
   if (!entitlements.canUseAiTutor) {
-    return Response.json({ error: "AI-помощь доступна во время trial и в Premium.", upgrade: true }, { status: 403 });
+    return Response.json({ error: "Помощь entgo.ai доступна во время trial и в Premium.", upgrade: true }, { status: 403 });
   }
   const rate = await checkRateLimit(request, `exam-help:${user.id}`, 20, 60 * 60);
   if (!rate.allowed) return Response.json({ error: "Лимит подсказок исчерпан." }, { status: 429 });

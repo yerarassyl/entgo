@@ -33,13 +33,13 @@ export async function POST(request: Request) {
   const entitlements = await getEntitlements(user.id);
   if (!entitlements.canUseAiTutor) {
     return Response.json(
-      { error: "AI-репетитор доступен во время пробного периода и в Premium.", upgrade: true },
+      { error: "entgo.ai доступен во время пробного периода и в Premium.", upgrade: true },
       { status: 403 },
     );
   }
   const rate = await checkRateLimit(request, `ai-chat:${user.id}`, 30, 60 * 60);
   if (!rate.allowed) {
-    return Response.json({ error: "Лимит AI-запросов на этот час исчерпан." }, { status: 429 });
+    return Response.json({ error: "Лимит запросов entgo.ai на этот час исчерпан." }, { status: 429 });
   }
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "Проверьте текст вопроса." }, { status: 400 });
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     (await prisma.aiThread.create({
       data: {
         userId: user.id,
-        title: parsed.data.pageTitle ?? "Разбор с AI",
+        title: parsed.data.pageTitle ?? "Разбор с entgo.ai",
         contextUrl: parsed.data.contextUrl,
       },
     }));
@@ -79,8 +79,8 @@ export async function POST(request: Request) {
   let generated = false;
   const system =
     parsed.data.mode === "exam_hint"
-      ? "Ты AI-репетитор ЕНТ. Дай короткую наводящую подсказку, но не называй правильный вариант, букву ответа или готовое решение. Объясняй простым русским языком."
-      : "Ты персональный AI-репетитор ЕНТ. Объясняй простым русским языком: сначала суть, затем короткие шаги и один пример. Учитывай контекст страницы и выделенный текст. Не выдумывай факты.";
+      ? "Ты entgo.ai — репетитор ЕНТ. Дай короткую наводящую подсказку, но не называй правильный вариант, букву ответа или готовое решение. Объясняй простым русским языком."
+      : "Ты entgo.ai — персональный репетитор ЕНТ. Объясняй простым русским языком: сначала суть, затем короткие шаги и один пример. Учитывай контекст страницы и выделенный текст. Не выдумывай факты.";
   const text = await generateQwenText({
     system,
     user: [

@@ -8,6 +8,7 @@ import {
   Languages,
   Laptop,
   LucideIcon,
+  Scale,
 } from "lucide-react";
 import { profileTopicCatalog, topicsForSubjects } from "@/data/profile-topic-catalog";
 
@@ -54,9 +55,14 @@ export const profileSubjects: ProfileSubject[] = [
     topics: profileTopicCatalog["Всемирная история"],
   },
   {
-    value: "Английский язык",
+    value: "Основы права",
+    icon: Scale,
+    topics: profileTopicCatalog["Основы права"],
+  },
+  {
+    value: "Иностранный язык",
     icon: Languages,
-    topics: profileTopicCatalog["Английский язык"],
+    topics: profileTopicCatalog["Иностранный язык"],
   },
 ];
 

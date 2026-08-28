@@ -92,14 +92,14 @@ export function AiTutor() {
       };
       if (!response.ok || !result.answer) {
         setUpgrade(Boolean(result.upgrade));
-        throw new Error(result.error ?? "AI временно недоступен.");
+        throw new Error(result.error ?? "entgo.ai временно недоступен.");
       }
       setThreadId(result.threadId);
       setMessages((current) => [...current, { role: "assistant", content: result.answer! }]);
     } catch (error) {
       setMessages((current) => [
         ...current,
-        { role: "assistant", content: error instanceof Error ? error.message : "AI временно недоступен." },
+        { role: "assistant", content: error instanceof Error ? error.message : "entgo.ai временно недоступен." },
       ]);
     } finally {
       setLoading(false);
@@ -113,9 +113,9 @@ export function AiTutor() {
           <header className="flex items-center justify-between bg-[#2563eb] px-5 py-4 text-white">
             <div className="flex items-center gap-3">
               <span className="grid size-9 place-items-center rounded-full bg-white text-ink"><Bot size={18} /></span>
-              <div><p className="text-sm font-bold">Твой AI-репетитор</p><p className="text-[11px] text-white/55">Видит контекст этой страницы</p></div>
+              <div><p className="text-sm font-bold">Твой entgo.ai-репетитор</p><p className="text-[11px] text-white/55">Видит контекст этой страницы</p></div>
             </div>
-            <button onClick={() => setOpen(false)} aria-label="Закрыть AI"><X size={18} /></button>
+            <button onClick={() => setOpen(false)} aria-label="Закрыть entgo.ai"><X size={18} /></button>
           </header>
           {selectedText && (
             <div className="border-b border-line bg-[#fff8dc] px-4 py-3">
@@ -128,7 +128,7 @@ export function AiTutor() {
           <div className="flex-1 space-y-3 overflow-y-auto p-4">
             {!messages.length && (
               <>
-                <p className="text-sm leading-6 text-muted">Выдели текст, вопрос или ошибку и спроси у ИИ. Я учту эту страницу, слабые места и прошлые ошибки.</p>
+                <p className="text-sm leading-6 text-muted">Выдели текст, вопрос или ошибку и спроси entgo.ai. Я учту эту страницу, слабые места и прошлые ошибки.</p>
                 <div className="grid gap-2">
                   {["Объясни проще", "Почему ответ такой?", "Дай похожую задачу", "Разбери мою ошибку", "Добавить в план обучения"].map((item) => (
                     <button key={item} onClick={() => void ask(item)} className="rounded-xl border border-line px-4 py-3 text-left text-xs font-semibold hover:bg-paper">{item}</button>
@@ -150,8 +150,8 @@ export function AiTutor() {
       )}
       <button
         onClick={() => setOpen((value) => !value)}
-        aria-label={selectedText ? "Спросить про выделенное" : "Спросить у ИИ"}
-        title={selectedText ? "Спросить про выделенное" : "Спросить у ИИ"}
+        aria-label={selectedText ? "Спросить про выделенное" : "Спросить entgo.ai"}
+        title={selectedText ? "Спросить про выделенное" : "Спросить entgo.ai"}
         className="ml-auto hidden size-12 place-items-center rounded-full bg-[#2563eb] text-white shadow-[0_12px_30px_rgba(37,99,235,.28)] transition hover:scale-105 md:grid"
       >
         <Sparkles size={18} />

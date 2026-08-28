@@ -86,6 +86,9 @@ export default async function DashboardPage() {
         row.topic.subject.isRequired || profile.profileSubjects.includes(row.topic.subject.titleRu),
       )
     : forecast.mastery;
+  const universityPrograms = Array.isArray(profile.desiredUniversity?.programs)
+    ? profile.desiredUniversity.programs.filter((program): program is string => typeof program === "string")
+    : [];
 
   return (
     <DashboardClient
@@ -96,6 +99,8 @@ export default async function DashboardPage() {
       forecastMinimum={forecast.minimum}
       forecastOptimistic={forecast.optimistic}
       chanceTarget={forecast.chanceTarget}
+      hasDiagnostic={forecast.hasKnownScore}
+      hasCompletedAttempt={forecast.attemptCount > 0}
       xp={profile.xp}
       university={profile.desiredUniversity ? {
         slug: profile.desiredUniversity.slug,
@@ -113,6 +118,10 @@ export default async function DashboardPage() {
       dateLabel={dateLabel}
       daysToExam={daysToExam}
       examAt={user.examDate?.toISOString() ?? null}
+      examDateLabel={user.examDate ? new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric" }).format(user.examDate) : null}
+      profileSubjects={profile.profileSubjects}
+      specialty={universityPrograms[0] ?? null}
+      dailyMinutes={profile.dailyMinutes ?? 45}
       initialTasks={todayTasks}
       initialStreakDays={streakDays}
       initialStreakCount={streakCount}

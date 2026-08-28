@@ -24,10 +24,10 @@ export async function POST(request: Request) {
   if (!user) return mobileJson({ error: "Требуется вход." }, { status: 401 });
   const entitlements = await getEntitlements(user.id);
   if (!entitlements.canUseAiTutor) {
-    return mobileJson({ error: "AI-репетитор доступен в Premium.", upgrade: true }, { status: 403 });
+    return mobileJson({ error: "entgo.ai доступен в Premium.", upgrade: true }, { status: 403 });
   }
   const rate = await checkRateLimit(request, `mobile-ai:${user.id}`, 30, 60 * 60);
-  if (!rate.allowed) return mobileJson({ error: "Лимит AI-запросов на этот час исчерпан." }, { status: 429 });
+  if (!rate.allowed) return mobileJson({ error: "Лимит запросов entgo.ai на этот час исчерпан." }, { status: 429 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return mobileJson({ error: "Проверьте текст вопроса." }, { status: 400 });
 
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     ? await prisma.aiThread.findFirst({ where: { id: parsed.data.threadId, userId: user.id } })
     : null;
   const thread = existing ?? await prisma.aiThread.create({
-    data: { userId: user.id, title: parsed.data.pageTitle ?? "Разбор с AI", contextUrl: "entgo://ai" },
+    data: { userId: user.id, title: parsed.data.pageTitle ?? "Разбор с entgo.ai", contextUrl: "entgo://ai" },
   });
   await prisma.aiMessage.create({
     data: {
@@ -50,8 +50,8 @@ export async function POST(request: Request) {
   const examHint = parsed.data.mode === "exam_hint";
   const generated = await generateQwenText({
     system: examHint
-      ? "Ты AI-репетитор ЕНТ. Дай короткую наводящую подсказку, но не называй правильный вариант или готовое решение. Пиши простым русским языком."
-      : "Ты персональный AI-репетитор ЕНТ. Объясняй простым русским языком: сначала суть, затем короткие шаги и один пример. Не выдумывай факты.",
+      ? "Ты entgo.ai — репетитор ЕНТ. Дай короткую наводящую подсказку, но не называй правильный вариант или готовое решение. Пиши простым русским языком."
+      : "Ты entgo.ai — персональный репетитор ЕНТ. Объясняй простым русским языком: сначала суть, затем короткие шаги и один пример. Не выдумывай факты.",
     user: [
       parsed.data.pageTitle ? `Страница: ${parsed.data.pageTitle}` : "",
       parsed.data.selectedText ? `Контекст: ${parsed.data.selectedText}` : "",

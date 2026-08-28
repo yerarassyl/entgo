@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Settings } from "lucide-react";
+import { UserRound } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand";
 
@@ -13,8 +13,9 @@ const navigation = [
   ["Статистика", "/statistics"],
 ] as const;
 
-export function ProductHeader() {
+export function ProductHeader({ name }: { name?: string } = {}) {
   const pathname = usePathname();
+  const initials = name?.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("");
 
   return (
     <header className="product-header sticky top-0 z-40 border-b border-line bg-white/92 backdrop-blur-xl">
@@ -38,21 +39,15 @@ export function ProductHeader() {
         </nav>
         <div className="flex items-center gap-2">
           <Link
-            href="/premium"
-            className="hidden rounded-full bg-[#2563eb] px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_26px_rgba(37,99,235,.18)] sm:inline-flex"
-          >
-            Полный доступ
-          </Link>
-          <Link
             href="/settings"
-            aria-label="Настройки"
+            aria-label="Профиль и настройки"
             className={`grid size-11 place-items-center rounded-full border ${
               pathname.startsWith("/settings")
                 ? "border-[#111] bg-[#111] text-white"
                 : "border-line bg-white hover:border-[#111]"
             }`}
           >
-            <Settings size={18} />
+            {initials ? <span className="text-xs font-extrabold">{initials}</span> : <UserRound size={18} />}
           </Link>
         </div>
       </div>

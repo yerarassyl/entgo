@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import { Brand } from "@/components/brand";
 import { profileSubjects, topicsForSubjects } from "@/data/profile-subjects";
+import { canPairWithSelected, isValidProfilePair } from "@/data/profile-pairs";
 import { universityCatalog } from "@/data/universities";
 
 type Phase = "questions" | "analyzing" | "route" | "plan";
@@ -38,7 +39,7 @@ const steps = [
   {
     key: "subjects",
     title: "Какие 2 предмета ты сдаёшь?",
-    subtitle: "Выбери два профильных предмета. ENTGO учтёт их при построении персонального плана.",
+    subtitle: "Выбери два профильных предмета. entgo.ai учтёт их при построении персонального плана.",
   },
   {
     key: "city",
@@ -182,6 +183,7 @@ export default function OnboardingPage() {
   const selectedTimeOption = timeOptions.find((option) => option.value === timeLeft);
   const firstMilestone = Math.round(currentScore + scoreGap / 3);
   const secondMilestone = Math.round(currentScore + (scoreGap * 2) / 3);
+  const pairError = selectedSubjects.length === 2 && !isValidProfilePair(selectedSubjects);
 
   const analysisStages = useMemo(() => [
     "Определяем проходной балл",
@@ -190,6 +192,10 @@ export default function OnboardingPage() {
     "Подбираем темы",
     "Формируем персональный план",
   ], []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [phase]);
 
   useEffect(() => {
     if (displayScore === targetScore) return;
@@ -252,7 +258,7 @@ export default function OnboardingPage() {
   }
 
   function next() {
-    if (current.key === "subjects" && selectedSubjects.length !== 2) return;
+    if (current.key === "subjects" && (selectedSubjects.length !== 2 || pairError)) return;
     if (current.key === "date" && !timeLeft) return;
     if (step < steps.length - 1) {
       setStep((value) => value + 1);
@@ -273,7 +279,7 @@ export default function OnboardingPage() {
         <section className="grid w-full max-w-[1080px] overflow-hidden rounded-[36px] bg-white shadow-[0_35px_100px_rgba(37,70,140,.13)] lg:grid-cols-[.82fr_1.18fr]">
           <div className="flex min-h-[360px] flex-col items-center justify-center bg-[#111] p-8 text-center text-white sm:p-12">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[.12em]">
-              <BrainCircuit size={16} /> ENTGO AI
+              <BrainCircuit size={16} /> entgo.ai
             </span>
             <div className="relative mt-8 size-[132px]">
               <svg className="-rotate-90" width="132" height="132" viewBox="0 0 120 120" aria-label={`Анализ выполнен на ${Math.round(analysisProgress)} процентов`}>
@@ -366,7 +372,7 @@ export default function OnboardingPage() {
             </div>
             <div className="mx-auto mt-6 grid max-w-3xl gap-3 text-sm font-semibold sm:grid-cols-3">
               <span className="flex items-center gap-3 rounded-2xl bg-[#f7f9fc] p-4"><BookOpen className="text-[#2563eb]" size={18} />{priorityTopics} приоритетных тем</span>
-              <span className="flex items-center gap-3 rounded-2xl bg-[#f7f9fc] p-4"><BrainCircuit className="text-[#2563eb]" size={18} />AI-анализ ошибок</span>
+              <span className="flex items-center gap-3 rounded-2xl bg-[#f7f9fc] p-4"><BrainCircuit className="text-[#2563eb]" size={18} />entgo.ai анализ ошибок</span>
               <span className="flex items-center gap-3 rounded-2xl bg-[#f7f9fc] p-4"><TrendingUp className="text-[#2563eb]" size={18} />Персональный план</span>
             </div>
           </div>
@@ -403,7 +409,7 @@ export default function OnboardingPage() {
         <section className="mx-auto max-w-[1440px] rounded-[34px] bg-white px-5 py-10 shadow-[0_30px_90px_rgba(37,70,140,.1)] sm:px-10 sm:py-14">
           <div className="text-center">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]"><Sparkles size={15} /> Твой персональный план готов</span>
-            <h1 className="mx-auto mt-7 max-w-4xl text-4xl font-extrabold tracking-[-.05em] text-[#172033] sm:text-6xl">ENTGO уже построил маршрут до твоей цели</h1>
+            <h1 className="mx-auto mt-7 max-w-4xl text-4xl font-extrabold tracking-[-.05em] text-[#172033] sm:text-6xl">entgo.ai уже построил маршрут до твоей цели</h1>
             <p className="mt-5 text-lg text-[#727b8b]">На основе выбранного университета, текущего уровня и срока подготовки.</p>
           </div>
 
@@ -437,7 +443,7 @@ export default function OnboardingPage() {
                   [Target, "Ежедневные задачи"],
                   [BookOpen, "Приоритетные темы"],
                   [TrendingUp, "Отслеживание прогресса"],
-                  [BrainCircuit, "AI объяснение ошибок"],
+                  [BrainCircuit, "entgo.ai объяснение ошибок"],
                   [GraduationCap, "Подготовка до цели"],
                 ].map(([Icon, label], index) => {
                   const ItemIcon = Icon as typeof Target;
@@ -474,7 +480,7 @@ export default function OnboardingPage() {
             Большинство учеников учат всё подряд.<br />Твой план показывает только то, что приближает к цели.
           </h2>
           <div className="text-center">
-            <button onClick={() => router.push("/register")} className="group mt-10 inline-flex h-16 w-full max-w-[380px] items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 font-bold text-white hover:bg-[#1d4ed8]">
+            <button onClick={() => { window.scrollTo({ top: 0, left: 0 }); router.push("/register", { scroll: true }); }} className="group mt-10 inline-flex h-16 w-full max-w-[380px] items-center justify-center gap-3 rounded-full bg-[#2563eb] px-7 font-bold text-white hover:bg-[#1d4ed8]">
               Разблокировать полный план <ArrowRight className="transition-transform group-hover:translate-x-1" size={19} />
             </button>
           </div>
@@ -560,14 +566,14 @@ export default function OnboardingPage() {
               <div className="mt-10">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                   <p className="text-sm font-semibold text-[#667083]">Выбрано {selectedSubjects.length} из 2</p>
-                  <span className={`rounded-full px-3 py-1.5 text-xs font-bold ${selectedSubjects.length === 2 ? "bg-[#e9f2ff] text-[#2563eb]" : "bg-white text-[#8a93a3]"}`}>
-                    {selectedSubjects.length === 2 ? "Можно продолжать" : "Нужно выбрать два"}
+                  <span className={`rounded-full px-3 py-1.5 text-xs font-bold ${pairError ? "bg-[#fdeaea] text-[#c0392b]" : selectedSubjects.length === 2 ? "bg-[#e9f2ff] text-[#2563eb]" : "bg-white text-[#8a93a3]"}`}>
+                    {pairError ? "Эта пара не сдаётся на ЕНТ" : selectedSubjects.length === 2 ? "Можно продолжать" : "Нужно выбрать два"}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-3 xl:grid-cols-3">
                   {profileSubjects.map(({ value, icon: Icon }) => {
                     const selected = selectedSubjects.includes(value);
-                    const unavailable = !selected && selectedSubjects.length === 2;
+                    const unavailable = !selected && !canPairWithSelected(value, selectedSubjects);
                     return (
                       <button
                         key={value}
@@ -596,6 +602,11 @@ export default function OnboardingPage() {
                 <p className="mt-5 text-sm leading-6 text-[#7b8495]">
                   Обязательные предметы ЕНТ уже включены. Здесь нужны только два профильных предмета.
                 </p>
+                {pairError && (
+                  <div className="mt-4 rounded-2xl border border-[#f5c6c0] bg-[#fdecea] p-4 text-sm font-semibold leading-6 text-[#c0392b]">
+                    Эти два предмета нельзя сдавать вместе. Выбери допустимую комбинацию, например «Математика + Физика» или «Биология + Химия».
+                  </div>
+                )}
               </div>
             )}
 
@@ -700,7 +711,7 @@ export default function OnboardingPage() {
                 </div>
                 {timeLeft && (
                   <div className="mt-6 w-full rounded-2xl bg-[#eef5ff] p-5 text-sm leading-6 text-[#2457bb]">
-                    <strong className="flex items-center gap-2"><BrainCircuit size={17} /> AI Insight</strong>
+                    <strong className="flex items-center gap-2"><BrainCircuit size={17} /> entgo.ai Insight</strong>
                     <p className="mt-2">{selectedTimeOption?.insight}</p>
                   </div>
                 )}
@@ -718,7 +729,7 @@ export default function OnboardingPage() {
               <button onClick={() => step > 0 ? setStep((value) => value - 1) : router.push("/")} className="inline-flex min-h-12 items-center gap-2 rounded-full px-4 text-sm font-bold text-[#667083] hover:bg-[#f4f7fb]">
                 <ArrowLeft size={17} /> Назад
               </button>
-              <button onClick={next} disabled={(isSubjects && selectedSubjects.length !== 2) || (isDeadline && !timeLeft)} className="ml-auto inline-flex min-h-14 min-w-[210px] items-center justify-center gap-3 rounded-full bg-[#2563eb] px-8 text-sm font-bold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0">
+              <button onClick={next} disabled={(isSubjects && (selectedSubjects.length !== 2 || pairError)) || (isDeadline && !timeLeft)} className="ml-auto inline-flex min-h-14 min-w-[210px] items-center justify-center gap-3 rounded-full bg-[#2563eb] px-8 text-sm font-bold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:translate-y-0">
                 {isDeadline ? "Построить маршрут" : "Продолжить"} <ArrowRight size={17} />
               </button>
             </div>

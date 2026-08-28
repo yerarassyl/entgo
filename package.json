@@ -29,6 +29,7 @@
     "admin:content-local": "tsx --env-file=.env scripts/create-local-content-admin.ts",
     "premium:local": "tsx --env-file=.env scripts/create-local-premium-user.ts",
     "questions:import": "tsx --env-file=.env scripts/import-question-bank.ts",
+    "questions:import-math": "tsx --env-file=.env.local scripts/import-ent-math-bank.ts",
     "mobile:start": "npm --prefix mobile run start",
     "mobile:android": "npm --prefix mobile run android",
     "mobile:ios": "npm --prefix mobile run ios",

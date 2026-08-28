@@ -10,8 +10,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "entgo.kz — подготовка к ЕНТ с ИИ",
-    template: "%s · entgo.kz",
+    default: "entgo.ai — персональная подготовка к ЕНТ",
+    template: "%s · entgo.ai",
   },
   description:
     "Персональный план подготовки, пробные ЕНТ и понятный разбор каждой ошибки.",

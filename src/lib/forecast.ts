@@ -27,7 +27,7 @@ export async function calculateForecast(userId: string) {
     getMasteryMap(userId),
   ]);
   const scores = attempts.map((attempt) => attempt.score ?? 0);
-  const current = scores.at(-1) ?? 0;
+  const current = scores.at(-1) ?? user.baselineScore ?? 0;
   const recent = scores.slice(-4);
   const growth =
     recent.length > 1 ? (recent.at(-1)! - recent[0]) / (recent.length - 1) : 0;
@@ -61,6 +61,8 @@ export async function calculateForecast(userId: string) {
     sigmoid((expected - target) / Math.max(4, uncertainty)) * 100,
   );
   return {
+    attemptCount: attempts.length,
+    hasKnownScore: attempts.length > 0 || user.baselineScore !== null,
     current,
     expected,
     minimum,

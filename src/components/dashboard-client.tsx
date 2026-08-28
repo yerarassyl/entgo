@@ -1,34 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Check, ChevronRight, Flame, Medal, Play, Target } from "lucide-react";
+import { ArrowRight, BrainCircuit, Check, ChevronRight, Clock3, Flame, Play, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ProductHeader } from "@/components/product-header";
 
-type DashboardTask = {
-  id: string;
-  label: string;
-  activity: string;
-  title: string;
-  durationMin: number;
-  completedAt: string | null;
-};
+type DashboardTask = { id: string; label: string; activity: string; title: string; durationMin: number; completedAt: string | null };
+type StreakDay = { key: string; label: string; active: boolean };
+const activityNames: Record<string, string> = { THEORY: "Теория", MINI_TEST: "Мини-тест", PRACTICE: "Практика", REVIEW: "Повторение", PLANNING: "Планирование" };
 
-type StreakDay = {
-  key: string;
-  label: string;
-  active: boolean;
-};
-
-const activityNames: Record<string, string> = {
-  THEORY: "теория",
-  MINI_TEST: "мини-тест",
-  PRACTICE: "практика",
-  REVIEW: "разбор",
-  PLANNING: "планирование",
-};
-
-function dayWord(value: number) {
+function pluralDays(value: number) {
   const mod10 = value % 10;
   const mod100 = value % 100;
   if (mod10 === 1 && mod100 !== 11) return "день";
@@ -36,183 +17,90 @@ function dayWord(value: number) {
   return "дней";
 }
 
-export function DashboardClient({
-  name,
-  targetScore,
-  currentScore,
-  forecastScore,
-  forecastMinimum,
-  forecastOptimistic,
-  chanceTarget,
-  xp,
-  university,
-  weakTopics,
-  dateLabel,
-  daysToExam,
-  examAt,
-  initialTasks,
-  initialStreakDays,
-  initialStreakCount,
-}: {
-  name: string;
-  targetScore: number;
-  currentScore: number;
-  forecastScore: number;
-  forecastMinimum: number;
-  forecastOptimistic: number;
-  chanceTarget: number;
-  xp: number;
+export function DashboardClient({ name, targetScore, currentScore, chanceTarget, xp, university, weakTopics, dateLabel, daysToExam, examAt, examDateLabel, profileSubjects, specialty, dailyMinutes, hasDiagnostic, hasCompletedAttempt, initialTasks, initialStreakDays, initialStreakCount }: {
+  name: string; targetScore: number; currentScore: number; forecastScore: number; forecastMinimum: number; forecastOptimistic: number; chanceTarget: number; xp: number;
   university: { slug: string; name: string; grantScore: number; chance: number } | null;
   weakTopics: Array<{ id: string; title: string; subject: string; score: number; expectedScoreGain: number }>;
-  dateLabel: string;
-  daysToExam: number;
-  examAt: string | null;
-  initialTasks: DashboardTask[];
-  initialStreakDays: StreakDay[];
-  initialStreakCount: number;
+  dateLabel: string; daysToExam: number; examAt: string | null; examDateLabel: string | null; profileSubjects: string[]; specialty: string | null; dailyMinutes: number; hasDiagnostic: boolean; hasCompletedAttempt: boolean;
+  initialTasks: DashboardTask[]; initialStreakDays: StreakDay[]; initialStreakCount: number;
 }) {
-  const tasks = initialTasks;
-  const streakDays = initialStreakDays;
-  const streakCount = initialStreakCount;
+  const completedTasks = initialTasks.filter((task) => task.completedAt).length;
+  const totalMinutes = initialTasks.reduce((sum, task) => sum + task.durationMin, 0);
+  const completedMinutes = useMemo(() => initialTasks.filter((task) => task.completedAt).reduce((sum, task) => sum + task.durationMin, 0), [initialTasks]);
+  const progress = initialTasks.length ? Math.round((completedTasks / initialTasks.length) * 100) : 0;
+  const allDone = initialTasks.length > 0 && completedTasks === initialTasks.length;
   const firstName = name.trim().split(/\s+/)[0] || "Ученик";
-  const initials = name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("") || "У";
-  const completedTasks = tasks.filter((task) => task.completedAt).length;
-  const daysUntilReward = Math.max(0, 7 - streakCount);
-  const totalMinutes = tasks.reduce((sum, task) => sum + task.durationMin, 0);
-  const progress = tasks.length ? (completedTasks / tasks.length) * 100 : 0;
-  const completedMinutes = useMemo(
-    () =>
-      tasks
-        .filter((task) => task.completedAt)
-        .reduce((sum, task) => sum + task.durationMin, 0),
-    [tasks],
-  );
-  const [countdown, setCountdown] = useState({ days: daysToExam, hours: 0, minutes: 0 });
+  const [countdown, setCountdown] = useState({ days: daysToExam, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, []);
   useEffect(() => {
-    if (!examAt) {
-      return;
-    }
+    if (!examAt) return;
     const tick = () => {
       const diff = Math.max(0, new Date(examAt).getTime() - Date.now());
-      const totalMinutesLeft = Math.floor(diff / 60_000);
-      setCountdown({
-        days: Math.floor(totalMinutesLeft / 1440),
-        hours: Math.floor((totalMinutesLeft % 1440) / 60),
-        minutes: totalMinutesLeft % 60,
-      });
+      setCountdown({ days: Math.floor(diff / 86_400_000), hours: Math.floor((diff % 86_400_000) / 3_600_000), minutes: Math.floor((diff % 3_600_000) / 60_000), seconds: Math.floor((diff % 60_000) / 1_000) });
     };
     tick();
-    const timer = window.setInterval(tick, 60_000);
+    const timer = window.setInterval(tick, 1_000);
     return () => window.clearInterval(timer);
-  }, [daysToExam, examAt]);
-  const goalGap = Math.max(0, targetScore - forecastScore);
+  }, [examAt]);
+
+  const goalGap = hasDiagnostic ? Math.max(0, targetScore - currentScore) : null;
   const grantChance = university?.chance ?? chanceTarget;
+  const firstTask = initialTasks.find((task) => !task.completedAt) ?? initialTasks[0];
+  const recommendation = weakTopics[0]
+    ? `Сегодня удели больше внимания теме «${weakTopics[0].title}». Сейчас это самая полезная точка роста в ${weakTopics[0].subject}.`
+    : hasCompletedAttempt ? "Продолжай сегодняшний план — новые рекомендации появятся после следующих ответов." : "Начни с первого пробника, чтобы я определил твой уровень и нашёл реальные слабые темы.";
 
-  return (
-    <main className="mobile-app-page product-v2 min-h-screen bg-paper">
-      <ProductHeader />
-      <section className="min-w-0">
-
-        <div className="container-shell min-w-0 pb-28 pt-8 sm:pt-12">
-          <div className="flex flex-col justify-between gap-6 border-b border-line pb-9 sm:flex-row sm:items-end">
-            <div><p className="text-xs font-bold uppercase tracking-[.16em] text-[#2563eb]">{dateLabel} · {xp} XP</p><h1 className="display mt-3 max-w-4xl text-5xl leading-[.94] sm:text-7xl">До цели {targetScore} баллов осталось <span className="italic">{goalGap} баллов.</span></h1><p className="mt-4 text-base text-muted">{firstName}, AI подстраивает план под твои предметы, пробники и ошибки.</p></div>
-            <div className="flex items-center gap-3"><div className="rounded-[24px] border border-line bg-white px-5 py-4 text-sm"><span className="text-muted">Шанс на грант</span><strong className="ml-3 text-2xl">{grantChance}%</strong></div><div className="grid size-12 place-items-center rounded-full bg-[#111] text-xs font-bold text-white">{initials}</div></div>
-          </div>
-
-          <section className="mt-8 grid gap-3 sm:grid-cols-4">
-            {[
-              ["Цель", `${targetScore}`],
-              ["Осталось", `${goalGap} баллов`],
-              ["Шанс на грант", `${grantChance}%`],
-              ["До ЕНТ", `${countdown.days}д ${countdown.hours}ч ${countdown.minutes}м`],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-[24px] border border-line bg-white p-5">
-                <p className="text-xs font-bold uppercase tracking-[.12em] text-muted">{label}</p>
-                <strong className="mt-3 block text-2xl">{value}</strong>
-              </div>
-            ))}
-          </section>
-
-          <section className="mt-8 grid gap-6 rounded-[32px] border border-line bg-white p-6 sm:grid-cols-[1fr_auto] sm:items-center sm:p-8">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[.14em] text-muted">Твой прогресс сегодня</p>
-              <h2 className="mt-2 text-xl font-semibold">Сегодня ты ближе к цели на {completedTasks ? `+${Math.min(4, completedTasks * 1.4).toFixed(1)} балла` : "0 баллов"}</h2>
-              <p className="mt-2 text-sm text-muted">{completedTasks ? `Выполнено ${completedTasks} из ${tasks.length} задач. Продолжай, чтобы закрепить рост.` : "Начни с первой задачи: план уже расставлен по влиянию на прогноз."}</p>
+  return <main className="mobile-app-page product-v2 min-h-screen bg-[#f6f8fc] text-[#172033]">
+    <ProductHeader name={name} />
+    <div className="container-shell pb-28 pt-7 sm:pt-10">
+      <section className="overflow-hidden rounded-[32px] border border-[#dfe5ef] bg-white p-6 shadow-[0_18px_60px_rgba(24,50,100,.06)] sm:p-9">
+        <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-start">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[.14em] text-[#2563eb]">{dateLabel} · {xp} XP</p>
+            <h1 className="mt-3 text-3xl font-extrabold tracking-[-.045em] sm:text-5xl">Добро пожаловать, {firstName} 👋</h1>
+            <div className="mt-7 flex flex-wrap items-end gap-x-8 gap-y-4">
+              <div><p className="text-sm text-[#7b8495]">Твоя цель</p><strong className="mt-1 block text-5xl tracking-[-.06em] text-[#2563eb]">{targetScore} <span className="text-lg tracking-normal">баллов</span></strong></div>
+              <div className="border-l border-[#e2e7ef] pl-6"><strong className="block text-lg">{university?.name ?? "Университет не выбран"}</strong><span className="mt-1 block text-sm text-[#7b8495]">{specialty ?? (profileSubjects.join(" + ") || "Профиль подготовки")}</span></div>
             </div>
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="rounded-2xl bg-paper px-4 py-3"><p className="text-[10px] text-muted">Сейчас</p><strong className="mt-1 block text-xl">{currentScore}</strong></div>
-              <div className="rounded-2xl bg-paper px-4 py-3"><p className="text-[10px] text-muted">Прогноз</p><strong className="mt-1 block text-xl">{forecastScore}</strong></div>
-              <div className="rounded-2xl bg-paper px-4 py-3"><p className="text-[10px] text-muted">До цели</p><strong className="mt-1 block text-xl">{Math.max(0, targetScore - forecastScore)}</strong></div>
-            </div>
-          </section>
-
-          <div className="mt-8 grid min-w-0 gap-5 xl:grid-cols-[1.4fr_.6fr]">
-            <section id="plan" className="min-w-0 rounded-[32px] border border-line bg-white p-6 sm:p-9">
-              <div className="flex items-center justify-between">
-                <div className="min-w-0"><p className="text-xs font-bold uppercase tracking-[.14em] text-muted">План на сегодня · до цели {targetScore}</p><h2 className="mt-2 text-lg font-semibold sm:text-xl">Сегодня нужно закрыть {tasks.length} темы</h2><p className="mt-1 text-xs text-muted">Ожидаемый прирост к прогнозу: +2–4 балла</p></div>
-                <span className="ml-3 shrink-0 text-sm font-bold">{completedTasks} / {tasks.length}</span>
-              </div>
-              <div className="mt-5 h-2 overflow-hidden rounded-full bg-paper"><div className="h-full rounded-full bg-ink transition-all" style={{ width: `${progress}%` }} /></div>
-              <div className="mt-7 divide-y divide-line">
-                {tasks.map((task) => {
-                  const done = Boolean(task.completedAt);
-                  return (
-                  <div key={task.title} className="flex items-center gap-4 py-5">
-                    <span aria-label={done ? `Задача выполнена: ${task.title}` : `Задача ожидает прохождения: ${task.title}`} className={`grid size-9 shrink-0 place-items-center rounded-full border ${done ? "border-ink bg-ink text-white" : "border-line bg-paper"}`}>{done && <Check size={16} />}</span>
-                    <div className="min-w-0 flex-1"><p className="text-[11px] font-bold uppercase tracking-[.12em] text-muted">{task.activity === "PRACTICE" ? "Самый быстрый рост" : task.activity === "REVIEW" ? "Частая ошибка" : "Новая тема"} · {task.label}</p><p className={`mt-1 text-sm font-semibold leading-5 ${done ? "text-muted line-through" : ""}`}>{task.title}</p><p className="mt-1 text-xs text-muted">{task.durationMin} минут · {activityNames[task.activity] ?? "занятие"} · до +{task.activity === "PRACTICE" ? "1.8" : task.activity === "REVIEW" ? "1.2" : "0.8"} балла</p></div>
-                    <Link href={`/study/${task.id}`} className="grid size-11 shrink-0 place-items-center rounded-full bg-paper" aria-label={done ? `Открыть задачу: ${task.title}` : `Начать задачу: ${task.title}`}><Play size={16} fill="currentColor" /></Link>
-                  </div>
-                )})}
-              </div>
-              <p className="border-t border-line pt-4 text-xs text-muted">Выполнено сегодня: {completedMinutes} из {totalMinutes} минут</p>
-            </section>
-
-            <section className="rounded-[32px] bg-[#111] p-6 text-white shadow-[0_24px_70px_rgba(0,0,0,.16)] sm:p-8">
-              <div className="flex items-center justify-between"><p className="text-xs font-bold uppercase tracking-[.14em] text-white/45">Прогноз</p><Target size={19} /></div>
-              <p className="display mt-8 text-7xl">{forecastScore}</p>
-              <p className="mt-1 text-sm text-white/45">прогноз ЕНТ · {forecastMinimum}–{forecastOptimistic}</p>
-              <div className="mt-8 border-t border-white/15 pt-6">
-                <div className="flex justify-between text-xs"><span className="text-white/45">Сейчас</span><strong>{currentScore}</strong></div>
-                <div className="mt-3 flex justify-between text-xs"><span className="text-white/45">Цель</span><strong>{targetScore}</strong></div>
-                <div className="mt-3 flex justify-between text-xs"><span className="text-white/45">До цели</span><strong>{Math.max(0, targetScore - forecastScore)} баллов</strong></div>
-                <div className="mt-3 flex justify-between text-xs"><span className="text-white/45">Шанс набрать цель</span><strong>{chanceTarget}%</strong></div>
-                <div className="mt-3 flex justify-between text-xs"><span className="text-white/45">Последнее обновление</span><strong>сегодня</strong></div>
-                <div className="mt-5 grid gap-2">
-                  <p className="rounded-xl bg-white/10 p-3 text-xs font-semibold">+{Math.max(1, Math.round((forecastScore - currentScore) / 3))} балла за неделю при текущем темпе</p>
-                  {weakTopics[0] && <p className="rounded-xl bg-white/10 p-3 text-xs font-semibold">{weakTopics[0].title}: до +{weakTopics[0].expectedScoreGain.toFixed(1)} балла к прогнозу</p>}
-                </div>
-                {university && <Link href={`/universities/${university.slug}`} className="mt-5 block rounded-xl bg-white/10 p-3 text-xs leading-5"><strong>{university.name}</strong><br /><span className="text-white/55">Для гранта: {university.grantScore} · шанс {university.chance}%</span></Link>}
-                <p className="mt-5 rounded-xl bg-white/10 p-3 text-xs leading-5 text-white/65">{currentScore >= targetScore ? "Цель уже достигнута. Теперь удерживаем форму и закрываем слабые места." : "Ты идёшь по плану. Не пропускай занятия 3 дня подряд."}</p>
-              </div>
-            </section>
           </div>
-
-          <div className="mt-5 grid gap-5 md:grid-cols-3">
-            <section className="rounded-[24px] border border-line bg-white p-6 md:col-span-2">
-              <div className="flex items-center justify-between"><h2 className="font-semibold">Слабые места</h2><Link href="/topics" className="flex min-h-11 items-center gap-1 rounded-full px-3 text-xs font-bold">Все темы <ChevronRight size={15} /></Link></div>
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                {weakTopics.length ? weakTopics.map((topic) => (
-                  <Link href={`/topics/${topic.id}`} key={topic.id} className="rounded-2xl bg-paper p-4"><p className="text-xs text-muted">{topic.subject}</p><p className="mt-2 min-h-10 text-sm font-semibold">{topic.title}</p><div className="mt-5 flex items-center justify-between text-xs"><span>Mastery</span><strong>{topic.score}%</strong></div></Link>
-                )) : <p className="text-sm text-muted sm:col-span-3">Пройди первый пробник, чтобы система нашла устойчивые слабые места.</p>}
-              </div>
-            </section>
-            <section className="rounded-[24px] border border-line bg-white p-6">
-              <div className="flex items-center justify-between"><h2 className="font-semibold">Серия</h2><Flame className="text-[#ef7c30]" /></div>
-              <p className="display mt-5 flex items-baseline gap-2 text-5xl">{streakCount}<span className="font-sans text-sm font-medium tracking-normal text-muted">{dayWord(streakCount)}</span></p>
-              <div className="mt-6 grid grid-cols-7 gap-1.5">
-                {streakDays.map((day) => <div key={day.key} className="text-center"><div className={`mx-auto grid size-7 place-items-center rounded-full text-[10px] font-bold ${day.active ? "bg-ink text-white" : "bg-paper text-muted"}`}>{day.active ? <Check size={12} /> : ""}</div><p className="mt-2 text-[10px] uppercase text-muted">{day.label}</p></div>)}
-              </div>
-              <div className="mt-6 flex items-center gap-3 rounded-xl bg-paper p-3"><Medal size={20} /><p className="text-xs leading-5"><strong>{daysUntilReward} {dayWord(daysUntilReward)} до награды</strong><br /><span className="text-muted">бейдж «Неделя силы»</span></p></div>
-            </section>
+          <div className="min-w-[280px] rounded-[24px] bg-[#172033] p-5 text-white">
+            <div className="flex items-center gap-2 text-sm text-white/60"><Clock3 size={16} /> ЕНТ {examDateLabel ?? "дата не указана"}</div>
+            <p className="mt-4 text-xs font-bold uppercase tracking-[.12em] text-white/45">До экзамена</p>
+            {examAt ? <div className="mt-2 grid grid-cols-4 gap-2 text-center">{[[countdown.days, "дн"], [countdown.hours, "ч"], [countdown.minutes, "мин"], [countdown.seconds, "сек"]].map(([value, label]) => <div key={label} className="rounded-xl bg-white/10 px-2 py-3"><strong className="block text-xl tabular-nums">{value}</strong><span className="text-[10px] text-white/45">{label}</span></div>)}</div> : <p className="mt-3 text-sm text-white/65">Укажи дату в настройках, чтобы включить точный отсчёт.</p>}
           </div>
-
         </div>
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <Metric label="Текущий балл" value={hasDiagnostic ? String(currentScore) : "Не определён"} note={!hasDiagnostic ? "Пройди первый пробник" : hasCompletedAttempt ? "Последний полный пробник" : "Стартовый результат из квиза"} />
+          <Metric label="До цели" value={goalGap === null ? "После диагностики" : `${goalGap} баллов`} />
+          <Metric label="Цель" value={`${targetScore} баллов`} note={`${dailyMinutes} минут подготовки в день`} />
+          <Metric label="Шанс на грант" value={hasDiagnostic ? `${grantChance}%` : "Расчётный прогноз"} note={hasDiagnostic ? "Не является гарантией" : "Появится после первого пробника"} />
+        </div>
+        <Link href="/plan" scroll className="mt-6 inline-flex min-h-13 items-center gap-2 rounded-full bg-[#2563eb] px-6 text-sm font-extrabold text-white shadow-[0_12px_28px_rgba(37,99,235,.2)]">Мой план <ArrowRight size={17} /></Link>
       </section>
-    </main>
-  );
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1.42fr_.58fr]">
+        <section className="rounded-[32px] border border-[#dfe5ef] bg-white p-6 sm:p-8">
+          <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-[#2563eb]">Сегодня</p><h2 className="mt-2 text-2xl font-extrabold tracking-[-.03em]">{allDone ? "День завершён ✓" : "Что делать сегодня"}</h2><p className="mt-2 text-sm text-[#7b8495]">План рассчитан примерно на {totalMinutes || dailyMinutes} минут и меняется по твоим результатам.</p></div><span className="rounded-full bg-[#eef5ff] px-4 py-2 text-sm font-bold text-[#2563eb]">{completedTasks} из {initialTasks.length}</span></div>
+          <div className="mt-6 h-2 overflow-hidden rounded-full bg-[#edf0f5]"><div className="h-full rounded-full bg-[#2563eb] transition-all duration-700" style={{ width: `${progress}%` }} /></div>
+          <div className="mt-5 divide-y divide-[#e6eaf1]">{initialTasks.map((task, index) => {
+            const done = Boolean(task.completedAt);
+            return <div key={task.id} className="flex items-center gap-4 py-5"><span className={`grid size-10 shrink-0 place-items-center rounded-full text-sm font-extrabold ${done ? "bg-[#e9f8ef] text-[#17834b]" : "bg-[#eef5ff] text-[#2563eb]"}`}>{done ? <Check size={17} /> : index + 1}</span><div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase tracking-[.1em] text-[#7b8495]">{task.label} · {activityNames[task.activity] ?? "Занятие"}</p><p className={`mt-1 font-bold ${done ? "text-[#8a93a3] line-through" : ""}`}>{task.title}</p><p className="mt-1 text-xs text-[#7b8495]">{task.durationMin} минут</p></div><Link href={`/study/${task.id}`} className="grid size-11 shrink-0 place-items-center rounded-full bg-[#172033] text-white" aria-label={`Открыть: ${task.title}`}><Play size={15} fill="currentColor" /></Link></div>;
+          })}{!initialTasks.length && <p className="py-8 text-sm text-[#7b8495]">План на сегодня формируется. Открой «Мой план», чтобы проверить расписание.</p>}</div>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#e6eaf1] pt-5"><p className="text-sm font-semibold">Примерно {Math.floor(totalMinutes / 60) ? `${Math.floor(totalMinutes / 60)} ч ` : ""}{totalMinutes % 60} мин · выполнено {completedMinutes} мин</p>{firstTask && !allDone && <Link href={`/study/${firstTask.id}`} className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[#2563eb] px-5 text-sm font-extrabold text-white">Начать подготовку <ArrowRight size={16} /></Link>}</div>
+        </section>
+
+        <div className="grid gap-6">
+          <section className="rounded-[28px] bg-[#172033] p-6 text-white sm:p-7"><div className="flex items-center justify-between"><p className="text-xs font-bold uppercase tracking-[.14em] text-[#8bb4ff]">entgo.ai рекомендует</p><BrainCircuit size={20} /></div><p className="mt-6 text-lg font-semibold leading-7">{recommendation}</p><Link href={hasCompletedAttempt && weakTopics[0] ? `/topics/${weakTopics[0].id}` : "/tests"} className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-white">{hasCompletedAttempt ? "Начать" : "Пройти пробник"} <ArrowRight size={16} /></Link></section>
+          <section className="rounded-[28px] border border-[#dfe5ef] bg-white p-6"><div className="flex items-center justify-between"><h2 className="font-extrabold">Серия занятий</h2><Flame className="text-[#ef7c30]" /></div><p className="mt-4 text-4xl font-extrabold tracking-[-.05em]">{initialStreakCount} <span className="text-sm font-medium tracking-normal text-[#7b8495]">{pluralDays(initialStreakCount)}</span></p><div className="mt-5 grid grid-cols-7 gap-1.5">{initialStreakDays.map((day) => <div key={day.key} className="text-center"><div className={`mx-auto grid size-7 place-items-center rounded-full text-[10px] font-bold ${day.active ? "bg-[#2563eb] text-white" : "bg-[#edf0f5] text-[#8a93a3]"}`}>{day.active ? <Check size={12} /> : ""}</div><p className="mt-2 text-[10px] uppercase text-[#8a93a3]">{day.label}</p></div>)}</div></section>
+        </div>
+      </div>
+
+      <section className="mt-6 rounded-[28px] border border-[#dfe5ef] bg-white p-6 sm:p-8"><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-[#7b8495]">Адаптивная подготовка</p><h2 className="mt-2 text-xl font-extrabold">Темы, которым нужен приоритет</h2></div><Link href="/results" className="inline-flex items-center gap-1 text-sm font-bold text-[#2563eb]">Разбор ошибок <ChevronRight size={16} /></Link></div><div className="mt-6 grid gap-3 md:grid-cols-3">{weakTopics.length ? weakTopics.map((topic) => <Link href={`/topics/${topic.id}`} key={topic.id} className="rounded-2xl bg-[#f6f8fc] p-5"><p className="text-xs text-[#7b8495]">{topic.subject}</p><p className="mt-2 font-bold">{topic.title}</p><div className="mt-5 flex items-center justify-between text-xs"><span>Освоено</span><strong>{topic.score}%</strong></div></Link>) : <div className="flex items-start gap-3 rounded-2xl bg-[#f6f8fc] p-5 text-sm text-[#667083] md:col-span-3"><Sparkles className="shrink-0 text-[#2563eb]" size={19} /><p>После первого пробника здесь появятся только твои реальные слабые темы — без случайных предметов.</p></div>}</div></section>
+    </div>
+  </main>;
+}
+
+function Metric({ label, value, note }: { label: string; value: string; note?: string }) {
+  return <div className="rounded-[22px] border border-[#e2e7ef] bg-[#fbfcfe] p-5"><p className="text-xs font-bold uppercase tracking-[.1em] text-[#7b8495]">{label}</p><strong className="mt-3 block text-xl tracking-[-.025em]">{value}</strong>{note && <p className="mt-2 text-xs leading-5 text-[#8a93a3]">{note}</p>}</div>;
 }

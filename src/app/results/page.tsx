@@ -46,7 +46,7 @@ export default async function ResultsPage({
           <div className="max-w-xl rounded-[32px] border border-line bg-white p-8 text-center shadow-[0_24px_70px_rgba(0,0,0,.05)] sm:p-12">
             <AlertCircle className="mx-auto text-[#2563eb]" size={34} />
             <h1 className="mt-6 text-3xl font-extrabold tracking-[-.04em]">Разбор ошибок появится после пробника</h1>
-            <p className="mt-4 text-sm leading-6 text-muted">ENTGO покажет, где именно потеряны баллы, какие темы дадут прирост и что делать дальше. AI-разбор встроен в пробники и задания автоматически.</p>
+            <p className="mt-4 text-sm leading-6 text-muted">ENTGO покажет, где именно потеряны баллы, какие темы дадут прирост и что делать дальше. entgo.ai разбор встроен в пробники и задания автоматически.</p>
             <Link href="/tests" className="mt-7 inline-flex h-13 items-center justify-center gap-2 rounded-full bg-[#2563eb] px-7 text-sm font-bold text-white">
               Перейти к пробникам <ArrowRight size={17} />
             </Link>

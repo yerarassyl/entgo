@@ -34,7 +34,7 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
       <div className="mx-auto mt-12 max-w-3xl rounded-[30px] bg-[#2563eb] p-8 text-white shadow-[0_30px_90px_rgba(37,99,235,.2)] sm:p-11">
         <ShieldCheck size={32} />
         <h2 className="mt-6 text-4xl font-extrabold tracking-[-.04em]">Полный план разблокирован</h2>
-        <p className="mt-3 text-sm leading-6 text-white/70">Доступ активен до {activeUntil}. Пробники, уроки, AI и прогноз поступления уже доступны.</p>
+        <p className="mt-3 text-sm leading-6 text-white/70">Доступ активен до {activeUntil}. Пробники, уроки, entgo.ai и прогноз поступления уже доступны.</p>
       </div>
     );
   }
@@ -54,8 +54,8 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
         "Анализ ошибок",
         "Статистика прогресса",
         "Библиотека тем",
-        "AI объяснение ошибок",
-        "AI помощник 24/7",
+        "entgo.ai объяснение ошибок",
+        "entgo.ai помощник 24/7",
       ],
     },
     {
@@ -68,8 +68,8 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
       dark: false,
       items: [
         "Всё из Premium",
-        "AI объяснение ошибок",
-        "AI помощник 24/7",
+        "entgo.ai объяснение ошибок",
+        "entgo.ai помощник 24/7",
         "Персональные рекомендации",
         "Прогноз поступления",
         "Программа 130+",
@@ -94,9 +94,9 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
               {plan.items.map((item) => <li key={item} className="flex items-start gap-3"><Check className={plan.dark ? "text-[#8bb4ff]" : "text-[#2563eb]"} size={17} strokeWidth={3} />{item}</li>)}
             </ul>
             {plan.dark && (
-              <div className="mt-7 rounded-2xl bg-white/10 p-4 text-sm font-semibold leading-6">
-                <RefreshCw className="mb-2 text-[#8bb4ff]" size={18} />
-                Система автоматически обновляет план после каждого пробника.
+              <div className="mt-7 inline-flex items-start gap-3 rounded-2xl bg-white/10 p-4 text-sm font-semibold leading-6">
+                <RefreshCw className="mt-0.5 shrink-0 text-[#8bb4ff]" size={18} />
+                <span>Система автоматически обновляет план после каждого пробника.</span>
               </div>
             )}
             <button onClick={() => checkout(plan.id)} disabled={Boolean(loadingPlan)} className={`group mt-auto flex h-14 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold disabled:opacity-50 ${plan.dark ? "bg-white text-[#2563eb]" : "border border-[#2563eb] bg-white text-[#2563eb] hover:bg-[#f5f8ff]"}`}>

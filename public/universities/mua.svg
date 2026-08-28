@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 72" role="img" aria-labelledby="title">
+  <title id="title">МУА Астанинский</title>
+  <rect width="160" height="72" rx="16" fill="#fff"/>
+  <path d="M21 52V20h7l10 17 10-17h7v32h-8V33l-9 15-9-15v19z" fill="#1d4ed8"/>
+  <text x="66" y="43" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#172033">МУА</text>
+</svg>

@@ -23,7 +23,7 @@ export default async function TestsPage() {
       <div className="container-shell py-12 sm:py-16">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">Пробники и практика</p>
         <h1 className="display mt-4 text-5xl sm:text-7xl">Проверь уровень <span className="italic">без подсматривания.</span></h1>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-muted">Ответы и объяснения открываются только после завершения. AI во время теста даёт намёк, но уменьшает награду XP.</p>
+        <p className="mt-5 max-w-2xl text-base leading-7 text-muted">Ответы и объяснения открываются только после завершения. entgo.ai во время теста даёт намёк, но уменьшает награду XP.</p>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {tests.map((test, index) => (
             <article key={test.id} className={`flex min-h-64 flex-col rounded-[32px] border p-7 md:min-h-80 ${index === 0 ? "border-[#111] bg-[#111] text-white shadow-[0_24px_70px_rgba(0,0,0,.16)]" : "border-line bg-white"}`}>

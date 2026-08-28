@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     maxTokens: 350,
   });
   if (!explanation) {
-    return Response.json({ error: "ИИ временно недоступен." }, { status: 503 });
+    return Response.json({ error: "entgo.ai временно недоступен." }, { status: 503 });
   }
   return Response.json({ explanation, generated: true });
 }

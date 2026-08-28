@@ -150,7 +150,7 @@ export function ResultsClient({ result }: { result: Result }) {
                 <div><p className="text-xs text-white/45">Диапазон</p><p className="mt-3 font-bold">{result.forecast.minimum}–{result.forecast.optimistic}</p></div>
                 <div><p className="text-xs text-white/45">Шанс цели</p><p className="mt-3 font-bold">{result.forecast.chanceTarget}%</p></div>
               </div>
-              <p className="mt-4 border-t border-white/15 pt-4 text-xs text-white/55">Начислено {result.xpAwarded} XP{result.aiHelpCount ? ` · AI-подсказок: ${result.aiHelpCount}` : ""}</p>
+              <p className="mt-4 border-t border-white/15 pt-4 text-xs text-white/55">Начислено {result.xpAwarded} XP{result.aiHelpCount ? ` · entgo.ai-подсказок: ${result.aiHelpCount}` : ""}</p>
               {result.university && <Link href={`/universities/${result.university.slug}`} className="mt-3 flex items-center justify-between rounded-xl bg-white/10 p-3 text-xs"><span>{result.university.name}: грант от {result.university.grantScore}</span><strong>{result.university.chance}%</strong></Link>}
             </div>
           </section>

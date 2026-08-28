@@ -52,7 +52,7 @@ export default function Home() {
               <article className="landing-comparison-card flex min-h-[520px] flex-col rounded-[32px] border border-[#2563eb]/20 bg-white p-7 shadow-[0_24px_80px_rgba(37,99,235,.10)] sm:p-9">
                 <div className="flex items-center gap-3">
                   <span className="grid size-11 place-items-center rounded-full bg-[#2563eb]/10 text-[#2563eb]"><Target size={23} /></span>
-                  <h3 className="text-xl font-semibold text-[#2563eb]">ENTGO</h3>
+                  <h3 className="text-xl font-semibold text-[#2563eb]">entgo.ai</h3>
                 </div>
                 <div className="mt-9 grid gap-3">
                   {[

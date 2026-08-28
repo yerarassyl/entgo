@@ -42,6 +42,12 @@ enum QuestionStatus {
   ARCHIVED
 }
 
+enum QuestionKind {
+  SINGLE
+  MULTI
+  MATCHING
+}
+
 enum TestType {
   DIAGNOSTIC
   FULL
@@ -109,6 +115,7 @@ model User {
   city                String?
   school              String?
   targetScore         Int?
+  baselineScore       Int?
   profileSubjects     String[]                 @default([])
   examDate            DateTime?
   dailyMinutes        Int?
@@ -261,6 +268,7 @@ model Question {
   status          QuestionStatus    @default(DRAFT)
   locale          Locale
   difficulty      Int
+  kind            QuestionKind      @default(SINGLE)
   body            Json
   explanation     Json
   source          String?
@@ -289,6 +297,7 @@ model QuestionOption {
   position   Int
   content    Json
   isCorrect  Boolean         @default(false)
+  matchKey   String?
   question   Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
   answers    AttemptAnswer[]
 
@@ -359,10 +368,11 @@ model TestAttempt {
 
 model AttemptAnswer {
   id            String          @id @default(cuid())
-  attemptId     String
-  questionId    String
-  optionId      String?
-  isCorrect     Boolean?
+  attemptId         String
+  questionId        String
+  optionId          String?
+  selectedOptionIds String[]         @default([])
+  isCorrect         Boolean?
   timeSpentSec  Int             @default(0)
   abilityBefore Float?
   abilityAfter  Float?
