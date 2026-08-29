@@ -79,9 +79,9 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
 
   return (
     <>
-      <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-2">
+      <div className="mt-14 grid w-full items-stretch gap-6 lg:grid-cols-2">
         {plans.map((plan) => (
-          <article key={plan.id} className={`relative flex min-h-[620px] flex-col rounded-[30px] border p-7 sm:p-9 ${plan.dark ? "border-[#2563eb] bg-[#2563eb] text-white shadow-[0_30px_80px_rgba(37,99,235,.2)]" : "border-[#dfe5ef] bg-white text-[#172033]"}`}>
+          <article key={plan.id} className={`relative flex min-w-0 flex-col rounded-[30px] border p-6 sm:min-h-[620px] sm:p-9 ${plan.dark ? "border-[#2563eb] bg-[#2563eb] text-white shadow-[0_30px_80px_rgba(37,99,235,.2)]" : "border-[#dfe5ef] bg-white text-[#172033]"}`}>
             {plan.dark && <span className="absolute -top-3 left-8 rounded-full bg-white px-4 py-1.5 text-xs font-extrabold text-[#2563eb] shadow-sm">Самый популярный</span>}
             <h2 className="text-3xl font-extrabold tracking-[-.04em]">{plan.title}</h2>
             <p className={`mt-3 min-h-12 text-sm leading-6 ${plan.dark ? "text-white/65" : "text-[#737d8e]"}`}>{plan.subtitle}</p>
@@ -94,12 +94,12 @@ export function PremiumClient({ activeUntil }: { activeUntil: string | null }) {
               {plan.items.map((item) => <li key={item} className="flex items-start gap-3"><Check className={plan.dark ? "text-[#8bb4ff]" : "text-[#2563eb]"} size={17} strokeWidth={3} />{item}</li>)}
             </ul>
             {plan.dark && (
-              <div className="mt-7 inline-flex items-start gap-3 rounded-2xl bg-white/10 p-4 text-sm font-semibold leading-6">
+              <div className="mt-7 flex w-full items-start gap-3 rounded-2xl bg-white/10 p-4 text-sm font-semibold leading-6">
                 <RefreshCw className="mt-0.5 shrink-0 text-[#8bb4ff]" size={18} />
                 <span>Система автоматически обновляет план после каждого пробника.</span>
               </div>
             )}
-            <button onClick={() => checkout(plan.id)} disabled={Boolean(loadingPlan)} className={`group mt-auto flex h-14 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold disabled:opacity-50 ${plan.dark ? "bg-white text-[#2563eb]" : "border border-[#2563eb] bg-white text-[#2563eb] hover:bg-[#f5f8ff]"}`}>
+            <button onClick={() => checkout(plan.id)} disabled={Boolean(loadingPlan)} className={`group mt-6 flex h-14 w-full shrink-0 items-center justify-center gap-2 rounded-full text-sm font-extrabold disabled:opacity-50 sm:mt-auto ${plan.dark ? "bg-white text-[#2563eb]" : "border border-[#2563eb] bg-white text-[#2563eb] hover:bg-[#f5f8ff]"}`}>
               {loadingPlan === plan.id ? "Открываем оплату..." : plan.dark ? "Разблокировать мой план" : "Выбрать тариф"}
               {loadingPlan !== plan.id && <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} />}
             </button>
