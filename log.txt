@@ -1,0 +1,5 @@
+
+> entgo@0.1.0 typecheck
+> tsc --noEmit
+
+src/app/topics/[id]/page.tsx(86,7): error TS1109: Expression expected.

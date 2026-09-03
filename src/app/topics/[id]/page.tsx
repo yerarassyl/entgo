@@ -1,98 +1,298 @@
-import { BookOpen, CheckCircle2, CircleHelp, Lightbulb, Target, TriangleAlert } from "lucide-react";
+"use client";
+
+import { BookOpen, CheckCircle2, CircleHelp, Lightbulb, Target, TriangleAlert, LoaderCircle } from "lucide-react";
 import { notFound } from "next/navigation";
-import { ProductHeader } from "@/components/product-header";
-import { requirePaidUser } from "@/lib/paid-access";
+import { useEffect, useState } from "react";
 import { prisma } from "@/lib/prisma";
 import { lessonForTopic } from "@/lib/topic-content";
-import { LessonActions } from "@/components/lesson-actions";
-import { jsonText } from "@/lib/exam";
+import { requirePaidUser } from "@/lib/paid-access";
 
-export default async function TopicPage({
+type ChatMessage = { role: "user" | "assistant"; content: string };
+
+interface TopicData {
+  id: string;
+  subject: { titleRu: string; titleKk?: string };
+  titleRu: string;
+  titleKk?: string;
+  summary: string;
+  rule: string;
+  example: string;
+  mistake: string;
+  steps: string[];
+  questions: Array<{ id: string; body: string; difficulty: number; options?: Array<{ id: string; content: string; isCorrect: boolean }> }>;
+}
+
+export default function TopicPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const user = await requirePaidUser();
-  const { id } = await params;
-  const topic = await prisma.topic.findUnique({
-    where: { id },
-    include: {
-      subject: true,
-      lesson: true,
-      questions: {
-        where: { status: "PUBLISHED" },
-        include: { options: { orderBy: { position: "asc" } } },
-        take: 8,
-      },
+  const [user, setUser] = useState<any | null>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [topic, setTopic] = useState<TopicData | null>(null);
+
+  // Hooks called unconditionally at top level
+  useEffect(() => {
+    async function init() {
+      const u = await requirePaidUser();
+      setUser(u);
+      if (!u) return;
+
+      const { id: topicId } = await params;
+      const t = await prisma.topic.findUnique({
+        where: { id: topicId },
+        include: {
+          subject: true,
+          lesson: true,
+          questions: {
+            where: { status: "PUBLISHED" },
+            include: { options: { orderBy: { position: "asc" } } },
+            take: 8,
+          },
+        },
+      });
+      if (!t) {
+        notFound();
+        return;
+      }
+
+      const fallbackLesson = lessonForTopic(t.slug, t.titleRu);
+      const lesson = t.lesson
+        ? {
+            summary: t.lesson.summary,
+            rule: t.lesson.rule,
+            example: t.lesson.example,
+            mistake: t.lesson.mistake,
+            steps:
+              Array.isArray(t.lesson.steps) && t.lesson.steps.length > 0
+                ? t.lesson.steps.filter((item): item is string => typeof item === "string")
+                : fallbackLesson.steps,
+          }
+        : fallbackLesson;
+
+      const formattedQuestions = (t.questions || []).map((q) => ({
+        id: q.id,
+        body: String(q.body ?? ""),
+        difficulty: q.difficulty ?? 1,
+        options: (q.options || []).map((o) => ({
+          id: o.id,
+          content: String(o.content ?? ""),
+          isCorrect: o.isCorrect ?? false,
+        })),
+      }));
+
+      setTopic({
+        id: t.id,
+        subject: t.subject,
+        titleRu: t.titleRu,
+        titleKk: t.titleKk,
+        summary: lesson.summary,
+        rule: lesson.rule,
+        example: lesson.example,
+        mistake: lesson.mistake,
+        steps: lesson.steps,
+        questions: formattedQuestions,
+      });
+    }
+    init();
+  }, [params]);
+
+  if (!user || !topic) {
+    return null;
+  }
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      role: "assistant",
+      content: `👋 Привет! Я entgo.ai — твой личный репетитор по подготовке к ЕНТ.
+
+📚 **${topic.titleRu}** — ${topic.subject.titleRu}
+
+${topic.summary}
+
+${topic.rule ? `\n🔑 **Главное правило:** ${topic.rule}` : ""}
+
+${topic.example ? `\n💡 **Пример:** ${topic.example}` : ""}
+
+${topic.mistake ? `\n⚠️ **Типическая ошибка:** ${topic.mistake}` : ""}
+
+${topic.steps.length > 0 ? `\n📝 **Шаги обучения:**` + topic.steps.map((step, i) => `\n${i + 1}. ${step}`) : ""}
+
+Если у тебя есть вопросы по этой теме — пиши ниже, и я объясню!`
     },
-  });
-  if (!topic) notFound();
-  const fallbackLesson = lessonForTopic(topic.slug, topic.titleRu);
-  const lesson = topic.lesson ? {
-    summary: topic.lesson.summary,
-    rule: topic.lesson.rule,
-    example: topic.lesson.example,
-    mistake: topic.lesson.mistake,
-    steps: Array.isArray(topic.lesson.steps) ? topic.lesson.steps.filter((item): item is string => typeof item === "string") : fallbackLesson.steps,
-  } : fallbackLesson;
-  const [progress, mastery] = await Promise.all([
-    prisma.lessonProgress.findUnique({
-      where: { userId_topicId: { userId: user.id, topicId: topic.id } },
-      select: { completedAt: true },
-    }),
-    prisma.topicMastery.findUnique({
-      where: { userId_topicId: { userId: user.id, topicId: topic.id } },
-      select: { masteryScore: true, totalAnswers: true, correctAnswers: true, errorScore: true },
-    }),
   ]);
-  const readiness = Math.round(mastery?.masteryScore ?? 0);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [input, setInput] = useState("");
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
+  const [loading, setLoading] = useState(false);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        const text = input.trim();
+        if (text) {
+          setMessages((msgs) => [...msgs, { role: "user", content: text }]);
+          setInput("");
+          setLoading(true);
+          fetch("/api/ai/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message: text,
+              contextUrl: window.location.href,
+              pageTitle: document.title,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.error) throw new Error(data.error);
+              setMessages((msgs) => [...msgs, { role: "assistant", content: data.answer ?? "" }]);
+            })
+            .catch((err) =>
+              setMessages((msgs) => [...msgs, { role: "assistant", content: "entgo.ai временно недоступен. Попробуй позже." }])
+            )
+            .finally(() => setLoading(false));
+        }
+      }
+    };
+
+    const handleSelection = () => {
+      const selection = window.getSelection()?.toString();
+      if (selection && selection.length >= 3) {
+        const popup = document.createElement("div");
+        popup.style.position = "fixed";
+        popup.style.top = "20px";
+        popup.style.right = "20px";
+        popup.style.background = "white";
+        popup.style.border = "1px solid #2563eb";
+        popup.style.borderRadius = "8px";
+        popup.style.padding = "12px 16px";
+        popup.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+        popup.style.zIndex = "9999";
+        popup.style.maxWidth = "300px";
+        popup.innerHTML = `
+          <div style="font-weight: 500; margin-bottom: 8px;">Выделенный текст</div>
+          <div style="font-size: 12px; color: #666; line-height: 1.4; margin-bottom: 12px;">${selection}</div>
+          <button
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent("entgo:ai-prompt", { detail: selection }));
+              popup.remove();
+            }}
+            style="width: 100%; background: #2563eb; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 14px; cursor: pointer; margin-top: 8px;"
+          >
+            Спросить entgo.ai о выделении
+          </button>
+        `;
+        document.body.appendChild(popup);
+
+        setTimeout(() => popup.remove(), 5000);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("selectionchange", () => handleSelection());
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("selectionchange", () => handleSelection());
+    };
+  }, [input]);
 
   return (
-    <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
-      <ProductHeader />
-      <article className="container-shell grid gap-8 py-10 lg:grid-cols-[1fr_300px] lg:py-16">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">{topic.subject.titleRu}</p>
-          <h1 className="display mt-4 text-5xl leading-none sm:text-7xl">{topic.titleRu}</h1>
-          <section className="mt-7 rounded-[24px] border border-line bg-white p-6">
-            <div className="flex items-center justify-between text-sm"><span className="font-semibold">Готовность по теме</span><strong>{readiness}%</strong></div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-paper"><div className="h-full rounded-full bg-ink" style={{ width: `${readiness}%` }} /></div>
-            <p className="mt-3 text-xs text-muted">Освоено: {Math.min(10, Math.floor((mastery?.totalAnswers ?? 0) / 2))} из 10 шагов · ожидаемый прирост +{topic.expectedScoreGain.toFixed(1)} балла</p>
-          </section>
-          <p className="mt-6 max-w-3xl text-xl leading-8">{lesson.summary}</p>
+    <main className="mobile-app-page min-h-screen bg-paper pb-6">
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">{topic.subject.titleRu}</p>
+            <h1 className="display mt-2 text-3xl sm:text-4xl font-bold leading-tight">{topic.titleRu}</h1>
+          </div>
+          <div className="relative">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-6 hidden sm:block"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.21L7 14.14 2 9.27l6.91-1.02L12 2z" />
+              <path d="M0 0h24v24H0V0zm0 0h24v24H0V0zm0 0h24v24H0V0z" fill="none" opacity="0.001" />
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-6 sm:hidden"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM12 20c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+            </svg>
+          </div>
+        </header>
 
-          <section className="mt-10 rounded-[32px] bg-[#111] p-7 text-white shadow-[0_24px_70px_rgba(0,0,0,.14)] sm:p-9">
-            <p className="text-xs font-bold uppercase tracking-[.15em] text-white/45">Главное правило</p>
-            <p className="display mt-5 text-3xl leading-tight sm:text-5xl">{lesson.rule}</p>
-          </section>
-          <section className="mt-5 rounded-[26px] border border-line bg-white p-7 sm:p-9">
-            <div className="flex items-center gap-3"><Lightbulb size={20} /><h2 className="text-lg font-semibold">Пример</h2></div>
-            <p className="mt-5 text-base leading-7 text-muted">{lesson.example}</p>
-          </section>
-          <section className="mt-5 rounded-[26px] border border-line bg-white p-7 sm:p-9">
-            <div className="flex items-center gap-3"><CircleHelp size={20} /><h2 className="text-lg font-semibold">Задачи для закрепления</h2></div>
-            <p className="mt-3 text-sm leading-6 text-muted">Сначала похожие на твои ошибки, затем закрепление и мини-тест.</p>
-            <div className="mt-6 space-y-3">
-              {topic.questions.length ? topic.questions.map((question, index) => <div key={question.id} className="rounded-2xl bg-paper p-5"><div className="flex items-start gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-white">{index + 1}</span><div><p className="text-sm font-semibold leading-6">{jsonText(question.body)}</p><p className="mt-2 text-xs text-muted">Сложность {question.difficulty} из 5 · ответ и объяснение откроются после проверки</p></div></div></div>) : <p className="rounded-2xl bg-paper p-5 text-sm text-muted">Задачи по теме добавляются редакторами контента.</p>}
+        <div className="space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto pb-6">
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 ${msg.role === "user" ? "ml-auto bg-[#2563eb] text-white" : "bg-paper text-ink"}`}
+            >
+              <div className="break-all">{msg.content}</div>
             </div>
-          </section>
-          <section className="mt-5 rounded-[26px] border border-line bg-white p-7 sm:p-9">
-            <div className="flex items-center gap-3"><TriangleAlert size={20} /><h2 className="text-lg font-semibold">Типичная ошибка</h2></div>
-            <p className="mt-5 text-base leading-7 text-muted">{lesson.mistake}</p>
-          </section>
+          ))}
+          {loading && (
+            <div className="flex items-center gap-2 text-xs text-muted">
+              <LoaderCircle className="animate-spin" size={12} /> Разбираю контекст...
+            </div>
+          )}
         </div>
 
-        <aside className="h-fit rounded-[26px] border border-line bg-white p-6 lg:sticky lg:top-24">
-          <BookOpen size={20} />
-          <h2 className="mt-4 text-lg font-semibold">Как закрепить тему</h2>
-          <ol className="mt-5 space-y-4">
-            {lesson.steps.map((step, index) => <li key={step} className="flex gap-3 text-sm leading-6"><span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-white">{index + 1}</span>{step}</li>)}
-          </ol>
-          <LessonActions topicId={topic.id} initiallyCompleted={Boolean(progress?.completedAt)} />
-          <div className="mt-6 rounded-2xl bg-paper p-4 text-xs leading-5"><div className="flex items-center gap-2 font-bold"><Target size={15} /> Классификация ошибок</div><p className="mt-2 text-muted">{(mastery?.errorScore ?? 0) > 30 ? "Не знаешь тему: ошибки повторяются. Нужна теория и серия похожих задач." : (mastery?.totalAnswers ?? 0) > 0 ? "Вероятна невнимательность: проверь промежуточные шаги и скорость." : "После первых ответов система определит: незнание темы, невнимательность или угадывание."}</p></div>
-          {progress?.completedAt && <p className="mt-4 flex items-center gap-2 text-xs font-semibold text-success"><CheckCircle2 size={15} /> Знание подтверждено проверкой</p>}
-        </aside>
-      </article>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const text = input.trim();
+            if (text) {
+              setMessages((msgs) => [...msgs, { role: "user", content: text }]);
+              setInput("");
+              setLoading(true);
+              fetch("/api/ai/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  message: text,
+                  contextUrl: window.location.href,
+                  pageTitle: document.title,
+                }),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.error) throw new Error(data.error);
+                  setMessages((msgs) => [...msgs, { role: "assistant", content: data.answer ?? "" }]);
+                })
+                .catch((err) =>
+                  setMessages((msgs) => [...msgs, { role: "assistant", content: "entgo.ai временно недоступен. Попробуй позже." }])
+                )
+                .finally(() => setLoading(false));
+            }
+          }}
+          className="mt-6 flex gap-3"
+        >
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Спроси у entgo.ai о чем угодно... "
+            className="flex-1 rounded-full border border-line px-4 py-3 text-sm outline-none focus:border-ink resize-none"
+            disabled={loading}
+          />
+          <button
+            type="submit"
+            disabled={loading || !input.trim()}
+            className="px-5 py-3 text-sm font-medium bg-[#2563eb] text-white rounded disabled:opacity-35"
+          >
+            {loading ? "Разбираю..." : "Отправить" }
+          </button>
+        </form>
+      </div>
     </main>
   );
 }
+

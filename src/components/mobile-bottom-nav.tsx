@@ -48,14 +48,6 @@ export function MobileBottomNav() {
           </Link>
         );
       })}
-      <button
-        type="button"
-        onClick={() => window.dispatchEvent(new CustomEvent("entgo:ai-open"))}
-        className="mx-auto grid size-13 place-items-center rounded-[18px] bg-[#2563eb] text-white shadow-[0_10px_28px_rgba(37,99,235,.36)]"
-        aria-label="Открыть entgo.ai-репетитора"
-      >
-        <Sparkles size={19} />
-      </button>
       {items.slice(2).map(([label, href, Icon]) => {
         const active = pathname === href || pathname.startsWith(href);
         return (
