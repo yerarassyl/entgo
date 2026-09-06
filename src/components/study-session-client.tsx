@@ -7,11 +7,11 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Brand } from "@/components/brand";
+import { LessonChat } from "@/components/lesson-chat";
 
 type SessionTask = {
   id: string;
@@ -161,22 +161,11 @@ export function StudySessionClient({
               {completed && <span className="inline-flex items-center gap-2 rounded-full bg-[#e9f7ef] px-3 py-2 text-xs font-bold text-success"><CheckCircle2 size={15} /> Выполнено</span>}
             </div>
 
-            <div className="mt-5 rounded-2xl bg-paper p-4 sm:p-5">
-              <div className="flex gap-3"><Sparkles className="mt-0.5 shrink-0" size={19} /><p className="text-sm font-semibold leading-6">{content.lead}</p></div>
-            </div>
-            <details className="mt-4 rounded-2xl border border-line p-4 sm:hidden">
-              <summary className="cursor-pointer text-sm font-bold">Короткая теория и подсказки</summary>
-              <div className="mt-4 space-y-4 border-t border-line pt-4">
-                <div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-muted">Правило</p><p className="mt-2 text-sm leading-6">{content.rule}</p></div>
-                <div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-muted">Как сделать</p><p className="mt-2 text-sm leading-6">{content.example}</p></div>
-                <div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-muted">Не ошибись</p><p className="mt-2 text-sm leading-6">{content.mistake}</p></div>
-              </div>
-            </details>
-            <div className="mt-6 hidden gap-5 sm:grid sm:grid-cols-3">
-              <div><p className="text-xs font-bold uppercase tracking-[.14em] text-muted">Правило</p><p className="mt-2 text-base leading-7">{content.rule}</p></div>
-              <div className="border-l border-line pl-5"><p className="text-xs font-bold uppercase tracking-[.14em] text-muted">Как сделать сейчас</p><p className="mt-2 text-sm leading-6">{content.example}</p></div>
-              <div className="border-l border-line pl-5"><p className="text-xs font-bold uppercase tracking-[.14em] text-muted">Типичная ошибка</p><p className="mt-2 text-sm leading-6">{content.mistake}</p></div>
-            </div>
+            <LessonChat
+              subject={task.label}
+              title={task.title}
+              lesson={{ summary: content.lead, rule: content.rule, example: content.example, mistake: content.mistake, steps: [] }}
+            />
 
             {questions.length > 0 && (
               <div className="mt-6 border-t border-line pt-6 sm:mt-9 sm:pt-8">
