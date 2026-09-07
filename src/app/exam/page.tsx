@@ -4,10 +4,17 @@ import { requirePaidUser } from "@/lib/paid-access";
 export default async function ExamPage({
   searchParams,
 }: {
-  searchParams: Promise<{ topic?: string }>;
+  searchParams: Promise<{ topic?: string; testId?: string; errorReview?: string }>;
 }) {
   await requirePaidUser();
 
-  const { topic } = await searchParams;
-  return <ExamClient topicId={topic} />;
+  const { topic, testId, errorReview } = await searchParams;
+  return (
+    <ExamClient
+      topicId={topic}
+      testId={testId}
+      errorReview={errorReview === "true" || errorReview === "1"}
+    />
+  );
 }
+

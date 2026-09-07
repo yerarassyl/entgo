@@ -1,31 +1,63 @@
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, GraduationCap } from "lucide-react";
 import { ProductHeader } from "@/components/product-header";
+import { UniversitiesClient, type UniversityItem } from "@/components/universities-client";
 import { universityCatalog } from "@/data/universities";
+import { getSessionUser } from "@/lib/auth";
+import { calculateAdmissionChance, calculateForecast } from "@/lib/forecast";
 import { ensureUniversities } from "@/lib/universities";
 
 export const dynamic = "force-dynamic";
 
 export default async function UniversitiesPage() {
-  const universities = await ensureUniversities();
+  const [rawUniversities, user] = await Promise.all([
+    ensureUniversities(),
+    getSessionUser(),
+  ]);
+
+  const forecast = user ? await calculateForecast(user.id) : null;
+  const currentExpected = forecast?.expected ?? null;
+
+  const universities: UniversityItem[] = rawUniversities.map((u) => {
+    const catalogEntry = universityCatalog.find((c) => c.slug === u.slug);
+    const programs = Array.isArray(u.programs)
+      ? u.programs.filter((item): item is string => typeof item === "string")
+      : [];
+    const chance = currentExpected === null ? null : calculateAdmissionChance(currentExpected, u.grantScore);
+
+    return {
+      id: u.id,
+      slug: u.slug,
+      name: u.name,
+      shortName: u.shortName,
+      city: u.city,
+      grantScore: u.grantScore,
+      description: u.description,
+      website: u.website,
+      programs: programs.length ? programs : [...(catalogEntry?.programs ?? [])],
+      logoPath: catalogEntry?.logoPath ?? "/universities/aitu.svg",
+      chance,
+    };
+  });
+
   return (
     <main className="mobile-app-page product-v2 min-h-screen bg-paper pb-24">
       <ProductHeader />
       <div className="container-shell py-12 sm:py-20">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">Университеты Казахстана</p>
-        <h1 className="display mt-4 max-w-4xl text-5xl leading-none sm:text-7xl">Выбери цель и узнай <span className="italic">шанс на грант.</span></h1>
-        <div className="mt-12 grid gap-4 md:grid-cols-2">
-          {universities.map((university) => (
-            <Link key={university.id} href={`/universities/${university.slug}`} className="group rounded-[32px] border border-line bg-white p-8 hover:-translate-y-1 hover:border-[#111] hover:shadow-[0_22px_60px_rgba(0,0,0,.07)]">
-              <div className="flex items-start justify-between"><div className="grid h-16 w-24 place-items-center overflow-hidden rounded-2xl border border-line bg-[#f8f9fc] p-2"><Image src={universityCatalog.find((item) => item.slug === university.slug)?.logoPath ?? "/universities/aitu.svg"} alt={`Логотип ${university.shortName}`} width={120} height={64} className="h-full w-full object-contain" /></div><ArrowRight className="text-[#2563eb] transition-transform group-hover:translate-x-1" /></div>
-              <h2 className="mt-6 text-xl font-semibold">{university.shortName}</h2>
-              <p className="mt-2 text-sm leading-6 text-muted">{university.name}</p>
-              <div className="mt-6 flex items-center gap-2 text-sm font-semibold"><GraduationCap size={17} /> Ориентир для гранта: {university.grantScore}</div>
-            </Link>
-          ))}
+        <h1 className="display mt-4 max-w-4xl text-5xl leading-none sm:text-7xl">
+          Выбери цель и узнай <span className="italic">шанс на грант.</span>
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-6 text-muted">
+          Сравнивай проходные баллы казахстанских вузов, фильтруй по городам и рассчитывай свои шансы на поступление.
+        </p>
+        <div className="mt-10">
+          <UniversitiesClient
+            universities={universities}
+            userTargetId={user?.desiredUniversityId ?? null}
+            userForecast={currentExpected}
+          />
         </div>
       </div>
     </main>
   );
 }
+

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Crown, Flame, Medal } from "lucide-react";
 import { ProductHeader } from "@/components/product-header";
+import { ReferralInviteCard } from "@/components/referral-invite-card";
 import { requirePaidUser } from "@/lib/paid-access";
 import { prisma } from "@/lib/prisma";
 
@@ -25,7 +26,7 @@ export default async function LeaderboardPage({
       : scope === "school" && currentUser.school
         ? { school: currentUser.school }
         : scope === "friends"
-          ? { id: "__friends_not_configured__" }
+          ? { OR: [{ id: currentUser.id }, currentUser.school ? { school: currentUser.school } : { id: currentUser.id }] }
           : {};
 
   const users = await prisma.user.findMany({
@@ -70,8 +71,13 @@ export default async function LeaderboardPage({
       <div className="container-shell py-10 sm:py-16">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-muted">Рейтинг учеников</p>
         <h1 className="display mt-4 text-5xl sm:text-7xl">Соревнуйся <span className="italic">с собой и друзьями.</span></h1>
-        <div className="mt-8 flex flex-wrap gap-2">
-          {[["global", "Весь Казахстан"], ["city", currentUser.city ?? "Мой город"], ["school", currentUser.school ?? "Моя школа"], ["friends", "Друзья"]].map(([value, label]) => (
+        
+        <div className="mt-8">
+          <ReferralInviteCard userId={currentUser.id} userName={currentUser.name} />
+        </div>
+
+        <div className="mt-10 flex flex-wrap gap-2">
+          {[["global", "Весь Казахстан"], ["city", currentUser.city ?? "Мой город"], ["school", currentUser.school ?? "Моя школа"], ["friends", "Друзья и школа"]].map(([value, label]) => (
             <Link key={value} href={`/leaderboard?scope=${value}`} className={`rounded-full px-4 py-2 text-sm font-semibold ${scope === value ? "bg-ink text-white" : "border border-line bg-white"}`}>{label}</Link>
           ))}
         </div>
@@ -95,8 +101,35 @@ export default async function LeaderboardPage({
               </div>
             ))}
           </div>
-          {!ranking.length && <p className="p-10 text-center text-sm text-muted">{scope === "friends" ? "Добавление друзей появится после приглашения одноклассников. Пустые тестовые аккаунты здесь не показываются." : "В этом рейтинге пока нет активных участников."}</p>}
+          {!ranking.length && <p className="p-10 text-center text-sm text-muted">{scope === "friends" ? "Добавление друзей появится после приглашения одноклассников. Пригласите одноклассников по ссылке выше!" : "В этом рейтинге пока нет активных участников."}</p>}
         </section>
+
+        {/* Sticky floating "My Position" bar */}
+        <div className="fixed bottom-4 left-4 right-4 z-40 mx-auto max-w-4xl rounded-2xl border border-white/10 bg-[#111]/95 px-5 py-3.5 text-white shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur-md">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="grid size-9 place-items-center rounded-xl bg-white/15 text-sm font-black text-white">
+                {currentPosition >= 0 ? `#${currentPosition + 1}` : "—"}
+              </span>
+              <div>
+                <p className="text-[11px] font-medium text-white/60">Твоя позиция</p>
+                <p className="text-sm font-bold text-white truncate">{currentUser.name || "Ты"}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-5 sm:gap-8">
+              <div className="text-right">
+                <p className="text-[11px] font-medium text-white/60">Всего XP</p>
+                <p className="text-sm font-black text-[#60a5fa]">{currentUser.xp ?? 0} XP</p>
+              </div>
+              {xpToNext && nextUser && (
+                <div className="hidden text-right sm:block">
+                  <p className="text-[11px] font-medium text-white/60">До #{currentPosition}</p>
+                  <p className="text-xs font-bold text-emerald-400">+{xpToNext} XP</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );

@@ -162,10 +162,12 @@ export function StudySessionClient({
             </div>
 
             <LessonChat
+              embedded
               subject={task.label}
               title={task.title}
               lesson={{ summary: content.lead, rule: content.rule, example: content.example, mistake: content.mistake, steps: [] }}
             />
+
 
             {questions.length > 0 && (
               <div className="mt-6 border-t border-line pt-6 sm:mt-9 sm:pt-8">

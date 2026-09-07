@@ -8,21 +8,42 @@ function requestIdentity(request: Request) {
   return createHash("sha256").update(value).digest("hex").slice(0, 24);
 }
 
+const memoryStore = new Map<string, { count: number; expiresAt: number }>();
+
 export async function checkRateLimit(
   request: Request,
   scope: string,
   limit: number,
   windowSeconds: number,
 ) {
+  const identity = requestIdentity(request);
+  const key = `rate:${scope}:${identity}`;
+
   const redis = await getRedis();
-  if (!redis) return { allowed: true, remaining: limit };
+  if (redis) {
+    try {
+      const count = await redis.incr(key);
+      if (count === 1) await redis.expire(key, windowSeconds);
+      return {
+        allowed: count <= limit,
+        remaining: Math.max(0, limit - count),
+      };
+    } catch {
+      // Fall through to memory store
+    }
+  }
 
-  const key = `rate:${scope}:${requestIdentity(request)}`;
-  const count = await redis.incr(key);
-  if (count === 1) await redis.expire(key, windowSeconds);
+  // Robust in-memory fallback
+  const now = Date.now();
+  const entry = memoryStore.get(key);
+  if (!entry || entry.expiresAt <= now) {
+    memoryStore.set(key, { count: 1, expiresAt: now + windowSeconds * 1000 });
+    return { allowed: true, remaining: limit - 1 };
+  }
 
+  entry.count += 1;
   return {
-    allowed: count <= limit,
-    remaining: Math.max(0, limit - count),
+    allowed: entry.count <= limit,
+    remaining: Math.max(0, limit - entry.count),
   };
 }

@@ -1,5 +1,11 @@
 import { getSessionUser } from "@/lib/auth";
-import { ensureDiagnosticTest, ensureTopicTest, jsonText } from "@/lib/exam";
+import {
+  ensureDiagnosticTest,
+  ensureErrorReviewTest,
+  ensureSpecificTest,
+  ensureTopicTest,
+  jsonText,
+} from "@/lib/exam";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { isSameOriginRequest } from "@/lib/request-security";
@@ -18,8 +24,15 @@ export async function POST(request: Request) {
     return Response.json({ error: "Слишком много попыток. Подождите минуту." }, { status: 429 });
   }
   const entitlements = await getEntitlements(user.id);
-  const body = await request.json().catch(() => ({})) as { topicId?: unknown };
+  const body = (await request.json().catch(() => ({}))) as {
+    topicId?: unknown;
+    testId?: unknown;
+    errorReview?: unknown;
+  };
   const topicId = typeof body.topicId === "string" && body.topicId.length <= 100 ? body.topicId : undefined;
+  const testId = typeof body.testId === "string" && body.testId.length <= 100 ? body.testId : undefined;
+  const errorReview = Boolean(body.errorReview);
+
   if (!entitlements.canTakeFullTest) {
     return Response.json(
       { error: "Пробники доступны после оплаты подписки.", upgrade: true },
@@ -30,10 +43,24 @@ export async function POST(request: Request) {
     return Response.json({ error: "Тематические тесты доступны после оплаты подписки.", upgrade: true }, { status: 403 });
   }
 
-  const test = topicId ? await ensureTopicTest(topicId) : await ensureDiagnosticTest();
-  if (!test) {
-    return Response.json({ error: "Для этой темы пока нет опубликованных заданий." }, { status: 404 });
+  let test = null;
+  if (errorReview) {
+    test = await ensureErrorReviewTest(user.id);
+    if (!test) {
+      return Response.json({ error: "У вас пока нет сохраненных ошибок для повторения." }, { status: 404 });
+    }
+  } else if (testId) {
+    test = await ensureSpecificTest(testId);
+  } else if (topicId) {
+    test = await ensureTopicTest(topicId);
+  } else {
+    test = await ensureDiagnosticTest();
   }
+
+  if (!test) {
+    return Response.json({ error: "Для этого теста пока нет опубликованных заданий." }, { status: 404 });
+  }
+
   const now = new Date();
   const existing = await prisma.testAttempt.findFirst({
     where: {

@@ -247,6 +247,87 @@ export async function ensureTopicTest(topicId: string) {
   });
 }
 
+export async function ensureSpecificTest(testId: string) {
+  const test = await prisma.test.findUnique({
+    where: { id: testId, isPublished: true },
+    include: {
+      questions: {
+        orderBy: { position: "asc" },
+        include: {
+          question: {
+            include: {
+              subject: true,
+              topic: true,
+              options: { orderBy: { position: "asc" } },
+            },
+          },
+        },
+      },
+    },
+  });
+  return test;
+}
+
+export async function ensureErrorReviewTest(userId: string) {
+  const wrongAnswers = await prisma.attemptAnswer.findMany({
+    where: {
+      attempt: { userId },
+      isCorrect: false,
+    },
+    orderBy: { answeredAt: "desc" },
+    take: 20,
+    select: { questionId: true },
+  });
+
+  const questionIds = [...new Set(wrongAnswers.map((a) => a.questionId))];
+  if (!questionIds.length) return null;
+
+  const test = await prisma.test.upsert({
+    where: { slug: `error-review-${userId}` },
+    update: {
+      titleRu: "Работа над ошибками",
+      titleKk: "Қателермен жұмыс",
+      durationSec: Math.max(600, questionIds.length * 120),
+      isPublished: true,
+    },
+    create: {
+      slug: `error-review-${userId}`,
+      type: "ADAPTIVE",
+      titleRu: "Работа над ошибками",
+      titleKk: "Қателермен жұмыс",
+      durationSec: Math.max(600, questionIds.length * 120),
+      isPublished: true,
+    },
+  });
+
+  await prisma.testQuestion.deleteMany({ where: { testId: test.id } });
+  await prisma.testQuestion.createMany({
+    data: questionIds.map((questionId, position) => ({
+      testId: test.id,
+      questionId,
+      position,
+    })),
+  });
+
+  return prisma.test.findUniqueOrThrow({
+    where: { id: test.id },
+    include: {
+      questions: {
+        orderBy: { position: "asc" },
+        include: {
+          question: {
+            include: {
+              subject: true,
+              topic: true,
+              options: { orderBy: { position: "asc" } },
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
 export function jsonText(value: unknown) {
   if (typeof value === "string") return value;
   if (value && typeof value === "object" && "text" in value && typeof value.text === "string") {
@@ -254,3 +335,4 @@ export function jsonText(value: unknown) {
   }
   return JSON.stringify(value);
 }
+

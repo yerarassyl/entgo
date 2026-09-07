@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, ExternalLink, GraduationCap } from "lucide-react";
 import { notFound } from "next/navigation";
 import { ProductHeader } from "@/components/product-header";
+import { SetTargetUniversityButton } from "@/components/set-target-university-button";
 import { universityCatalog } from "@/data/universities";
 import { getSessionUser } from "@/lib/auth";
 import { calculateAdmissionChance, calculateForecast } from "@/lib/forecast";
@@ -37,6 +38,11 @@ export default async function UniversityPage({ params }: { params: Promise<{ slu
         <aside className="h-fit rounded-[32px] bg-[#111] p-7 text-white shadow-[0_24px_70px_rgba(0,0,0,.16)] sm:p-9 lg:sticky lg:top-28">
           <div className="flex items-center justify-between"><p className="text-xs font-bold uppercase tracking-[.15em] text-white/45">Твой прогноз поступления</p><GraduationCap size={20} /></div>
           <h2 className="display mt-6 text-5xl">{university.shortName}</h2>
+          {user && (
+            <div className="mt-4">
+              <SetTargetUniversityButton universityId={university.id} isCurrentTarget={user.desiredUniversityId === university.id} />
+            </div>
+          )}
           {forecast ? (
             <div className="mt-8 space-y-4">
               <div className="flex justify-between border-b border-white/15 pb-4"><span className="text-white/55">Текущий прогноз</span><strong>{forecast.expected}</strong></div>
